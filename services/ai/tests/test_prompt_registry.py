@@ -7,6 +7,7 @@ Covers:
 - Missing prompt id raises KeyError.
 - Invalid prompt_id strings raise ValueError (regex guard).
 """
+
 import pathlib
 
 import frontmatter
@@ -68,7 +69,8 @@ class TestIdMatchesFilename:
         stubs = sorted(prompts_dir.glob("*.v*.md"))
         assert len(stubs) == 7, f"Expected 7 stubs, found {len(stubs)}: {stubs}"
         for stub_path in stubs:
-            # stem is everything before the first .vN part, e.g. "extraction" from "extraction.v1.md"
+            # stem is everything before the first .vN part
+            # e.g. "extraction" from "extraction.v1.md"
             name = stub_path.name  # e.g. extraction.v1.md
             # strip ".vN.md" suffix
             stem = name.rsplit(".", 2)[0]  # extraction
@@ -86,16 +88,24 @@ class TestLatestVersionResolution:
         # Write two temp version files into tmp_path — no writes to the real prompts dir.
         v1 = tmp_path / "foo.v1.md"
         v2 = tmp_path / "foo.v2.md"
-        v1.write_text(
-            "---\nid: foo\nversion: 1\nintent: test\nmodel_tier: cheap\nfailure_handling: none\n---\nbody v1\n"
-        )
-        v2.write_text(
-            "---\nid: foo\nversion: 2\nintent: test\nmodel_tier: cheap\nfailure_handling: none\n---\nbody v2\n"
-        )
+
+        def _stub(v: int) -> str:
+            lines = [
+                "---",
+                f"id: foo",  # noqa: F541
+                f"version: {v}",
+                "intent: test",
+                "model_tier: cheap",
+                "failure_handling: none",
+                "---",
+                f"body v{v}",
+            ]
+            return "\n".join(lines) + "\n"
+
+        v1.write_text(_stub(1))
+        v2.write_text(_stub(2))
         post = load("foo", base_dir=tmp_path)
-        assert post.metadata["version"] == 2, (
-            f"Expected version 2, got {post.metadata['version']}"
-        )
+        assert post.metadata["version"] == 2, f"Expected version 2, got {post.metadata['version']}"
 
     def test_no_writes_to_real_prompts_dir(self, tmp_path: pathlib.Path) -> None:
         """Ensure the tmp_path test above doesn't pollute the real prompts directory."""
