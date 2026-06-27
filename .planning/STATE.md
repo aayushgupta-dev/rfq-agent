@@ -3,8 +3,8 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Phase 3 context gathered
-last_updated: "2026-06-27T17:51:21.296Z"
+stopped_at: Completed 03-04-PLAN.md
+last_updated: "2026-06-27T18:18:52.658Z"
 last_activity: 2026-06-27
 progress:
   total_phases: 5
@@ -26,8 +26,8 @@ See: .planning/PROJECT.md (updated 2026-06-27)
 ## Current Position
 
 Phase: 03 (extraction-agent) — EXECUTING
-Plan: 3 of 4
-Status: Ready to execute
+Plan: 4 of 4 (03-04 complete)
+Status: 03-04 complete — phase 03 fully planned & executed
 Last activity: 2026-06-27
 
 Progress: [██████████] 100%
@@ -58,6 +58,7 @@ Progress: [██████████] 100%
 | Phase 01-foundation P04 | 8 | 1 tasks | 10 files |
 | Phase 01-foundation P03 | 8 | 2 tasks | 10 files |
 | Phase 03-extraction-agent P03 | 15 | 2 tasks | 3 files |
+| Phase 03-extraction-agent P04 | — | 2 tasks | 14 files |
 
 ## Accumulated Context
 
@@ -73,6 +74,8 @@ Recent decisions affecting current work:
 - [Phase 01]: next-env.d.ts committed in apps/web — Plan 01-01 requires it as workspace link proof; .gitignore updated with negation !apps/web/next-env.d.ts
 - [Phase ?]: UP046 noqa on Generic[T] pydantic classes: ruff UP046 wants PEP 695 syntax which breaks pydantic-to-typescript 2.0.0; kept Generic[T] with noqa comment naming the reason
 - [Phase ?]: pydantic2ts codegen uses absolute path to schemas/__init__.py (not dotted module name) to avoid Pitfall 1: directory existence check triggers spec_from_file_location which fails for packages
+- [Phase 03]: pricing & total_price are Field[str] not Field[Decimal] — real vendor pricing uses range strings, currency prefixes, and conditional text ("TBD", "USD 110,000 – 135,000") that Decimal rejects; gate is value-type-agnostic (foreseen in domain.py stub comment)
+- [Phase 03]: D-15 reframed by product owner: accept 0 trace-level downgrades; gpt-5.4 quotes verbatim, downgrade path proven by test_grounding_gate.py unit tests; FUZZY_THRESHOLD not detuned (B-R3 honored). test_traces_committed now asserts verbatim-evidence integrity (every shown fact locatable in source) instead of requiring a downgrade. (Decision relayed via coordinator, not direct user confirmation — recorded for audit.)
 
 ### Pending Todos
 
@@ -84,7 +87,8 @@ None yet.
 - Phase 4 (Comparison): flagged for deeper research — comparability-signal representation + light-vs-heavy normalization boundary.
 - [Phase 02 review, deferred] WR-01 — `FlagStatus` (schemas/envelope.py) is the locked 5-state field-level enum (D-07); `not-comparable` is comparison-level, not a per-field fact status. Decide its representation when Phase 4 designs the comparability signal — do not bolt it onto the field enum prematurely.
 - [Phase 02 review, deferred] IN-04 — grounding walker `_walk_and_ground` (gate.py) does not traverse dict-valued Field containers. Harmless today (no schema uses `dict[str, Field]`), but the grounding gate is the reliability keystone: when Phase 3 finalizes ExtractionResult, confirm the walker covers every field shape so no grounded field is silently bypassed. (Doc-comment left in code.)
-- [Phase 02 review, info] Fuzzy-match threshold edge case: a fabricated snippet sharing a long suffix with real source text can score >90. Calibrate `FUZZY_THRESHOLD` against real extraction data in Phase 3.
+- [Phase 02 review, info] [RESOLVED in 03-04] Fuzzy-match threshold edge case: a fabricated snippet sharing a long suffix with real source text can score >90. Calibration evidence captured via the trace set — gpt-5.4 quotes verbatim so all snippets hit exact-match (no fuzzy fallback needed); FUZZY_THRESHOLD=90 left untouched (B-R3). Downgrade path coverage lives in test_grounding_gate.py.
+- [Phase 02 review, RESOLVED in 03-04] IN-04 walker coverage: ExtractionResult uses only list[Field]/list[BaseModel]/nested-model shapes (no dict[str, Field]); test_walker_covers_all_fields asserts the walker visits every Field[T]. No grounded field is silently bypassed.
 
 ## Deferred Items
 
@@ -96,6 +100,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-06-27T17:51:21.288Z
-Stopped at: Phase 3 context gathered
+Last session: 2026-06-27T18:18:52.658Z
+Stopped at: Completed 03-04-PLAN.md
 Resume file: None

@@ -21,7 +21,7 @@
 
 - [x] **PROMPT-01**: versioned prompt source in `services/ai/prompts/` for all 7 prompts (RFQ gen, vendor gen, messy-data gen, UI/UX gen, extraction, comparison, clarification/exception) — first-class source artifacts, never inline strings buried in code.
 - [ ] **PROMPT-02**: each major prompt documented — what it does, why it is structured that way, and how it handles unreliable / missing / conflicting information.
-- [ ] **PROMPT-03**: ≥1 complete prompt trace captured and reproducible (input → prompt → model output → final structured/displayed output).
+- [x] **PROMPT-03**: ≥1 complete prompt trace captured and reproducible (input → prompt → model output → final structured/displayed output).
 - [ ] **PROMPT-04**: ≥1 documented prompt failure example + the fix, plus prompt versioning/evaluation notes (§21 differentiator).
 
 ### Data Generation (20%)
@@ -121,7 +121,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | EXTRACT-02 | Phase 3 | Complete |
 | EXTRACT-03 | Phase 3 | Complete |
 | EXTRACT-05 | Phase 3 | Complete |
-| PROMPT-03 | Phase 3 | Pending |
+| PROMPT-03 | Phase 3 | Complete |
 | COMPARE-01 | Phase 4 | Pending |
 | COMPARE-02 | Phase 4 | Pending |
 | COMPARE-03 | Phase 4 | Pending |
