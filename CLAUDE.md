@@ -57,6 +57,7 @@ Hardcoded outputs · static dashboards · generic prompts · unrealistically cle
 - **Never trust an LLM-supplied authorization or "verified" flag.** In an agent runtime the model will happily fabricate whatever bypasses a guard. Grounding/evidence checks are enforced in code, not by asking the model to promise it didn't hallucinate.
 - **No functionality breakage.** Before shipping, verify the change doesn't regress a working flow. If you change a shared schema, prompt, or agent contract, list every caller and confirm each works.
 - **Git.** Never include any AI tool (Claude, Codex, Copilot, etc.) as a commit co-author. Commits are authored solely by the human developer.
+- **Enforced by PonyTail.** These principles aren't left to memory — the **PonyTail** skill (`full` mode) injects a "laziest senior dev" YAGNI ladder into every turn, including GSD-spawned subagents. It drives the *kind* of code written (reuse → stdlib → native → minimal); it must **never** challenge the requirement set we're building. See **§16**.
 
 ---
 
@@ -351,6 +352,48 @@ written as if a reviewer at Aerchain will read it — not buried in code comment
   supported — validate the evidence span exists in the source.
 - **Don't over-build infra.** No DB/queue/vector store, no Docker service, no CI stage until a
   feature actually requires it (see §10).
+
+---
+
+## 16. PonyTail — Code-Minimalism Guardrail
+
+**GSD runs the show.** GSD owns the entire lifecycle (discuss → plan → execute → verify → ship)
+and, with the planning artifacts in `.planning/`, owns *what* we build and *whether* it's in scope.
+**PonyTail is a guardrail, not a decision-maker:** a "laziest senior dev" that challenges the *kind*
+of code being written — never the requirement set. The line is absolute:
+
+> PonyTail governs **implementation shape**. GSD CONTEXT.md / locked requirements govern **scope**.
+> When they ever appear to conflict, **scope wins** — PonyTail does not re-argue a locked decision.
+
+### How it reaches our work
+PonyTail (`full` mode, the default) injects its YAGNI ladder on every turn **and into every
+GSD-spawned subagent** via a `SubagentStart` hook — so it reaches `gsd-executor`/`gsd-planner`,
+which is where nearly all real code is written. The ladder: *does this need to exist? → already in
+the codebase? → stdlib? → native platform feature? → installed dependency? → one line? → only then,
+minimal code.* This is just §2's Engineering Principles, enforced instead of hoped for.
+
+### Where it's used across the workflow
+| GSD stage | PonyTail role |
+|---|---|
+| `/gsd:plan-phase`, `/gsd:execute-phase` | `full` ladder active in the executor subagents — biases reuse/stdlib/native/minimal as code is written |
+| After execute, before `/gsd:verify-work` | `/ponytail-review` on the phase diff — a **complexity-only** gate that runs *alongside* `gsd-code-reviewer` (correctness/security), never instead of it |
+| Phase 5, pre-submission | `/ponytail-audit` — one whole-repo over-engineering sweep so reviewers see a lean codebase |
+| Anytime | `/ponytail-debt` — harvests `ponytail:` comments into a deferral ledger; mirrors CONTEXT.md "Deferred Ideas" |
+
+### Operating rules
+- **`full`, never `ultra`.** `ultra` "challenges the rest of the requirement" — forbidden here; our
+  requirements are the graded rubric. `lite`/`full` only.
+- **What PonyTail must never trim:** anything in §1 (product principles), §8 (reliability), or a
+  locked CONTEXT.md decision — the absence-enum `Field[T]` envelope, evidence offsets, the
+  code-enforced grounding gate, the four flag types, the full SSE taxonomy, the 7 prompt stubs, the
+  codegen drift-check. These are deliverables, not bloat, even when they read as single-use today.
+- **Mark deliberate "kept complexity"** with a `ponytail:` comment naming why
+  (`# ponytail: this exists — PLAT-01 contract, filled in P3`). Then `/ponytail-review` reads intent,
+  not slop, and `/ponytail-debt` tracks it.
+- **Review/audit are advisory** — they *list*, they never auto-apply. A human or GSD verify decides.
+- Its own "When NOT to be lazy" rule already protects validation at trust boundaries, error handling,
+  security, accessibility, and **anything explicitly requested**, and it requires (never deletes) one
+  minimal runnable check per non-trivial logic path — consistent with §11.
 
 ---
 
