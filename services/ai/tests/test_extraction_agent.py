@@ -332,7 +332,6 @@ def test_missing_line_items_surface_as_missing() -> None:
 # ---------------------------------------------------------------------------
 
 
-@pytest.mark.xfail(reason="Plan 03-03 not yet executed — /extract/vendor route not yet built", strict=True)
 def test_sse_event_taxonomy() -> None:
     """All emitted SSE event types from /extract/vendor must be in EVENT_TYPES.
 

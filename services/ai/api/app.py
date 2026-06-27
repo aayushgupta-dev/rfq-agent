@@ -29,13 +29,15 @@ from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel, Field as pydantic_Field
+from pydantic import BaseModel, Field as pydantic_Field, model_validator
 from sse_starlette import EventSourceResponse
 
 from agents._demo import demo_graph
+from agents.extraction import extraction_graph
 from agents.rfq_gen import generate_rfq, render_rfq_md
 from agents.vendor_gen import MESS_SPECS, generate_vendor_response
 from llm.factory import verify_access
+from schemas.domain import RFQ, VendorResponse
 from schemas.events import EventEnvelope
 
 
@@ -96,6 +98,32 @@ async def post_vendor_gen(req: VendorGenRequest) -> dict:
     return vendor.model_dump(mode="json")
 
 
+class ExtractionRequest(BaseModel):
+    """Request body for POST /extract/vendor (EXTRACT-03).
+
+    vendor_response carries the full VendorResponse; rfq carries the full RFQ.
+    A model_validator enforces the 200k-char limit on raw_text at the data layer.
+
+    # ponytail: max_length on nested raw_text enforced via model_validator because
+    # pydantic_Field max_length only applies to direct str fields, not nested model
+    # attributes. Server-level body size limit should be set via uvicorn
+    # --limit-max-requests or nginx for production; 200k char raw_text is the
+    # operative guard for this prototype (W-R2).
+    """
+
+    vendor_response: VendorResponse
+    rfq: RFQ
+
+    @model_validator(mode="after")
+    def _check_raw_text_length(self) -> "ExtractionRequest":
+        if len(self.vendor_response.raw_text) > 200_000:
+            raise ValueError(
+                f"vendor_response.raw_text exceeds 200,000 chars "
+                f"(got {len(self.vendor_response.raw_text)})"
+            )
+        return self
+
+
 @app.get("/stream/demo")
 async def stream_demo() -> EventSourceResponse:
     """Stream the trivial LangGraph demo graph as SSE events (PLAT-04).
@@ -117,6 +145,26 @@ async def stream_demo() -> EventSourceResponse:
         async for chunk in demo_graph.astream({}, stream_mode="custom"):
             yield {"data": EventEnvelope(**chunk).model_dump_json()}
         # Final "done" event appended by the route after the graph completes.
+        yield {"data": EventEnvelope(type="done", payload={}).model_dump_json()}
+
+    return EventSourceResponse(_generate())
+
+
+@app.post("/extract/vendor")
+async def extract_vendor(req: ExtractionRequest) -> EventSourceResponse:
+    """Stream vendor extraction as SSE events (EXTRACT-03).
+
+    Accepts a VendorResponse + RFQ, runs the extraction graph, and streams
+    status -> result -> done events. All structured-output failure shapes emit
+    a safe error event (B-R2). Grounding runs before the result event (D-07).
+    """
+
+    async def _generate() -> AsyncGenerator[dict, None]:
+        async for chunk in extraction_graph.astream(
+            {"vendor": req.vendor_response, "rfq": req.rfq},
+            stream_mode="custom",
+        ):
+            yield {"data": EventEnvelope(**chunk).model_dump_json()}
         yield {"data": EventEnvelope(type="done", payload={}).model_dump_json()}
 
     return EventSourceResponse(_generate())
