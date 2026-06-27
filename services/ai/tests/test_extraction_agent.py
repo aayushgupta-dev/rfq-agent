@@ -202,7 +202,6 @@ def test_evidence_required() -> None:
 # ---------------------------------------------------------------------------
 
 
-@pytest.mark.xfail(reason="Plan 03-03 not yet executed — extraction agent not yet built", strict=True)
 def test_truncation_raises_error_event() -> None:
     """LengthFinishReasonError from the LLM chain must produce error event with recoverable=True.
 
@@ -214,8 +213,7 @@ def test_truncation_raises_error_event() -> None:
 
     with patch("agents.extraction._chain") as mock_chain:
         mock_chain.invoke.side_effect = LengthFinishReasonError(
-            message="finish_reason=length — output truncated",
-            response=MagicMock(),
+            completion=MagicMock(),
         )
         state = run_extraction(
             vendor_response=MagicMock(),
@@ -239,7 +237,6 @@ def test_truncation_raises_error_event() -> None:
 # ---------------------------------------------------------------------------
 
 
-@pytest.mark.xfail(reason="Plan 03-03 not yet executed — extraction agent not yet built", strict=True)
 def test_refusal_raises_error_event() -> None:
     """A model refusal must produce error event with recoverable=False; no ExtractionResult parsed.
 
@@ -274,7 +271,6 @@ def test_refusal_raises_error_event() -> None:
 # ---------------------------------------------------------------------------
 
 
-@pytest.mark.xfail(reason="Plan 03-03 not yet executed — extraction agent not yet built", strict=True)
 def test_missing_line_items_surface_as_missing() -> None:
     """A LineItemExtraction with missing pricing/scope_coverage must propagate through SSE result.
 
