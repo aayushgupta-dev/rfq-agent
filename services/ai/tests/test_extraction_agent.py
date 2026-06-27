@@ -30,7 +30,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from conftest_extraction import fabricated_field, missing_field, present_field
+from conftest_extraction import fabricated_decimal_field, fabricated_field, missing_field, present_field
 from grounding.gate import ground_model
 from grounding.report import DowngradeReport
 from openai import LengthFinishReasonError
@@ -44,7 +44,6 @@ from schemas.events import EVENT_TYPES
 # ---------------------------------------------------------------------------
 
 
-@pytest.mark.xfail(reason="Plan 03-02 not yet executed — ExtractionResult is still a stub", strict=True)
 def test_schema_shape() -> None:
     """ExtractionResult must cover all 8 extraction categories; vendor_name is plain str (D-05).
 
@@ -83,7 +82,6 @@ def test_schema_shape() -> None:
 # ---------------------------------------------------------------------------
 
 
-@pytest.mark.xfail(reason="Plan 03-02 not yet executed — ExtractionResult is still a stub", strict=True)
 def test_walker_covers_all_fields() -> None:
     """Every Field[T] in ExtractionResult must be visited by _walk_and_ground.
 
@@ -140,21 +138,21 @@ def test_walker_covers_all_fields() -> None:
     li = LineItemExtraction(
         line_item_id="li-01",
         line_item_name="Test",
-        pricing=fabricated_field("XYZNOTFOUND_VALUE"),
-        scope_coverage=fabricated_field("XYZNOTFOUND_VALUE"),
+        pricing=fabricated_decimal_field(),
+        scope_coverage=fabricated_field(),
     )
     result = ExtractionResult(
         vendor_name="test",
-        scope_summary=fabricated_field("XYZNOTFOUND_VALUE"),
+        scope_summary=fabricated_field(),
         line_items=[li],
-        pricing_structure=fabricated_field("XYZNOTFOUND_VALUE"),
-        total_price=fabricated_field("XYZNOTFOUND_VALUE"),
-        commercial_terms=fabricated_field("XYZNOTFOUND_VALUE"),
-        timeline=fabricated_field("XYZNOTFOUND_VALUE"),
-        compliance_points=[fabricated_field("XYZNOTFOUND_VALUE")],
-        assumptions=[fabricated_field("XYZNOTFOUND_VALUE")],
-        exclusions=[fabricated_field("XYZNOTFOUND_VALUE")],
-        risks=[fabricated_field("XYZNOTFOUND_VALUE")],
+        pricing_structure=fabricated_field(),
+        total_price=fabricated_decimal_field(),
+        commercial_terms=fabricated_field(),
+        timeline=fabricated_field(),
+        compliance_points=[fabricated_field()],
+        assumptions=[fabricated_field()],
+        exclusions=[fabricated_field()],
+        risks=[fabricated_field()],
     )
 
     _, report = ground_model(result, {"src": "harmless source text containing nothing relevant"})
@@ -173,7 +171,6 @@ def test_walker_covers_all_fields() -> None:
 # ---------------------------------------------------------------------------
 
 
-@pytest.mark.xfail(reason="Plan 03-02 not yet executed — ExtractionResult is still a stub", strict=True)
 def test_evidence_required() -> None:
     """A present field with a genuine verbatim snippet must survive grounding with status=present."""
     from schemas.domain import ExtractionResult

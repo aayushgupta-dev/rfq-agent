@@ -9,7 +9,18 @@ and inside test bodies without the pytest fixture injection machinery.
 """
 from __future__ import annotations
 
+from decimal import Decimal
+
 from schemas.envelope import Evidence, Field, FlagStatus
+
+_FABRICATED_EVIDENCE = [
+    Evidence(
+        snippet="XYZNOTFOUND_FABRICATED_SNIPPET_123",
+        source_id="src",
+        char_start=0,
+        char_end=1,
+    )
+]
 
 
 def missing_field(type_=str) -> Field:  # type: ignore[type-arg]
@@ -29,7 +40,7 @@ def present_field(value: object, snippet: str, source_id: str = "src") -> Field:
     )
 
 
-def fabricated_field(value: str = "XYZNOTFOUND_VALUE") -> Field:  # type: ignore[type-arg]
+def fabricated_field(value: object = "XYZNOTFOUND_VALUE") -> Field:  # type: ignore[type-arg]
     """Return a present Field whose snippet is guaranteed not locatable in any real source.
 
     ground_model() on this field ALWAYS produces a DowngradeEntry.
@@ -37,16 +48,15 @@ def fabricated_field(value: str = "XYZNOTFOUND_VALUE") -> Field:  # type: ignore
 
     # ponytail: the sentinel snippet 'XYZNOTFOUND_FABRICATED_SNIPPET_123' is long enough
     # to clear MIN_SNIPPET_LEN (15 chars) and bizarre enough to never fuzzy-match real text.
+    Pass value= explicitly for typed fields (e.g. fabricated_field(Decimal("0")) for Field[Decimal]).
     """
     return Field(
         status=FlagStatus.present,
         value=value,
-        evidence=[
-            Evidence(
-                snippet="XYZNOTFOUND_FABRICATED_SNIPPET_123",
-                source_id="src",
-                char_start=0,
-                char_end=1,
-            )
-        ],
+        evidence=_FABRICATED_EVIDENCE,
     )
+
+
+def fabricated_decimal_field() -> Field:  # type: ignore[type-arg]
+    """Convenience wrapper: fabricated_field for Field[Decimal] attributes."""
+    return fabricated_field(Decimal("0"))

@@ -1,5 +1,6 @@
 """
 domain.py — Domain schemas: RFQ, VendorResponse, and supporting models (Phase 2).
+Phase 3 (P3): ExtractionResult fleshed out with LineItemExtraction sub-model (D-01..D-05).
 
 RFQ is the structured procurement event — our own clean artifact, never grounded
 against (D-11). Plain Python types only; no Field[T] wrappers.
@@ -12,13 +13,7 @@ MessSpecItem is the typed mess-spec entry (D-08/D-09) — a hand-authored instru
 for the vendor-gen prompt describing one deliberate flaw to inject. list[dict] avoided
 to keep the TS contract typed via pydantic2ts.
 
-ExtractionResult and ComparisonResult remain Phase 3/4 stubs (unchanged from Phase 1).
-
-# ponytail: ExtractionResult/ComparisonResult stay as P3/P4 contract placeholders —
-# the Field[T] stubs prove codegen monomorphizes FieldStr/FieldDecimal/FieldInt and
-# establish the absence-envelope contract before the agents that fill them exist (D-08).
-# The `# type: ignore[call-arg]` on stub fields is scoped to placeholder construction
-# only — real P3/P4 fields are populated by validated agent output, not inline stubs.
+ComparisonResult remains a Phase 4 stub.
 """
 from __future__ import annotations
 
@@ -120,19 +115,49 @@ class VendorResponse(BaseModel):
     raw_text: str
 
 
-class ExtractionResult(BaseModel):
-    """Structured extraction for one vendor response (stub — full fields in Phase 3).
+class LineItemExtraction(BaseModel):
+    """Per-RFQ-line-item extraction — pricing and scope coverage for one service item (D-01).
 
-    # ponytail: P3 placeholder — real fields (scope, pricing breakdown, commercial
-    # terms, timeline, compliance, assumptions, exclusions, risks + evidence spans
-    # for each) land in Phase 3 (extraction agent).
+    line_item_id and line_item_name are copied from RFQ context at extraction time.
+    # ponytail: line_item_id and line_item_name are copied from RFQ context at extraction time,
+    # not extracted from vendor text — they are scaffold/provenance, not grounded facts.
     """
 
     model_config = ConfigDict(extra="forbid")
 
-    vendor_name: Field[str] = Field[str](status="missing")  # type: ignore[call-arg]
-    scope_summary: Field[str] = Field[str](status="missing")  # type: ignore[call-arg]
-    total_price: Field[Decimal] = Field[Decimal](status="missing")  # type: ignore[call-arg]
+    line_item_id: str  # matches RFQ.line_items[*].id — provenance, not grounded
+    line_item_name: str  # matches RFQ.line_items[*].name — provenance, not grounded
+    pricing: Field[Decimal]  # vendor's stated price for this item; missing if not bid
+    scope_coverage: Field[str]  # what the vendor covers for this item; missing if not bid
+
+
+class ExtractionResult(BaseModel):
+    """Structured extraction for one vendor response (Phase 3 — D-01..D-05).
+
+    vendor_name is plain str (D-05): provenance metadata from VendorResponse, not an
+    extracted claim — grounding a known name against raw_text could spuriously fail.
+
+    All multi-claim categories use list[Field[T]] for per-claim grounding (D-03).
+    No dict[str, Field] shapes — only list[BaseModel] and list[Field[T]] (D-04).
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    vendor_name: str  # D-05: provenance metadata — NOT a grounded Field
+    scope_summary: Field[str]  # doc-level narrative summary of what vendor is offering
+    line_items: list[LineItemExtraction] = pydantic_Field(default_factory=list)  # D-01: one entry per RFQ line item
+    pricing_structure: Field[str]  # D-02: verbatim bundle/grand total statement; unclear if not stated
+    total_price: Field[Decimal]  # D-02: stated grand total if separable; missing if bundled-only
+    # ponytail: Field[Decimal] for total_price — if with_structured_output(method="json_schema")
+    # produces schema friction during Plan 03 (model fills it inconsistently or parse errors occur),
+    # downgrade to Field[str] here; the gate is value-type-agnostic. Check by running:
+    # python -c "from schemas.domain import ExtractionResult; print('ok')" after Plan 03 wires the chain.
+    commercial_terms: Field[str]  # payment terms, milestones, discounts, conditions
+    timeline: Field[str]  # delivery timeline / project schedule narrative
+    compliance_points: list[Field[str]] = pydantic_Field(default_factory=list)  # D-03: each compliance statement
+    assumptions: list[Field[str]] = pydantic_Field(default_factory=list)  # D-03: each vendor assumption
+    exclusions: list[Field[str]] = pydantic_Field(default_factory=list)  # D-03: each explicit exclusion
+    risks: list[Field[str]] = pydantic_Field(default_factory=list)  # D-03: each identified risk
 
 
 class ComparisonResult(BaseModel):
