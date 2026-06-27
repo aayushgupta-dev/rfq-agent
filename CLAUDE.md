@@ -150,7 +150,10 @@ aerchain/
 
 - **Frontend — `apps/web` (Next.js, Vercel).** App Router only. Renders the buyer experience,
   consumes the AI service over HTTP/SSE. No AI SDKs and no business logic here — it is a thin,
-  well-designed client. Use design-system primitives + tokens; no third-party UI kits.
+  well-designed client. Styling is **Tailwind CSS v4**; UI is built with **shadcn/ui** — copy-paste,
+  you-own-the-source components on Radix primitives + Tailwind tokens, vendored into the repo (this is
+  the design-system-primitives-and-tokens approach, *not* a runtime UI kit). Avoid heavyweight runtime
+  component libraries (MUI, Chakra, Ant, etc.) — own the component source, theme via tokens.
 - **Backend / AI — `services/ai` (FastAPI + LangGraph, Python).** Owns every agent, every prompt,
   every structured-output schema, all OpenAI calls. Deploys to **Render or Railway** (Vercel is for
   the Next.js app only — the Python service is long-running). This is where 70% of the grade lives.
