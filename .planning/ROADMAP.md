@@ -75,7 +75,7 @@ Decimal phases appear between their surrounding integers in numeric order.
   5. The extraction agent streams progress over SSE as `{type, payload}` (never buffer-and-return), and ≥1 complete prompt trace (input → prompt → model output → final displayed output) is captured.
 **Plans**: 4 plans (4 waves)
   - [x] 03-01-PLAN.md — Wave 1: RED test stubs (test_extraction_agent.py, 6 functions) + docs/traces/ directory
-  - [ ] 03-02-PLAN.md — Wave 2: ExtractionResult schema flesh-out (LineItemExtraction, D-01..D-05, D-05 vendor_name fix) + codegen drift-check
+  - [x] 03-02-PLAN.md — Wave 2: ExtractionResult schema flesh-out (LineItemExtraction, D-01..D-05, D-05 vendor_name fix) + codegen drift-check
   - [ ] 03-03-PLAN.md — Wave 3: Extraction agent (StateGraph, truncation/refusal handling) + POST /extract/vendor SSE route
   - [ ] 03-04-PLAN.md — Wave 4: Full extraction prompt authored + 3+ pipeline traces captured (D-12..D-15) + human checkpoint
 
@@ -114,6 +114,6 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 |-------|----------------|--------|-----------|
 | 1. Foundation | 5/5 | Complete   | 2026-06-27 |
 | 2. Grounding Gate & Messy Data | 4/4 | Complete   | 2026-06-27 |
-| 3. Extraction Agent | 1/4 | In Progress|  |
+| 3. Extraction Agent | 2/4 | In Progress|  |
 | 4. Comparison Agent | 0/TBD | Not started | - |
 | 5. Buyer UI, Trace & Submission | 0/TBD | Not started | - |

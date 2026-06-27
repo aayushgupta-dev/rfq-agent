@@ -40,7 +40,7 @@
 
 ### Extraction (20%)
 
-- [ ] **EXTRACT-01**: extraction agent produces a structured per-vendor extraction covering scope, pricing, commercial terms, timeline, compliance, assumptions, exclusions, and risks.
+- [x] **EXTRACT-01**: extraction agent produces a structured per-vendor extraction covering scope, pricing, commercial terms, timeline, compliance, assumptions, exclusions, and risks.
 - [ ] **EXTRACT-02**: every extracted fact carries an evidence snippet drawn from the vendor's response.
 - [ ] **EXTRACT-03**: missing / unclear / conflicting / unsupported information is flagged explicitly and prominently; the agent never fills missing information.
 - [ ] **EXTRACT-04**: grounding is enforced in code — each evidence span is verified against the source text (normalized exact match → high-threshold fuzzy); facts whose evidence cannot be located are downgraded to `unsupported` and their value suppressed. No LLM-asserted `verified`/`grounded` flag is ever trusted to display a fact.
@@ -117,7 +117,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | DATA-03 | Phase 2 | Pending |
 | DATA-04 | Phase 2 | Pending |
 | PROMPT-04 | Phase 2 | Pending |
-| EXTRACT-01 | Phase 3 | Pending |
+| EXTRACT-01 | Phase 3 | Complete |
 | EXTRACT-02 | Phase 3 | Pending |
 | EXTRACT-03 | Phase 3 | Pending |
 | EXTRACT-05 | Phase 3 | Pending |
