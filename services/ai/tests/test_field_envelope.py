@@ -178,3 +178,101 @@ def test_field_evidence_defaults_to_empty_list() -> None:
     # Confirm it's not the same object across instances (mutable default guard)
     f2: Field[str] = Field[str](status=FlagStatus.missing)
     assert f.evidence is not f2.evidence
+
+
+# ---------------------------------------------------------------------------
+# CR-01: Field[present] requires non-empty evidence (grounding invariant)
+# ---------------------------------------------------------------------------
+
+
+def test_field_present_empty_evidence_raises() -> None:
+    """present status with no evidence violates the grounding invariant (CR-01)."""
+    with pytest.raises(ValidationError):
+        Field[str](status=FlagStatus.present, value="1200000", evidence=[])
+
+
+def test_field_present_with_evidence_passes() -> None:
+    """present status with at least one Evidence item is valid."""
+    ev = Evidence(snippet="vendor said so", char_start=0, char_end=14, source_id="doc-1")
+    f: Field[str] = Field[str](status=FlagStatus.present, value="1200000", evidence=[ev])
+    assert f.value == "1200000"
+    assert len(f.evidence) == 1
+
+
+# ---------------------------------------------------------------------------
+# CR-01 variant: Field[unclear] with a value requires evidence
+# ---------------------------------------------------------------------------
+
+
+def test_field_unclear_with_value_empty_evidence_raises() -> None:
+    """unclear + value with no evidence violates the grounding invariant (CR-01)."""
+    with pytest.raises(ValidationError):
+        Field[str](status=FlagStatus.unclear, value="maybe 500k", evidence=[])
+
+
+def test_field_unclear_with_value_and_evidence_passes() -> None:
+    """unclear + value + evidence is valid."""
+    ev = Evidence(snippet="approx", char_start=0, char_end=6, source_id="doc-1")
+    f: Field[str] = Field[str](status=FlagStatus.unclear, value="maybe 500k", evidence=[ev])
+    assert f.value == "maybe 500k"
+
+
+def test_field_unclear_with_none_value_empty_evidence_passes() -> None:
+    """unclear + value=None (pure tentative/absent) with no evidence is valid."""
+    f: Field[str] = Field[str](status=FlagStatus.unclear, value=None, evidence=[])
+    assert f.value is None
+
+
+# ---------------------------------------------------------------------------
+# CR-03: Field[conflicting] — each ConflictingValue requires evidence
+# ---------------------------------------------------------------------------
+
+
+def test_field_conflicting_cv_empty_evidence_raises() -> None:
+    """A ConflictingValue with empty evidence fails (CR-03)."""
+    with pytest.raises(ValidationError):
+        Field[str](
+            status=FlagStatus.conflicting,
+            values=[
+                ConflictingValue[str](value="500k", evidence=[]),
+                ConflictingValue[str](value="600k", evidence=[]),
+            ],
+        )
+
+
+def test_field_conflicting_all_cvs_have_evidence_passes() -> None:
+    """Conflicting where every ConflictingValue has evidence is valid."""
+    ev1 = Evidence(snippet="section A says 500k", char_start=0, char_end=19, source_id="doc-1")
+    ev2 = Evidence(snippet="section B says 600k", char_start=20, char_end=39, source_id="doc-1")
+    f: Field[str] = Field[str](
+        status=FlagStatus.conflicting,
+        values=[
+            ConflictingValue[str](value="500k", evidence=[ev1]),
+            ConflictingValue[str](value="600k", evidence=[ev2]),
+        ],
+    )
+    assert len(f.values) == 2
+
+
+# ---------------------------------------------------------------------------
+# CR-02: Evidence offset sanity validation
+# ---------------------------------------------------------------------------
+
+
+def test_evidence_char_end_before_char_start_raises() -> None:
+    """char_end <= char_start is semantically impossible (CR-02)."""
+    with pytest.raises(ValidationError):
+        Evidence(snippet="x", char_start=500, char_end=0, source_id="doc-1")
+
+
+def test_evidence_negative_char_start_raises() -> None:
+    """Negative char_start is invalid (CR-02)."""
+    with pytest.raises(ValidationError):
+        Evidence(snippet="x", char_start=-5, char_end=0, source_id="doc-1")
+
+
+def test_evidence_valid_offsets_pass() -> None:
+    """Positive char_start with char_end > char_start is valid."""
+    ev = Evidence(snippet="hello", char_start=0, char_end=5, source_id="doc-1")
+    assert ev.char_start == 0
+    assert ev.char_end == 5
