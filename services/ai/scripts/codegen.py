@@ -80,10 +80,15 @@ def generate(out_path: Path | None = None) -> Path:
     dest = out_path or (root / "packages" / "shared-types" / "index.d.ts")
     json2ts_bin = root / "node_modules" / ".bin" / "json2ts"
 
+    # Prefer the locally-installed json2ts; fall back to the global PATH entry so
+    # the script also runs correctly from a git worktree that shares node_modules
+    # with the main checkout (worktrees do not symlink node_modules).
+    json2ts_cmd = str(json2ts_bin) if json2ts_bin.exists() else "json2ts"
+
     generate_typescript_defs(
         str(schemas_path()),
         str(dest),
-        json2ts_cmd=str(json2ts_bin),
+        json2ts_cmd=json2ts_cmd,
     )
 
     # Post-process: strip any empty interfaces that leaked through
