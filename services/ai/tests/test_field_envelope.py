@@ -54,7 +54,8 @@ def test_evidence_rejects_extra_keys() -> None:
 
 
 def test_field_present_with_value() -> None:
-    f: Field[str] = Field[str](status=FlagStatus.present, value="hello")
+    ev = Evidence(snippet="hello", char_start=0, char_end=5, source_id="doc-1")
+    f: Field[str] = Field[str](status=FlagStatus.present, value="hello", evidence=[ev])
     assert f.value == "hello"
     assert f.status == FlagStatus.present
 
@@ -71,8 +72,9 @@ def test_field_unclear_with_none_value() -> None:
 
 
 def test_field_unclear_with_value() -> None:
-    """unclear allows a partial/tentative value."""
-    f: Field[str] = Field[str](status=FlagStatus.unclear, value="maybe")
+    """unclear with an asserted value requires evidence."""
+    ev = Evidence(snippet="maybe", char_start=0, char_end=5, source_id="doc-1")
+    f: Field[str] = Field[str](status=FlagStatus.unclear, value="maybe", evidence=[ev])
     assert f.value == "maybe"
 
 
@@ -131,7 +133,8 @@ def test_field_conflicting_none_values_raises() -> None:
 
 
 def test_field_decimal_present() -> None:
-    f: Field[Decimal] = Field[Decimal](status=FlagStatus.present, value=Decimal("9.99"))
+    ev = Evidence(snippet="9.99", char_start=0, char_end=4, source_id="doc-1")
+    f: Field[Decimal] = Field[Decimal](status=FlagStatus.present, value=Decimal("9.99"), evidence=[ev])
     assert f.value == Decimal("9.99")
 
 

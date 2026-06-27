@@ -32,7 +32,10 @@ export interface FieldInt {
 /**
  * Source grounding for a single extracted fact (D-04).
  *
- * Offsets are computed/validated in code, never trusted from the model (CLAUDE.md §8).
+ * Offsets are validated in code, never trusted from the model (CLAUDE.md §8).
+ * Enforced: char_start >= 0 and char_end > char_start. Snippet-vs-source-text
+ * matching (that the span actually exists in the vendor document) is a Phase 3
+ * agent-level concern requiring the source text — not enforced here.
  */
 export interface Evidence {
   snippet: string;

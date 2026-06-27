@@ -43,7 +43,10 @@ T = TypeVar("T")
 class Evidence(BaseModel):
     """Source grounding for a single extracted fact (D-04).
 
-    Offsets are computed/validated in code, never trusted from the model (CLAUDE.md §8).
+    Offsets are validated in code, never trusted from the model (CLAUDE.md §8).
+    Enforced: char_start >= 0 and char_end > char_start. Snippet-vs-source-text
+    matching (that the span actually exists in the vendor document) is a Phase 3
+    agent-level concern requiring the source text — not enforced here.
     """
 
     model_config = ConfigDict(extra="forbid")
@@ -52,6 +55,18 @@ class Evidence(BaseModel):
     char_start: int
     char_end: int
     source_id: str
+
+    @model_validator(mode="after")
+    def _validate_offsets(self) -> Evidence:
+        if self.char_start < 0:
+            raise ValueError(
+                f"char_start must be >= 0, got {self.char_start}"
+            )
+        if self.char_end <= self.char_start:
+            raise ValueError(
+                f"char_end ({self.char_end}) must be > char_start ({self.char_start})"
+            )
+        return self
 
 
 class ConflictingValue(BaseModel, Generic[T]):  # noqa: UP046
@@ -104,6 +119,12 @@ class Field(BaseModel, Generic[T]):  # noqa: UP046
                     "conflicting status requires non-empty values[] "
                     "(each contradictory claim must carry its own evidence)"
                 )
+            for i, cv in enumerate(self.values):
+                if not cv.evidence:
+                    raise ValueError(
+                        f"conflicting values[{i}] has no evidence — "
+                        "every contradictory claim must link to a source snippet"
+                    )
 
         elif status in (FlagStatus.missing, FlagStatus.unsupported):
             if self.value is not None:
@@ -118,7 +139,18 @@ class Field(BaseModel, Generic[T]):  # noqa: UP046
                     "present status requires a value "
                     "(use missing/unclear if the information is not available)"
                 )
+            if not self.evidence:
+                raise ValueError(
+                    "present status requires at least one Evidence item "
+                    "(every asserted fact must be traceable to a source snippet)"
+                )
 
-        # status == unclear: no constraint — partial/tentative info allowed
+        # status == unclear: partial/tentative info allowed; if a value is asserted,
+        # evidence is still required so the partial claim traces to a source.
+        if status == FlagStatus.unclear and self.value is not None and not self.evidence:
+            raise ValueError(
+                "unclear status with a value requires at least one Evidence item "
+                "(partial facts still need a source)"
+            )
 
         return self
