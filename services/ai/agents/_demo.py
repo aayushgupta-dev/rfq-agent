@@ -8,8 +8,8 @@ followed by a final "done" appended by the FastAPI route.
 This graph makes NO model calls — it exists only to prove the streaming
 infrastructure. A real agent (extraction, comparison) reuses this pattern.
 
-The emitted type values are imported from schemas.events.EVENT_TYPES so the
-demo cannot drift from the closed taxonomy defined in Plan 02.
+The emitted type values are asserted against schemas.events.EVENT_TYPES at node
+runtime so the demo cannot drift from the closed taxonomy defined in Plan 02.
 
 # ponytail: kept as a single node emitting three events — splitting into
 # multiple nodes adds latency and complexity with no observability benefit
@@ -24,12 +24,16 @@ from langgraph.config import get_stream_writer
 from langgraph.graph import END, START, StateGraph
 
 # Import the canonical taxonomy so this module cannot drift from it.
-from schemas.events import EVENT_TYPES  # noqa: F401 (imported for drift guard; used below)
+from schemas.events import EVENT_TYPES
 
 
 def _demo_node(state: dict[str, Any]) -> dict[str, Any]:
     """Single node that emits status -> partial -> result events via the stream writer."""
     w = get_stream_writer()
+
+    # Couple emitted events to the canonical taxonomy: a rename/removal in
+    # EVENT_TYPES fails here, not silently downstream.
+    assert {"status", "partial", "result"} <= set(EVENT_TYPES)
 
     # Emit status first (the phase/progress signal)
     w({"type": "status", "payload": {"message": "Demo graph running", "phase": "demo"}})
