@@ -460,19 +460,18 @@ TODO: extraction prompt body (fleshed out in Phase 3).
 | A3 | slopcheck legitimacy verdicts (tool unavailable) | Package Legitimacy Audit | Low — all packages are mandated/established and version-verified on the correct registry |
 | A4 | Decimal → TS `string` is the desired contract shape | Pattern 1 | Low — correct (JSON has no decimal), but planner should confirm UI expects string money |
 
-## Open Questions
+## Open Questions (RESOLVED)
+
+All three were resolved and locked during planning (Phase 1 plans, commit `fe9c1e2`).
 
 1. **`.env` location after the D-02 relocation**
-   - What we know: `.env` is at repo root, empty, gitignored. The AI service reads it.
-   - What's unclear: whether to keep it at root or move to `services/ai/`.
-   - Recommendation: keep one `.env` at repo root and load it from `services/ai` (e.g. `dotenv` pointing up one level), or document a `services/ai/.env`. Either works — pick one and document in README (SHIP-02 lives in P5 but the setup step is referenced by `verify_access.py` now).
+   - RESOLVED: one `.env` at repo root (gitignored), loaded from `services/ai` one level up. Locked in Plan 01-01 and Plan 01-03 notes; documented in README setup (SHIP-02, P5).
 
 2. **Empty `export interface Strict {}` handling**
-   - What we know: a shared `extra="forbid"` base leaks into TS.
-   - Recommendation: set `model_config` per-model (shown in Code Examples) rather than a shared exported base, OR strip the empty interface in `codegen.py`. Planner picks; per-model config is the lazy correct choice.
+   - RESOLVED: set `model_config = ConfigDict(extra="forbid")` per-model (no shared exported base); strip the empty interface in `codegen.py` only if a leak actually appears. Locked in Plan 01-02 notes.
 
 3. **Where the trivial demo graph lives** (Claude's discretion per D-09)
-   - Recommendation: `services/ai/agents/_demo.py` or inline in `api/app.py`. Trivial; keep it next to the route it proves.
+   - RESOLVED: `services/ai/agents/_demo.py`, next to the route it proves. Locked in Plan 01-03.
 
 ## Environment Availability
 
