@@ -1,0 +1,15 @@
+{
+  "name": "aerchain",
+  "version": "0.1.0",
+  "private": true,
+  "packageManager": "pnpm@10.28.1",
+  "scripts": {
+    "lint": "turbo lint",
+    "build": "turbo build"
+  },
+  "devDependencies": {
+    "json-schema-to-typescript": "15.0.4",
+    "prettier": "^3.4.2",
+    "turbo": "^2.3.3"
+  }
+}

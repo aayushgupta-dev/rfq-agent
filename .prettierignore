@@ -1,0 +1,9 @@
+# Ignore generated TypeScript contract — codegen owns its shape (D-18)
+packages/shared-types/index.d.ts
+
+# Ignore build outputs
+.next/
+dist/
+out/
+node_modules/
+.turbo/
