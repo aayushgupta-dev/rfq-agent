@@ -2,9 +2,9 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: complete
-stopped_at: "Gap-closure: CR-01/CR-02/CR-03 in envelope.py (commits 9610284, 0ebabb4)"
-last_updated: "2026-06-27T14:00:00.000Z"
+status: ready_to_plan
+stopped_at: Phase 01 complete (4/4) — ready to discuss Phase 2
+last_updated: 2026-06-27T12:34:23.924Z
 last_activity: 2026-06-27
 progress:
   total_phases: 5
@@ -21,13 +21,13 @@ progress:
 See: .planning/PROJECT.md (updated 2026-06-27)
 
 **Core value:** Evidence over assertion, absence made first-class — every shown fact carries a source snippet; missing/unclear/conflicting/unsupported are explicit states; the AI never fabricates a number or claim.
-**Current focus:** Phase 01 — foundation
+**Current focus:** Phase 2 — grounding gate & messy data
 
 ## Current Position
 
-Phase: 01 (foundation) — COMPLETE
-Plan: 4 of 4 (+ gap-closure pass)
-Status: Phase fully verified — PLAT-01 grounding invariant enforced at schema boundary
+Phase: 2
+Plan: Not started
+Status: Ready to plan
 Last activity: 2026-06-27
 
 Progress: [██████████] 100%
@@ -36,7 +36,7 @@ Progress: [██████████] 100%
 
 **Velocity:**
 
-- Total plans completed: 0
+- Total plans completed: 4
 - Average duration: — min
 - Total execution time: 0.0 hours
 
@@ -44,7 +44,7 @@ Progress: [██████████] 100%
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| - | - | - | - |
+| 01 | 4 | - | - |
 
 **Recent Trend:**
 
@@ -78,7 +78,6 @@ None yet.
 
 ### Blockers/Concerns
 
-- Phase 1: GPT-5.4 API access is account-specific and unverified — gate everything on a live ping.
 - Phase 3 (Extraction): flagged for deeper research — strict structured-output edge cases + LangGraph v2 stream → SSE mapping.
 - Phase 4 (Comparison): flagged for deeper research — comparability-signal representation + light-vs-heavy normalization boundary.
 
@@ -92,6 +91,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-06-27T11:40:42.763Z
-Stopped at: Completed 01-02-PLAN.md
+Last session: 2026-06-27T12:33:00Z
+Stopped at: Phase 1 complete (UAT verified — 9/9, one E501 lint regression found and fixed in 241d017), ready to plan Phase 2
 Resume file: None
