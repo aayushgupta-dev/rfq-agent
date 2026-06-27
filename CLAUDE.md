@@ -57,7 +57,17 @@ Hardcoded outputs · static dashboards · generic prompts · unrealistically cle
 - **Never trust an LLM-supplied authorization or "verified" flag.** In an agent runtime the model will happily fabricate whatever bypasses a guard. Grounding/evidence checks are enforced in code, not by asking the model to promise it didn't hallucinate.
 - **No functionality breakage.** Before shipping, verify the change doesn't regress a working flow. If you change a shared schema, prompt, or agent contract, list every caller and confirm each works.
 - **Git.** Never include any AI tool (Claude, Codex, Copilot, etc.) as a commit co-author. Commits are authored solely by the human developer.
-- **Enforced by PonyTail.** These principles aren't left to memory — the **PonyTail** skill (`full` mode) injects a "laziest senior dev" YAGNI ladder into every turn, including GSD-spawned subagents. It drives the *kind* of code written (reuse → stdlib → native → minimal); it must **never** challenge the requirement set we're building. See **§16**.
+
+### Code minimalism — PonyTail (enforced)
+
+The **PonyTail** skill makes the principles above operational, not aspirational. It runs at `full` mode by default and is injected into every GSD-spawned subagent (a `SubagentStart` hook), so it reaches `gsd-executor`/`gsd-planner` — where the code is actually written.
+
+Before writing code, climb the ladder and stop at the first rung that holds: **(1)** does this need to exist at all (YAGNI)? → **(2)** already in this repo (reuse a helper / type / pattern)? → **(3)** stdlib does it? → **(4)** native platform feature? → **(5)** already-installed dependency? → **(6)** one line? → **(7)** only then, the minimum code that works.
+
+- **Governs the *kind* of code, never the *scope*.** GSD owns *what* we build and *whether* it's in scope (ROADMAP / REQUIREMENTS / CONTEXT.md). PonyTail never re-argues a locked requirement or decision — when they appear to conflict, **scope wins**.
+- **`full` or `lite` only — never `ultra`.** `ultra` challenges the requirement itself; ours is the graded rubric, so it stays off.
+- **Never simplify away the reliability machinery in §1 / §8** — the absence-enum envelope, evidence grounding, the four flag types, the prompt-pack stubs — even when a piece reads as single-use today (the contract precedes the agents that fill it). Mark deliberate kept-complexity with a `# ponytail:` comment naming why, so review reads intent, not slop.
+- **Review gates:** `/ponytail-review` (a diff) and `/ponytail-audit` (the repo) are **complexity-only** passes that *list, never apply* — they complement `gsd-code-reviewer` (correctness/security), never replace it.
 
 ---
 
@@ -87,6 +97,11 @@ Hardcoded outputs · static dashboards · generic prompts · unrealistically cle
 
 Route non-trivial work through GSD so planning artifacts and state stay in sync. This project is
 fresh, so the lifecycle commands matter early.
+
+**Anchor every lifecycle action on `docs/assignment.md`.** It is the PRD and source of truth —
+discussion, planning, execution, and verification/UAT each read it (alongside the phase's
+CONTEXT.md) so plans, tests, and UAT scripts stay tailored to the original use case and the §22
+rubric. Nothing drifts from the brief.
 
 | Situation | GSD Command |
 |---|---|
@@ -206,11 +221,10 @@ reproducible and captured in `docs/` or the app.
 
 ## 8. AI Reliability (non-negotiable)
 
-- The system is designed to avoid hallucination and unsupported claims.
-- It explicitly identifies when information is missing, unclear, conflicting, unsupported, not
-  comparable, or needs buyer review.
-- Important outputs are backed by evidence from the vendor response wherever possible.
-- Grounding/flagging is enforced in code, never delegated to an LLM-asserted "I didn't hallucinate."
+The bar is set in §1 (evidence over assertion, absence first-class, no hallucinated claims) and §2
+(grounding enforced in code, never on the model's word). The one rule to keep explicit: every fact
+is marked **present / missing / unclear / conflicting / unsupported / not-comparable** — surfaced,
+never silently filled.
 
 ---
 
@@ -231,12 +245,10 @@ Everything runs locally; no cloud dependency for dev beyond the OpenAI API.
 - **Web (`apps/web`, Next.js):** `pnpm dev`.
 - **Env:** `OPENAI_API_KEY` (+ model IDs) for the AI service; the web app gets the AI service URL. Keep secrets in `.env` (gitignored); document every required var in the README.
 
-### Docker Compose (placeholder — evolves with the code)
-A `infrastructure/docker-compose.yml` is the intended one-command local setup (`docker compose up`
-brings up the AI service + web together). **It does not exist yet** — add and grow it as the code
-lands (start with the two app services; add anything else only when a feature actually needs it).
-Until it exists, run the two apps directly as above. **Don't pre-build infra the prototype doesn't
-need** — no database, queue, or vector store unless a feature requires one.
+### Docker Compose (placeholder)
+Not built yet — run the two apps directly (above). A `infrastructure/docker-compose.yml` for
+one-command local setup (`docker compose up`) **will be added and expanded here as the compose infra
+lands**; don't pre-build it before a feature needs it (§2).
 
 ---
 
@@ -251,9 +263,11 @@ Two layers, both required: **code-level tests** (the agent runs them) **and func
 - **Streaming APIs:** verify SSE with `curl -N <url>`; events are `data: {"type": ..., "payload": ...}`.
 
 ### Functional UAT testing (the buyer flow, end-to-end via Playwright)
-Code-level tests don't prove the *product* works. **Before handing a phase/plan off to the user, the
-agent drives the full buyer journey end-to-end in a real browser using the Playwright browser tool**
-— don't just assert with curl/unit tests, actually click through the running app:
+Code-level tests don't prove the *product* works. Design each UAT against `docs/assignment.md` (the
+PRD + §22 rubric) so it verifies the original use case, not just that code runs. **Before handing a
+phase/plan off to the user, the agent drives the full buyer journey end-to-end in a real browser
+using the Playwright browser tool** — don't just assert with curl/unit tests, actually click through
+the running app:
 - Generate RFQ → input ≥3 messy vendor responses → run extraction → view comparison → view trace.
 - Assert the AI behaviors that win the rubric: missing/unclear/conflicting fields are surfaced (not
   hidden), every shown fact has a visible evidence snippet, non-comparable vendors are flagged as
@@ -336,64 +350,14 @@ written as if a reviewer at Aerchain will read it — not buried in code comment
 
 ---
 
-## 15. Gotchas
+## 15. Gotchas (quick reference — full rules in the linked sections)
 
-- **Vercel hosts the Next.js app only.** The Python AI service is long-running → Render/Railway.
-  Don't try to run FastAPI/LangGraph on Vercel.
-- **Schemas are the contract.** `services/ai/schemas/` (pydantic) is the source of truth;
-  `packages/shared-types` mirrors it. Change one → change both → list affected screens/agents, or
-  the UI and AI silently drift.
-- **`openai` lib ≠ OpenAI Agents SDK.** Orchestration stays in LangChain/LangGraph; the `openai`
-  library is only a low-level model client when LangChain doesn't fit.
-- **Model tier discipline.** GPT-5.4 for reasoning-heavy agents, GPT-5.4 mini for cheap tasks,
-  **never GPT-5.5.** Don't silently upgrade a model to "fix" a quality issue — fix the prompt first.
-- **Never buffer-and-return agent work.** Long agent steps stream over SSE.
-- **Grounding is enforced in code, not by the model.** Don't accept the model's word that a fact is
-  supported — validate the evidence span exists in the source.
-- **Don't over-build infra.** No DB/queue/vector store, no Docker service, no CI stage until a
-  feature actually requires it (see §10).
-
----
-
-## 16. PonyTail — Code-Minimalism Guardrail
-
-**GSD runs the show.** GSD owns the entire lifecycle (discuss → plan → execute → verify → ship)
-and, with the planning artifacts in `.planning/`, owns *what* we build and *whether* it's in scope.
-**PonyTail is a guardrail, not a decision-maker:** a "laziest senior dev" that challenges the *kind*
-of code being written — never the requirement set. The line is absolute:
-
-> PonyTail governs **implementation shape**. GSD CONTEXT.md / locked requirements govern **scope**.
-> When they ever appear to conflict, **scope wins** — PonyTail does not re-argue a locked decision.
-
-### How it reaches our work
-PonyTail (`full` mode, the default) injects its YAGNI ladder on every turn **and into every
-GSD-spawned subagent** via a `SubagentStart` hook — so it reaches `gsd-executor`/`gsd-planner`,
-which is where nearly all real code is written. The ladder: *does this need to exist? → already in
-the codebase? → stdlib? → native platform feature? → installed dependency? → one line? → only then,
-minimal code.* This is just §2's Engineering Principles, enforced instead of hoped for.
-
-### Where it's used across the workflow
-| GSD stage | PonyTail role |
-|---|---|
-| `/gsd:plan-phase`, `/gsd:execute-phase` | `full` ladder active in the executor subagents — biases reuse/stdlib/native/minimal as code is written |
-| After execute, before `/gsd:verify-work` | `/ponytail-review` on the phase diff — a **complexity-only** gate that runs *alongside* `gsd-code-reviewer` (correctness/security), never instead of it |
-| Phase 5, pre-submission | `/ponytail-audit` — one whole-repo over-engineering sweep so reviewers see a lean codebase |
-| Anytime | `/ponytail-debt` — harvests `ponytail:` comments into a deferral ledger; mirrors CONTEXT.md "Deferred Ideas" |
-
-### Operating rules
-- **`full`, never `ultra`.** `ultra` "challenges the rest of the requirement" — forbidden here; our
-  requirements are the graded rubric. `lite`/`full` only.
-- **What PonyTail must never trim:** anything in §1 (product principles), §8 (reliability), or a
-  locked CONTEXT.md decision — the absence-enum `Field[T]` envelope, evidence offsets, the
-  code-enforced grounding gate, the four flag types, the full SSE taxonomy, the 7 prompt stubs, the
-  codegen drift-check. These are deliverables, not bloat, even when they read as single-use today.
-- **Mark deliberate "kept complexity"** with a `ponytail:` comment naming why
-  (`# ponytail: this exists — PLAT-01 contract, filled in P3`). Then `/ponytail-review` reads intent,
-  not slop, and `/ponytail-debt` tracks it.
-- **Review/audit are advisory** — they *list*, they never auto-apply. A human or GSD verify decides.
-- Its own "When NOT to be lazy" rule already protects validation at trust boundaries, error handling,
-  security, accessibility, and **anything explicitly requested**, and it requires (never deletes) one
-  minimal runnable check per non-trivial logic path — consistent with §11.
+- **Vercel = Next.js only;** the long-running Python service goes to Render/Railway (§12).
+- **Schemas are the contract** — change pydantic and regenerate `shared-types` together (§5).
+- **Model tier:** GPT-5.4 / 5.4-mini, **never 5.5**; fix the prompt before upgrading a model (§5).
+- **Never buffer-and-return** — stream agent work over SSE (§5, §11).
+- **Grounding is code-enforced** — validate the evidence span exists; never trust a model "verified" flag (§2, §8).
+- **Don't over-build infra** — no DB/queue/vector/CI until a feature needs it (§2, §10).
 
 ---
 
