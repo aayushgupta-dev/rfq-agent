@@ -28,8 +28,8 @@ from __future__ import annotations
 from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI
-from pydantic import BaseModel
+from fastapi import FastAPI, HTTPException
+from pydantic import BaseModel, Field as pydantic_Field
 from sse_starlette import EventSourceResponse
 
 from agents._demo import demo_graph
@@ -57,8 +57,8 @@ app = FastAPI(title="Bid Desk AI", lifespan=lifespan)
 class VendorGenRequest(BaseModel):
     """Request body for POST /data/vendor-gen (DATA-04)."""
 
-    persona: str
-    rfq_text: str | None = None
+    persona: str = pydantic_Field(max_length=64)
+    rfq_text: str | None = pydantic_Field(default=None, max_length=200_000)
 
 
 @app.get("/data/rfq")
@@ -84,8 +84,6 @@ async def post_vendor_gen(req: VendorGenRequest) -> dict:
     Security: persona is validated against MESS_SPECS keys before use (T-02-11).
     """
     if req.persona not in MESS_SPECS:
-        from fastapi import HTTPException
-
         raise HTTPException(
             status_code=400,
             detail=f"Unknown persona: {req.persona!r}. Must be one of {list(MESS_SPECS)}",
