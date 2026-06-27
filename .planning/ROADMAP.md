@@ -57,7 +57,11 @@ Decimal phases appear between their surrounding integers in numeric order.
   3. The generated RFQ reads like a real procurement event (8 line items, scope, timelines, commercials, questionnaire, compliance) — not a clean sample.
   4. ≥3 generated vendor responses are deliberately messy per an explicit per-vendor mess spec (missing/incomplete pricing, unclear tax/currency, partial scope, vague timelines, weak compliance), and a test asserts the messiness so the data is never too clean.
   5. The RFQ + ≥3 vendor responses are committed as sample data AND regenerable live in-app.
-**Plans**: TBD
+**Plans**: 4 plans (3 waves)
+  - [ ] 02-01-PLAN.md — Test stubs + module stubs (grounding package + test_grounding_gate.py + test_sample_fixtures.py; all RED — imports resolve, implementations pending)
+  - [ ] 02-02-PLAN.md — Grounding gate implementation (rapidfuzz install, two-stage normalization, exact+fuzzy match, ground_field, ground_model walker; all 9 EXTRACT-04 tests GREEN)
+  - [ ] 02-03-PLAN.md — Schema flesh-out (RFQ + VendorResponse real fields, codegen drift-check) + three data-generation prompts authored (rfq-gen, vendor-gen, messy-data-gen)
+  - [ ] 02-04-PLAN.md — Generation agents (rfq_gen.py + vendor_gen.py) + sample fixtures committed (data/) + live-regen API endpoints + PROMPT-04 docs
 
 ### Phase 3: Extraction Agent
 **Goal**: Per-vendor extraction produces grounded, evidence-backed structured output that streams to the client and never fabricates.
@@ -106,7 +110,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation | 5/5 | Complete   | 2026-06-27 |
-| 2. Grounding Gate & Messy Data | 0/TBD | Not started | - |
+| 2. Grounding Gate & Messy Data | 0/4 | Not started | - |
 | 3. Extraction Agent | 0/TBD | Not started | - |
 | 4. Comparison Agent | 0/TBD | Not started | - |
 | 5. Buyer UI, Trace & Submission | 0/TBD | Not started | - |
