@@ -15,7 +15,7 @@
 - [x] **PLAT-02**: pydantic schemas mechanically generate the `packages/shared-types` TS contract (pydantic2ts codegen) — the UI/AI contract is never hand-mirrored.
 - [x] **PLAT-03**: env-configured LLM client (`gpt-5.4` reasoning-heavy / `gpt-5.4-mini` cheap tasks); GPT-5.4 API access verified by a live ping before anything is built on it.
 - [x] **PLAT-04**: agent responses stream to the UI over SSE using a single `{type, payload}` envelope (FastAPI emits, Next.js consumes) — never buffer-and-return long agent work.
-- [ ] **FOUND-UPGRADE**: `apps/web` runs on the latest framework + agreed UI toolchain (Next.js 16 + React 19.2, Tailwind CSS v4, shadcn/ui substrate) before buyer screens land — set up once on the empty shell, not retrofitted under Phase 5 deadline. Foundation tech-debt item, not a rubric requirement.
+- [x] **FOUND-UPGRADE**: `apps/web` runs on the latest framework + agreed UI toolchain (Next.js 16 + React 19.2, Tailwind CSS v4, shadcn/ui substrate) before buyer screens land — set up once on the empty shell, not retrofitted under Phase 5 deadline. Foundation tech-debt item, not a rubric requirement.
 
 ### Prompt Pack (30%)
 
@@ -109,7 +109,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | PLAT-02 | Phase 1 | Complete |
 | PLAT-03 | Phase 1 | Complete |
 | PLAT-04 | Phase 1 | Complete |
-| FOUND-UPGRADE | Phase 1 | Pending |
+| FOUND-UPGRADE | Phase 1 | Complete |
 | PROMPT-01 | Phase 1 | Complete |
 | EXTRACT-04 | Phase 2 | Pending |
 | DATA-01 | Phase 2 | Pending |
