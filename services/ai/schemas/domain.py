@@ -11,6 +11,12 @@ as the smallest stubs that:
 # ponytail: stub fields carry a comment marking them as the P2/P3/P4 contract
 # placeholder. Kept-complexity is intentional — the contract precedes the agents
 # that fill it (D-08).
+#
+# The `# type: ignore[call-arg]` on each stub is a known limitation of calling a
+# generic pydantic model (Field[T](...)) — the type checker cannot infer the
+# missing T-typed `value` is optional. These ignores are scoped to placeholder
+# stubs ONLY: real P2+ fields are populated by validated agent output / fixtures,
+# not constructed inline here, so the ignores must not propagate into them.
 """
 from __future__ import annotations
 
