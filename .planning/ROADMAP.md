@@ -22,7 +22,7 @@ documented prompt(s) rather than being a standalone phase.
 Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Foundation** - Schemas, pydantic→TS contract, env LLM client, SSE proof, Prompt Pack skeleton (completed 2026-06-27)
-- [ ] **Phase 2: Grounding Gate & Messy Data** - Code-enforced grounding (LLM-free, unit-tested) + RFQ/vendor generation with mess specs
+- [x] **Phase 2: Grounding Gate & Messy Data** - Code-enforced grounding (LLM-free, unit-tested) + RFQ/vendor generation with mess specs (completed 2026-06-27)
 - [ ] **Phase 3: Extraction Agent** - Grounding-gated extraction with evidence, four flag types, safe structured output, SSE streaming, first trace
 - [ ] **Phase 4: Comparison Agent** - Comparability-before-ranking over `ExtractionResult[]` with clarification questions
 - [ ] **Phase 5: Buyer UI, Trace & Submission** - Five buyer screens, in-app prompt trace, deploy, and the full submission package
@@ -61,7 +61,7 @@ Decimal phases appear between their surrounding integers in numeric order.
   - [x] 02-01-PLAN.md — Test stubs + module stubs (grounding package + test_grounding_gate.py + test_sample_fixtures.py; all RED — imports resolve, implementations pending)
   - [x] 02-02-PLAN.md — Grounding gate implementation (rapidfuzz install, two-stage normalization, exact+fuzzy match, ground_field, ground_model walker; all 9 EXTRACT-04 tests GREEN)
   - [x] 02-03-PLAN.md — Schema flesh-out (RFQ + VendorResponse real fields, codegen drift-check) + three data-generation prompts authored (rfq-gen, vendor-gen, messy-data-gen)
-  - [ ] 02-04-PLAN.md — Generation agents (rfq_gen.py + vendor_gen.py) + sample fixtures committed (data/) + live-regen API endpoints + PROMPT-04 docs
+  - [x] 02-04-PLAN.md — Generation agents (rfq_gen.py + vendor_gen.py) + sample fixtures committed (data/) + live-regen API endpoints + PROMPT-04 docs
 
 ### Phase 3: Extraction Agent
 **Goal**: Per-vendor extraction produces grounded, evidence-backed structured output that streams to the client and never fabricates.
@@ -110,7 +110,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation | 5/5 | Complete   | 2026-06-27 |
-| 2. Grounding Gate & Messy Data | 3/4 | In Progress|  |
+| 2. Grounding Gate & Messy Data | 4/4 | Complete   | 2026-06-27 |
 | 3. Extraction Agent | 0/TBD | Not started | - |
 | 4. Comparison Agent | 0/TBD | Not started | - |
 | 5. Buyer UI, Trace & Submission | 0/TBD | Not started | - |
