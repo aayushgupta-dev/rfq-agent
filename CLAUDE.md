@@ -98,9 +98,9 @@ fresh, so the lifecycle commands matter early.
 ("just do it" / "skip GSD" = explicit bypass). When something goes sideways mid-execution, STOP and
 re-plan via `/gsd:plan-phase --gaps-only` rather than manual recovery.
 
-GSD planning artifacts live in `.planning/` (local-only, gitignored): `PROJECT.md`, `STATE.md`
-(source of truth for position/decisions/blockers), `config.json`, and phase folders once planning
-begins.
+GSD planning artifacts live in `.planning/` and are **tracked in git** (committed alongside the
+code): `PROJECT.md`, `STATE.md` (source of truth for position/decisions/blockers), `config.json`,
+and phase folders once planning begins.
 
 ---
 
