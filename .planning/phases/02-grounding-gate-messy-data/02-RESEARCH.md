@@ -715,7 +715,7 @@ assert len(rfq.line_items) == 8
 
 ---
 
-## Open Questions
+## Open Questions (RESOLVED)
 
 1. **Minimum snippet length threshold (Pitfall 3)**
    - What we know: very short snippets score near-100 against any text via partial_ratio
