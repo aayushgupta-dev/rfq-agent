@@ -44,6 +44,7 @@ Decimal phases appear between their surrounding integers in numeric order.
   - [x] 01-02-PLAN.md — Contract primitives (generic Field[T] envelope, evidence, 5-state flag enum, SSE event envelope) + 4 domain stubs + pydantic2ts codegen + drift-check test
   - [x] 01-03-PLAN.md — LLM tier factory + live gpt-5.4/mini access ping + FastAPI startup check + trivial LangGraph {type,payload} SSE proof (curl -N)
   - [x] 01-04-PLAN.md — Prompt Pack registry skeleton + all 7 versioned prompt stubs
+  - [x] 01-GAP — Evidence-grounding invariant enforcement (CR-01/CR-02/CR-03): TDD gap-closure (commits 9610284 + 0ebabb4); 85 tests green; phase fully verified
 
 ### Phase 2: Grounding Gate & Messy Data
 **Goal**: The reliability keystone — code that disproves the model — works in isolation, and there is realistically messy data worth testing it against.

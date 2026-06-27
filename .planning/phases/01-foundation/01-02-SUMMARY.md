@@ -148,6 +148,18 @@ completed: "2026-06-27"
 
 No new threat surface. T-02-01 (contract drift) is mitigated by the drift-check test as designed. T-02-04 (model_validator bypass) is mitigated by the semantic validator running on every `model_validate` call (confirmed in tests).
 
+## Gap Closure (2026-06-27)
+
+Three grounding-enforcement gaps identified during code review (01-REVIEW.md) and confirmed by the verifier (01-VERIFICATION.md) were closed via TDD after plan completion:
+
+| Gap | Fix | Commits |
+|-----|-----|---------|
+| CR-01: `Field[present]` accepted with `evidence=[]`; `Field[unclear]+value` accepted with `evidence=[]` | Added evidence non-empty check in `_validate_absence_semantics` for `present` and `unclear`-with-value branches | RED: 9610284 / GREEN: 0ebabb4 |
+| CR-02: `Evidence` permitted `char_start<0` and `char_end<=char_start` | Added `Evidence._validate_offsets` model_validator enforcing `char_start>=0` and `char_end>char_start`; updated docstring to be precise about what is vs. is not validated at this layer | 0ebabb4 |
+| CR-03: `Field[conflicting]` ConflictingValues permitted with `evidence=[]` | Extended conflicting branch to iterate `values[]` and reject any entry with empty evidence | 0ebabb4 |
+
+10 new tests added to `test_field_envelope.py` (30 total). Full suite: **85 passed, 1 warning**. `packages/shared-types/index.d.ts` regenerated to reflect the new `Evidence` validator. PLAT-01 is now fully satisfied.
+
 ## Self-Check: PASSED
 
 - `services/ai/schemas/envelope.py` exists with `Field[T]` + `model_validator` — FOUND
