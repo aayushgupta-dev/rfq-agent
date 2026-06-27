@@ -16,6 +16,7 @@ The committed file is the generated contract — never hand-edit it (PLAT-02).
 """
 from __future__ import annotations
 
+import re
 from pathlib import Path
 
 from pydantic2ts import generate_typescript_defs
@@ -50,8 +51,6 @@ def _strip_empty_interfaces(ts_text: str) -> str:
     This is a defensive post-gen pass — per-model model_config should prevent it,
     but belt-and-suspenders given the Pitfall 3 warning in RESEARCH.md.
     """
-    import re
-
     # Match: export interface Name {} (with optional leading whitespace/newline)
     return re.sub(r"\nexport interface \w+ \{\}\n", "\n", ts_text)
 
