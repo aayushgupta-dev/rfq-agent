@@ -20,7 +20,6 @@ from schemas.envelope import (
 )
 from schemas.events import ErrorPayload, EventEnvelope
 
-
 # ---------------------------------------------------------------------------
 # FlagStatus
 # ---------------------------------------------------------------------------
