@@ -41,7 +41,7 @@ Decimal phases appear between their surrounding integers in numeric order.
   5. The Prompt Pack registry exists in `services/ai/prompts/` as first-class versioned source (skeleton, not inline strings).
 **Plans**: 4 plans (2 waves)
   - [x] 01-01-PLAN.md — Monorepo scaffold (relocate Python to services/ai, pnpm+turbo workspace, apps/web shell, shared-types pkg) + dev tooling spine (ruff/pytest, prettier/eslint)
-  - [ ] 01-02-PLAN.md — Contract primitives (generic Field[T] envelope, evidence, 5-state flag enum, SSE event envelope) + 4 domain stubs + pydantic2ts codegen + drift-check test
+  - [x] 01-02-PLAN.md — Contract primitives (generic Field[T] envelope, evidence, 5-state flag enum, SSE event envelope) + 4 domain stubs + pydantic2ts codegen + drift-check test
   - [ ] 01-03-PLAN.md — LLM tier factory + live gpt-5.4/mini access ping + FastAPI startup check + trivial LangGraph {type,payload} SSE proof (curl -N)
   - [ ] 01-04-PLAN.md — Prompt Pack registry skeleton + all 7 versioned prompt stubs
 
@@ -103,7 +103,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation | 1/4 | In Progress|  |
+| 1. Foundation | 2/4 | In Progress|  |
 | 2. Grounding Gate & Messy Data | 0/TBD | Not started | - |
 | 3. Extraction Agent | 0/TBD | Not started | - |
 | 4. Comparison Agent | 0/TBD | Not started | - |

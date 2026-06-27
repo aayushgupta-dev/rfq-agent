@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Phase 1 context gathered
-last_updated: "2026-06-27T11:13:22.448Z"
+stopped_at: Completed 01-02-PLAN.md
+last_updated: "2026-06-27T11:25:35.326Z"
 last_activity: 2026-06-27
 progress:
   total_phases: 5
   completed_phases: 0
   total_plans: 4
-  completed_plans: 1
+  completed_plans: 2
   percent: 0
 ---
 
@@ -26,11 +26,11 @@ See: .planning/PROJECT.md (updated 2026-06-27)
 ## Current Position
 
 Phase: 01 (foundation) — EXECUTING
-Plan: 2 of 4
+Plan: 3 of 4
 Status: Ready to execute
 Last activity: 2026-06-27
 
-Progress: [███░░░░░░░] 25%
+Progress: [█████░░░░░] 50%
 
 ## Performance Metrics
 
@@ -53,6 +53,7 @@ Progress: [███░░░░░░░] 25%
 
 *Updated after each plan completion*
 | Phase 01-foundation P01 | 6 | 2 tasks | 19 files |
+| Phase 01-foundation P02 | 6 | 2 tasks | 9 files |
 
 ## Accumulated Context
 
@@ -66,6 +67,8 @@ Recent decisions affecting current work:
 - Roadmap: Phase 5 merges UI + deploy + submission (coarse granularity); the strict dependency chain kept extraction/comparison separate.
 - [Phase 01]: ESLint flat config via FlatCompat bridge — eslint-config-next@15 exports legacy CJS format; FlatCompat is the official ESLint 9 migration path; @eslint/eslintrc added as direct dep to apps/web
 - [Phase 01]: next-env.d.ts committed in apps/web — Plan 01-01 requires it as workspace link proof; .gitignore updated with negation !apps/web/next-env.d.ts
+- [Phase ?]: UP046 noqa on Generic[T] pydantic classes: ruff UP046 wants PEP 695 syntax which breaks pydantic-to-typescript 2.0.0; kept Generic[T] with noqa comment naming the reason
+- [Phase ?]: pydantic2ts codegen uses absolute path to schemas/__init__.py (not dotted module name) to avoid Pitfall 1: directory existence check triggers spec_from_file_location which fails for packages
 
 ### Pending Todos
 
@@ -87,6 +90,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-06-27T11:12:14.641Z
-Stopped at: Phase 1 context gathered
+Last session: 2026-06-27T11:25:35.318Z
+Stopped at: Completed 01-02-PLAN.md
 Resume file: None
