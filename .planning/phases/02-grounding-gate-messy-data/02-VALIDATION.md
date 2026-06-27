@@ -102,3 +102,31 @@ Full reference implementations live in `02-RESEARCH.md` → "The Falsifiability 
 - [x] `nyquist_compliant: true` set in frontmatter
 
 **Approval:** complete — 108 tests GREEN (2026-06-27)
+
+---
+
+## Validation Audit 2026-06-27
+
+Retroactive Nyquist audit (`/gsd:validate-phase 2`). Each requirement cross-referenced
+against the live test files — every named test function was confirmed to **exist** in its
+stated file (not a paper claim), and the full suite was re-run green.
+
+| Metric | Count |
+|--------|-------|
+| Requirements audited | 6 (EXTRACT-04, DATA-01, DATA-02, DATA-03, DATA-04, PROMPT-04) |
+| COVERED (automated, green) | 6 |
+| Gaps found (MISSING/PARTIAL) | 0 |
+| Tests generated | 0 (none needed) |
+| Escalated to manual-only | 0 |
+
+**Evidence:**
+- 14 named gate/fixture test functions all resolve to real `def`s in
+  `tests/test_grounding_gate.py` / `tests/test_sample_fixtures.py`; `test_codegen_drift.py`
+  and `test_prompt_registry.py` present.
+- `uv run pytest -q` → **108 passed, 1 warning** (pre-existing starlette/httpx deprecation).
+- **Manual-only DATA-04 smoke now actually exercised** against live gpt-5.4 this session:
+  `GET /data/rfq` returned a valid 8-line-item RFQ; `POST /data/vendor-gen` returned a valid
+  `VendorResponse` carrying its persona's mess markers; unknown persona → 400. The manual
+  verification is no longer just documented — it has been performed.
+
+**Verdict:** Phase 2 remains **NYQUIST-COMPLIANT**. No new test files required.
