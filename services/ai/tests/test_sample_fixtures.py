@@ -10,6 +10,7 @@ AssertionError on the existence check, not AttributeError on a missing schema fi
 """
 from __future__ import annotations
 
+import re
 from pathlib import Path
 
 import pytest
@@ -96,7 +97,6 @@ def test_vendor_fixture_messiness() -> None:
     raw_fluff = fluff.raw_text.lower()
     # D-09: fluff persona should have internal contradictions (two different week counts
     # or contradictory scope statements)
-    import re
     week_counts = re.findall(r"(\d+)\s*weeks?", raw_fluff)
     scope_conflicts = any(
         marker in raw_fluff for marker in ("will not", "won't", "cannot", "excluded", "not included")
@@ -136,7 +136,6 @@ def test_polished_fluff_has_conflict() -> None:
     vendor = VendorResponse.model_validate_json(vendor_path.read_text())
     raw = vendor.raw_text.lower()
     # D-13: simple string pattern search, no LLM call
-    import re
     # Look for two different week counts (e.g. "6 weeks" and "12 weeks")
     week_counts = re.findall(r"(\d+)\s*weeks?", raw)
     different_week_counts = len(set(week_counts)) >= 2
