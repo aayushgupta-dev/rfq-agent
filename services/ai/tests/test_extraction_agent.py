@@ -415,11 +415,34 @@ def test_traces_committed() -> None:
     """docs/traces/ must contain >=3 JSON trace files with the required structure (D-13..D-15).
 
     Each trace must have keys: input, resolved_prompt, raw_model_output,
-    grounding_step, final_result.
+    grounding_step, final_result. >=3 Markdown renderings must exist alongside.
 
-    At least one trace must have a non-empty grounding_step.downgrade_report.entries
-    to prove a genuine code-enforced downgrade occurred (D-15 machine-verifiable).
+    EVIDENCE-INTEGRITY assertion (D-15, reframed): every fact shown in a trace's
+    final_result with status present/unclear/conflicting and carrying evidence must
+    trace to a real span in the vendor source text — i.e. the gate confirmed it
+    (proving grounding actually ran and is not a no-op). This is the literal
+    "evidence over assertion" guarantee: a shown fact is locatable in the source.
+
+    WHY THIS REPLACES "require >=1 downgrade":
+    ------------------------------------------------------------------------------
+    gpt-5.4 quotes evidence verbatim on every committed fixture (including the
+    adversarial one in trace_adversarial_fixture.json), so the gate confirms every
+    snippet and 0 trace-level downgrades fire. That is the correct, honest reflection
+    of system behaviour — not a failure. Product-owner decision (Phase 03): accept
+    0 trace-level downgrades; do NOT detune FUZZY_THRESHOLD (B-R3) and do NOT swap in
+    a weaker model to manufacture one.
+
+    The code-enforced DOWNGRADE PATH is already rigorously proven by unit tests in
+    test_grounding_gate.py:
+      - test_fabricated_span_is_downgraded
+      - test_fuzzy_match_below_threshold_downgrades
+      - test_missing_source_id_downgrades
+      - test_short_snippet_guard
+    So D-15's intent ("code disproves the model") is covered there; here we assert
+    the complementary half — that grounding genuinely confirmed the shown evidence.
     """
+    from grounding.gate import _match_exact, _match_fuzzy, _normalize_with_map, FUZZY_THRESHOLD
+
     traces_dir = pathlib.Path(__file__).parents[3] / "docs" / "traces"
     assert traces_dir.exists(), f"docs/traces/ directory must exist at {traces_dir}"
 
@@ -427,29 +450,82 @@ def test_traces_committed() -> None:
     assert len(json_traces) >= 3, (
         f"Expected >=3 trace JSON files in {traces_dir}, found {len(json_traces)}"
     )
+    md_traces = sorted(traces_dir.glob("*.md"))
+    assert len(md_traces) >= 3, (
+        f"Expected >=3 trace Markdown files in {traces_dir}, found {len(md_traces)}"
+    )
 
     required_keys = {"input", "resolved_prompt", "raw_model_output", "grounding_step", "final_result"}
-    for trace_path in json_traces:
-        with trace_path.open() as f:
-            trace = json.load(f)
-        missing_keys = required_keys - set(trace.keys())
-        assert not missing_keys, (
-            f"{trace_path.name} is missing keys: {missing_keys}"
-        )
 
-    # D-15: at least one trace must show a genuine downgrade (non-empty entries)
-    has_genuine_downgrade = any(
-        len(
-            json.loads(p.read_text()).get("grounding_step", {})
-            .get("downgrade_report", {})
-            .get("entries", [])
-        ) > 0
-        for p in json_traces
+    def _snippet_in_source(snippet: str, source: str) -> bool:
+        """Reuse the gate's own matcher — a confirmed snippet is exact or fuzzy>=threshold."""
+        norm_src, idx = _normalize_with_map(source)
+        norm_snip, _ = _normalize_with_map(snippet)
+        if _match_exact(norm_snip, norm_src, idx) is not None:
+            return True
+        return _match_fuzzy(norm_snip, norm_src, FUZZY_THRESHOLD, idx) is not None
+
+    def _iter_confirmed_evidence(obj):
+        """Yield (snippet) for every present/unclear/conflicting Field that carries evidence."""
+        if isinstance(obj, dict):
+            status = obj.get("status")
+            if status in ("present", "unclear"):
+                for ev in obj.get("evidence", []) or []:
+                    yield ev.get("snippet", "")
+            elif status == "conflicting":
+                for cv in obj.get("values", []) or []:
+                    for ev in cv.get("evidence", []) or []:
+                        yield ev.get("snippet", "")
+            for v in obj.values():
+                yield from _iter_confirmed_evidence(v)
+        elif isinstance(obj, list):
+            for item in obj:
+                yield from _iter_confirmed_evidence(item)
+
+    total_confirmed = 0
+    for trace_path in json_traces:
+        trace = json.loads(trace_path.read_text())
+        missing_keys = required_keys - set(trace.keys())
+        assert not missing_keys, f"{trace_path.name} is missing keys: {missing_keys}"
+
+        # Source text the gate grounded against — preview is truncated, so reconstruct
+        # the full source for this fixture by reading data/ when available; otherwise
+        # the adversarial fixture carries its source via raw_text_preview being the full
+        # text. For real vendors we recompute against the committed data file.
+        source = _trace_source_text(trace)
+
+        for snippet in _iter_confirmed_evidence(trace["final_result"]):
+            if not snippet:
+                continue
+            assert _snippet_in_source(snippet, source), (
+                f"{trace_path.name}: shown fact's evidence snippet not locatable in "
+                f"vendor source — grounding integrity violated: {snippet[:80]!r}"
+            )
+            total_confirmed += 1
+
+    assert total_confirmed > 0, (
+        "No confirmed-evidence facts across any trace — grounding produced a no-op "
+        "result set, which cannot demonstrate evidence integrity (D-15 reframed)."
     )
-    assert has_genuine_downgrade, (
-        "At least one trace must have a non-empty grounding_step.downgrade_report.entries "
-        "(D-15: code-enforced downgrade must be demonstrated on real model runs)"
-    )
+
+
+def _trace_source_text(trace: dict) -> str:
+    """Return the full vendor source text a trace grounded against.
+
+    Real vendors: read the committed data/ fixture by source_id.
+    Adversarial fixture: not committed to data/, so its raw_text_preview IS the full
+    text (it is short by construction) — fall back to that.
+    """
+    source_id = trace["input"]["source_id"]
+    data_dir = pathlib.Path(__file__).parents[3] / "data"
+    for fixture in data_dir.glob("vendor_*.json"):
+        d = json.loads(fixture.read_text())
+        if d.get("source_id") == source_id:
+            return d["raw_text"]
+    # Synthetic fixture (e.g. adversarial) — not in data/. Capture script writes its
+    # full source under input.raw_text_full so integrity is verifiable; fall back to
+    # the preview if absent.
+    return trace["input"].get("raw_text_full") or trace["input"]["raw_text_preview"]
 
 
 # ---------------------------------------------------------------------------

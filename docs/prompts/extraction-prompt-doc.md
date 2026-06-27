@@ -80,3 +80,18 @@ This floor is set *above* the gate floor intentionally:
 
 The prompt also adds the ≥3 words requirement to prevent single-word snippets that hit
 15+ characters via a long technical term (e.g. "Paid-Media-Buying-TBD-pending").
+
+---
+
+## What the Captured Traces Demonstrate
+
+The committed traces under `docs/traces/` demonstrate **verbatim-evidence integrity**:
+every fact shown in a trace's final result traces to a real, locatable span in the
+vendor source text. On these fixtures gpt-5.4 quoted evidence character-for-character —
+including the deliberately vague adversarial fixture — so the grounding gate confirmed
+every snippet and **no downgrade fired**. Zero downgrades is the honest reflection of
+model behaviour here, not a gap: the gate's downgrade behaviour (fabricated spans,
+sub-threshold fuzzy matches, missing source IDs, too-short snippets) is proven
+separately and rigorously by the unit tests in `services/ai/tests/test_grounding_gate.py`.
+The `FUZZY_THRESHOLD` was deliberately left untouched (B-R3) — it is not a dial to turn
+for trace production.

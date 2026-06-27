@@ -92,6 +92,10 @@ def _build_trace(
 
     if fixture_type is not None:
         trace["input"]["fixture_type"] = fixture_type
+        # Synthetic fixtures are not committed to data/, so store the full source so
+        # test_traces_committed can verify evidence integrity against the whole text
+        # (the 500-char preview can truncate a quoted span).
+        trace["input"]["raw_text_full"] = vendor.raw_text
 
     return trace
 

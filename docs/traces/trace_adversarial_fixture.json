@@ -45,7 +45,8 @@
       }
     ],
     "raw_text_preview": "Agency Proposal — GlowBite RFQ Response\n\nSection A: Introduction\nWe are a full-service creative and media agency. Our work spans strategy, brand development, and integrated campaign delivery across consumer categories.\n\nSection B: Commercial Approach\nFees for strategic engagements of this nature are scoped individually. We do not publish rate cards. Investment levels are discussed after a discovery session. Our commercial model is designed to align with client outcomes and program complexity.\n\nS",
-    "fixture_type": "adversarial"
+    "fixture_type": "adversarial",
+    "raw_text_full": "Agency Proposal — GlowBite RFQ Response\n\nSection A: Introduction\nWe are a full-service creative and media agency. Our work spans strategy, brand development, and integrated campaign delivery across consumer categories.\n\nSection B: Commercial Approach\nFees for strategic engagements of this nature are scoped individually. We do not publish rate cards. Investment levels are discussed after a discovery session. Our commercial model is designed to align with client outcomes and program complexity.\n\nSection C: Timeline\nProgram timelines reflect the scope complexity and client readiness factors. We plan work collaboratively with clients. Duration is typically confirmed during onboarding. We have delivered comparable programs in periods ranging from six to eighteen months depending on approval cycles.\n\nSection D: Compliance\nWe work within all applicable regulatory and industry guidelines. Our internal compliance review covers all relevant advertising standards.\n\nSection E: Summary\nWe believe this engagement presents an excellent fit for our capabilities. We welcome a conversation to discuss fit and next steps."
   },
   "resolved_prompt": {
     "id": "extraction",
