@@ -80,6 +80,9 @@ None yet.
 
 - Phase 3 (Extraction): flagged for deeper research — strict structured-output edge cases + LangGraph v2 stream → SSE mapping.
 - Phase 4 (Comparison): flagged for deeper research — comparability-signal representation + light-vs-heavy normalization boundary.
+- [Phase 02 review, deferred] WR-01 — `FlagStatus` (schemas/envelope.py) is the locked 5-state field-level enum (D-07); `not-comparable` is comparison-level, not a per-field fact status. Decide its representation when Phase 4 designs the comparability signal — do not bolt it onto the field enum prematurely.
+- [Phase 02 review, deferred] IN-04 — grounding walker `_walk_and_ground` (gate.py) does not traverse dict-valued Field containers. Harmless today (no schema uses `dict[str, Field]`), but the grounding gate is the reliability keystone: when Phase 3 finalizes ExtractionResult, confirm the walker covers every field shape so no grounded field is silently bypassed. (Doc-comment left in code.)
+- [Phase 02 review, info] Fuzzy-match threshold edge case: a fabricated snippet sharing a long suffix with real source text can score >90. Calibrate `FUZZY_THRESHOLD` against real extraction data in Phase 3.
 
 ## Deferred Items
 
