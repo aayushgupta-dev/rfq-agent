@@ -73,9 +73,9 @@ export interface ErrorPayload {
  * SSE event envelope — the typed wrapper for every streamed agent event (D-09).
  *
  * type is a closed Literal so the set of event names is enforced at schema
- * validation time, not by convention. payload is typed as Any / dict[str, Any]
- * because per-agent payload shapes land in P3/P4 and this envelope is the
- * structural wrapper only.
+ * validation time, not by convention. payload is typed as Any because
+ * per-agent payload shapes land in P3/P4 and this envelope is the structural
+ * wrapper only.
  */
 export interface EventEnvelope {
   type: "status" | "partial" | "result" | "error" | "done";
