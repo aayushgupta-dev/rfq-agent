@@ -23,15 +23,15 @@ import json
 import pytest
 from fastapi.testclient import TestClient
 
-# EVENT_TYPES is the canonical closed SSE taxonomy from Plan 02.
-# Imported directly so this test cannot drift from the schema definition.
-from schemas.events import EVENT_TYPES
-
 # --- Import the FastAPI app --- #
 # This import must NOT trigger the lifespan (startup access check).
 # We use TestClient(app) without a context manager for all tests so the
 # lifespan is not entered. The startup gate only fires on actual uvicorn boot.
 from api.app import app
+
+# EVENT_TYPES is the canonical closed SSE taxonomy from Plan 02.
+# Imported directly so this test cannot drift from the schema definition.
+from schemas.events import EVENT_TYPES
 
 
 class TestSseDemoRoute:
@@ -137,7 +137,7 @@ def _parse_sse_events(body: str) -> list[dict]:
     for line in body.splitlines():
         line = line.strip()
         if line.startswith("data: "):
-            payload_str = line[len("data: "):]
+            payload_str = line[len("data: ") :]
             if payload_str:
                 try:
                     event = json.loads(payload_str)
