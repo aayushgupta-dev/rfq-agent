@@ -23,7 +23,7 @@ from schemas.envelope import (
     Field,
     FlagStatus,
 )
-from grounding.gate import ground_field, ground_model
+from grounding.gate import _normalize_with_map, ground_field, ground_model
 from grounding.report import DowngradeEntry, DowngradeReport
 
 # ---------------------------------------------------------------------------
@@ -290,3 +290,85 @@ class TestWalker:
         # Genuine field must survive
         assert grounded_model.genuine_field.status == FlagStatus.present
         assert report.has_downgrades
+
+    def test_ground_model_does_not_mutate_input(self) -> None:
+        """ground_model() must return a NEW object; the original must be unchanged (D-06)."""
+        source = "Vendor A proposes $15,000 for strategy and creative over 8 weeks."
+
+        class _MutationTestModel(BaseModel):
+            model_config = ConfigDict(extra="forbid")
+            price_field: Field[str]
+
+        ev = Evidence(
+            snippet="$15,000 for strategy and creative",
+            char_start=0,
+            char_end=10,
+            source_id="v1",
+        )
+        original_field: Field[str] = Field[str](
+            status=FlagStatus.present,
+            value="15000",
+            evidence=[ev],
+        )
+        model = _MutationTestModel(price_field=original_field)
+        original_status_before = original_field.status
+
+        ground_model(model, {"v1": source})
+
+        # Original field object must be unchanged after ground_model()
+        assert original_field.status == original_status_before
+
+
+# ---------------------------------------------------------------------------
+# _normalize_with_map unit tests (offset-map correctness)
+# ---------------------------------------------------------------------------
+
+
+class TestNormalizeWithMap:
+    def test_nfkc_ligature_offset_roundtrip(self) -> None:
+        """NFKC ﬁ ligature (1 char → 2 chars) must produce orig_indices that roundtrip to source."""
+        source = "Our ﬁrm offers services"
+        normalized, orig_indices = _normalize_with_map(source)
+        # "fi" from ligature ﬁ should appear in normalized text
+        fi_pos = normalized.find("fi")
+        assert fi_pos >= 0, "NFKC ligature ﬁ must normalize to 'fi'"
+        # Round-trip: original text sliced via orig_indices must equal source chars at that region
+        orig_start = orig_indices[fi_pos]
+        orig_end = orig_indices[fi_pos + 1] + 1  # +1 since ﬁ is one char in source
+        assert source[orig_start:orig_end] == "ﬁ", (
+            f"Expected 'ﬁ', got {source[orig_start:orig_end]!r}"
+        )
+
+    def test_normalize_strips_leading_trailing_consistently(self) -> None:
+        """After trim-together, len(orig_indices) must equal len(normalized)."""
+        normalized, orig_indices = _normalize_with_map("  hello  ")
+        assert len(orig_indices) == len(normalized), (
+            f"Map array length {len(orig_indices)} != normalized length {len(normalized)}"
+        )
+        assert normalized == "hello"
+
+
+# ---------------------------------------------------------------------------
+# Source-id missing downgrade
+# ---------------------------------------------------------------------------
+
+
+class TestSourceIdMissing:
+    def test_missing_source_id_downgrades(self) -> None:
+        """A field whose evidence references an unknown source_id must be downgraded."""
+        ev = Evidence(
+            snippet="$15,000 for strategy and creative",
+            char_start=0,
+            char_end=10,
+            source_id="v_unknown",
+        )
+        field: Field[str] = Field[str](
+            status=FlagStatus.present,
+            value="15000",
+            evidence=[ev],
+        )
+        grounded, report = ground_field(field, {"v_other": "some text about other things"})
+        assert grounded.status == FlagStatus.unsupported
+        assert len(report) == 1
+        assert report[0].original_status == "present"
+        assert "source_id not in sources" in report[0].reason
