@@ -134,7 +134,9 @@ def test_field_conflicting_none_values_raises() -> None:
 
 def test_field_decimal_present() -> None:
     ev = Evidence(snippet="9.99", char_start=0, char_end=4, source_id="doc-1")
-    f: Field[Decimal] = Field[Decimal](status=FlagStatus.present, value=Decimal("9.99"), evidence=[ev])
+    f: Field[Decimal] = Field[Decimal](
+        status=FlagStatus.present, value=Decimal("9.99"), evidence=[ev]
+    )
     assert f.value == Decimal("9.99")
 
 

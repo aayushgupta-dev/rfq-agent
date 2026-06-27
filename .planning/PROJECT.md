@@ -90,11 +90,11 @@ fails, the AI must not hallucinate a number or a claim.
 
 | Decision | Rationale | Outcome |
 |----------|-----------|---------|
-| Hold the full Next.js + FastAPI/LangGraph monorepo (not a leaner single app) | Showcases the Python/LangGraph AI story the rubric rewards; CLAUDE.md §5 is the agreed plan | — Pending |
+| Hold the full Next.js + FastAPI/LangGraph monorepo (not a leaner single app) | Showcases the Python/LangGraph AI story the rubric rewards; CLAUDE.md §5 is the agreed plan | Phase 1 — scaffolded; pnpm+turbo workspace, Next.js shell, and services/ai uv env all build/lint clean; `@aerchain/shared-types` link proven end-to-end |
 | Data strategy: commit pre-generated samples AND support live generation/upload | Satisfies both "generated sample data" deliverable and "dynamic processing, not hardcoded" requirement; strongest demo | — Pending |
 | Deploy to Vercel + Render/Railway (not local-only) | More impressive submission; accepts the deploy/CORS/cold-start cost | — Pending |
 | Support paste + PDF/Word/Excel/PPT via best-effort text extraction (no heavy OCR) | Assignment §11 permits "extracted text"; broad format coverage without over-investing in parsing | — Pending |
-| Grounding validated in code, not by the model | Hallucination control is the headline reliability requirement; LLM self-attestation is untrustworthy | — Pending |
+| Grounding validated in code, not by the model | Hallucination control is the headline reliability requirement; LLM self-attestation is untrustworthy | Phase 1 — primitive landed: `Field[T]` absence envelope enforces all 5 grounding states (present/missing/unclear/conflicting/unsupported) via model_validator at the schema boundary; present/unclear/conflicting facts rejected without evidence (PLAT-01) |
 
 ## Evolution
 
@@ -114,4 +114,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-06-27 after initialization*
+*Last updated: 2026-06-27 after Phase 1 (foundation)*
