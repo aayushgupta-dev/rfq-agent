@@ -11,9 +11,9 @@ Tests cover:
 The LIVE proof (verify_access exits 0 with a real key) runs in the verification
 step of Task 1, not in this unit suite.
 """
+
 from __future__ import annotations
 
-import os
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -27,7 +27,8 @@ class TestGetLlm:
         monkeypatch.setenv("MODEL_REASONING", "gpt-5.4")
         monkeypatch.setenv("MODEL_CHEAP", "gpt-5.4-mini")
 
-        with patch("langchain.chat_models.init_chat_model") as mock_init:
+        # Patch at the factory module level (where init_chat_model is already imported).
+        with patch("llm.factory.init_chat_model") as mock_init:
             mock_model = MagicMock()
             mock_init.return_value = mock_model
 
@@ -43,7 +44,7 @@ class TestGetLlm:
         monkeypatch.setenv("MODEL_REASONING", "gpt-5.4")
         monkeypatch.setenv("MODEL_CHEAP", "gpt-5.4-mini")
 
-        with patch("langchain.chat_models.init_chat_model") as mock_init:
+        with patch("llm.factory.init_chat_model") as mock_init:
             mock_model = MagicMock()
             mock_init.return_value = mock_model
 
@@ -117,9 +118,7 @@ class TestVerifyAccess:
 
         assert mock_model.invoke.call_count == 2  # one call per tier
 
-    def test_verify_access_raises_on_access_denied(
-        self, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
+    def test_verify_access_raises_on_access_denied(self, monkeypatch: pytest.MonkeyPatch) -> None:
         """verify_access() must raise RuntimeError naming the tier + model id on access failure."""
         monkeypatch.setenv("MODEL_REASONING", "gpt-5.4")
         monkeypatch.setenv("MODEL_CHEAP", "gpt-5.4-mini")
@@ -135,9 +134,7 @@ class TestVerifyAccess:
             with pytest.raises(RuntimeError, match="No access to reasoning model"):
                 verify_access()
 
-    def test_verify_access_error_names_model_id(
-        self, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
+    def test_verify_access_error_names_model_id(self, monkeypatch: pytest.MonkeyPatch) -> None:
         """The RuntimeError from verify_access must include the model id (not just tier)."""
         monkeypatch.setenv("MODEL_REASONING", "gpt-5.4")
         monkeypatch.setenv("MODEL_CHEAP", "gpt-5.4-mini")
@@ -154,9 +151,7 @@ class TestVerifyAccess:
 
         assert "sk-" not in str(exc_info.value)  # key must not appear
 
-    def test_verify_access_never_leaks_api_key(
-        self, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
+    def test_verify_access_never_leaks_api_key(self, monkeypatch: pytest.MonkeyPatch) -> None:
         """verify_access RuntimeError must never contain the OPENAI_API_KEY value."""
         monkeypatch.setenv("OPENAI_API_KEY", "sk-super-secret-key-must-not-appear")
         monkeypatch.setenv("MODEL_REASONING", "gpt-5.4")
