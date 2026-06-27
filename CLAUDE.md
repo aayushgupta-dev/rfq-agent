@@ -67,12 +67,18 @@ Hardcoded outputs · static dashboards · generic prompts · unrealistically cle
 - **Explore before implement.** First phase is always exploration: what exists, reuse vs. extend vs. build. Query the codebase knowledge graph first (§13) when one is built; until then use Glob/Grep/Read.
 - **Stop and ask when uncertain.** Ambiguity, a risk to an existing flow, or a decision that belongs to the user → stop, present findings and open questions, then continue.
 - **Think as an architect.** For every non-trivial feature: what's the right abstraction? What are the failure modes (especially hallucination + ungrounded claims)? Recommend the right trade-off for a 5-day prototype — correct and demonstrable, not the most sophisticated.
+- **Delegate to preserve context.** Default to delegating discrete, parallelizable, or context-heavy work to subagents rather than doing it inline — exploration, multi-file search, research, code review, and isolated implementation. Use the right agent for the job: GSD agents/skills for planning/execution/review, and native Claude Code agents (`Explore` for broad read-only search, `Plan`, `general-purpose`, `fork` for context inheritance, etc.) otherwise. Spawn independent agents in parallel in one message. The main thread stays the orchestrator: it keeps the conclusions, not the raw file dumps. Only do work inline when it's trivial or genuinely sequential.
 
 ### Branch setup (per task)
 1. Confirm `main` is checked out and up to date.
 2. Merge conflicts → stop; user resolves manually.
 3. Branch from `main`: `feat/{3-5-word-desc}` or `fix/{3-5-word-desc}` — lowercase, hyphenated.
 4. Keep the branch focused on one coherent change.
+
+### Worktrees (prefer for isolation)
+- **Use git worktrees wherever possible** — especially for parallel plans/phases and for any agent that mutates files. Isolated worktrees prevent concurrent edits from colliding and keep `main` clean.
+- Spawn file-mutating subagents with worktree isolation (`isolation: "worktree"` on the Agent tool, or GSD's worktree-backed execution) so parallel work doesn't conflict; the worktree is auto-cleaned if nothing changed.
+- One coherent change per worktree, mirroring the branch rule above. Merge back to the task branch when the plan is verified.
 
 ---
 
@@ -243,19 +249,24 @@ Two layers, both required: **code-level tests** (the agent runs them) **and func
 - **Web (TypeScript):** vitest from `apps/web/` when there's logic worth covering.
 - **Streaming APIs:** verify SSE with `curl -N <url>`; events are `data: {"type": ..., "payload": ...}`.
 
-### Functional UAT testing (the buyer flow, end-to-end)
-Code-level tests don't prove the *product* works. After meaningful changes, run/walk the full buyer
-journey and confirm behavior against the requirement:
+### Functional UAT testing (the buyer flow, end-to-end via Playwright)
+Code-level tests don't prove the *product* works. **Before handing a phase/plan off to the user, the
+agent drives the full buyer journey end-to-end in a real browser using the Playwright browser tool**
+— don't just assert with curl/unit tests, actually click through the running app:
 - Generate RFQ → input ≥3 messy vendor responses → run extraction → view comparison → view trace.
 - Assert the AI behaviors that win the rubric: missing/unclear/conflicting fields are surfaced (not
   hidden), every shown fact has a visible evidence snippet, non-comparable vendors are flagged as
   such, and **no fabricated** numbers or claims appear.
-- Capture the UAT script + expected outcomes under `docs/qa/` so it's repeatable and demoable.
+- Use Playwright to navigate, fill/upload vendor inputs, wait for SSE-streamed results, read the
+  rendered DOM, and capture screenshots of each screen for the demo/write-up.
+- Capture the UAT script + expected outcomes (and Playwright steps) under `docs/qa/` so it's
+  repeatable and demoable.
 Provide the UAT steps + regression scenarios as the handoff after every change.
 
 ### Completion checklist (before handoff)
 - [ ] Change implemented via the appropriate GSD workflow
 - [ ] Relevant test suite passing (run by the agent)
+- [ ] **Playwright end-to-end pass of the buyer flow on the running app** (not just unit/curl checks)
 - [ ] No hallucination / ungrounded-claim regression introduced
 - [ ] Prompt changes reflected in the Prompt Pack + a trace if behavior changed
 - [ ] UAT handoff: (1) steps to verify end-to-end, (2) regression scenarios for affected flows
