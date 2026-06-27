@@ -19,6 +19,8 @@ derives filenames via persona.replace("-", "_").
 
 from __future__ import annotations
 
+import json
+
 from langchain_core.prompts import ChatPromptTemplate
 
 from llm.factory import get_llm
@@ -183,6 +185,10 @@ FORMAT_LABELS: dict[str, str] = {
     "polished-fluff": "deck_bullets",
 }
 
+assert FIXTURE_FILENAMES.keys() == MESS_SPECS.keys() == FORMAT_LABELS.keys(), (
+    "persona dicts (FIXTURE_FILENAMES, MESS_SPECS, FORMAT_LABELS) must share identical keys"
+)
+
 
 def generate_vendor_response(
     rfq_text: str,
@@ -212,15 +218,17 @@ def generate_vendor_response(
     )
     llm = get_llm("reasoning")
 
-    # Convert MessSpecItem instances to dicts for template interpolation.
-    mess_spec_dicts = [m.model_dump() for m in mess_spec]
+    # Serialize to JSON so the LLM prompt receives valid JSON syntax (WR-04).
+    # str() on a list[dict] produces Python repr (single-quoted keys, True/False) —
+    # json.dumps guarantees double-quoted keys and json-native booleans.
+    mess_spec_json = json.dumps([m.model_dump() for m in mess_spec], indent=2, ensure_ascii=False)
 
     chain = prompt | llm
     result = chain.invoke(
         {
             "rfq_text": rfq_text,
             "persona": persona,
-            "mess_spec": mess_spec_dicts,
+            "mess_spec": mess_spec_json,
         }
     )
     raw_text: str = result.content

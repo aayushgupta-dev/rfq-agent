@@ -24,7 +24,7 @@ from __future__ import annotations
 
 from decimal import Decimal
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, model_validator
 from pydantic import Field as pydantic_Field
 
 from schemas.envelope import Field
@@ -61,6 +61,21 @@ class LineItem(BaseModel):
     deliverables: list[str]
     timeline_weeks: int | None = None
     budget_range_usd: list[int] | None = None
+
+    @model_validator(mode="after")
+    def _validate_budget_range(self) -> "LineItem":
+        if self.budget_range_usd is not None:
+            if len(self.budget_range_usd) != 2:
+                raise ValueError(
+                    f"budget_range_usd must be a 2-element [min, max] list, "
+                    f"got {len(self.budget_range_usd)} elements"
+                )
+            if self.budget_range_usd[0] > self.budget_range_usd[1]:
+                raise ValueError(
+                    f"budget_range_usd[0] must be <= budget_range_usd[1], "
+                    f"got {self.budget_range_usd}"
+                )
+        return self
 
 
 class RFQ(BaseModel):

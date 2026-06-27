@@ -359,6 +359,10 @@ def _walk_and_ground(
                     new_list.append(item)
             updates[field_name] = new_list
 
+        # ponytail: dict-valued Field containers are intentionally NOT traversed yet —
+        # no extraction schema uses dict[str, Field[T]] as of Phase 2; revisit when
+        # Phase 3 finalises ExtractionResult so no grounded field is silently bypassed.
+
     return obj.model_copy(update=updates), report
 
 
