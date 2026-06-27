@@ -45,7 +45,6 @@ _TIER_ENV: dict[str, str] = {
 # A param rejection (HTTP 400 / InvalidRequestError) must NOT be reported as
 # "No access" — that would be a false-negative for the PLAT-03 access check.
 _PARAM_REJECTION_MARKERS = (
-    "400",
     "bad request",
     "invalid request",
     "unknown parameter",
@@ -88,6 +87,11 @@ def _is_param_rejection(exc: Exception) -> bool:
     Used by verify_access to distinguish access-denied from param errors so
     PLAT-03 does not produce false-negatives (Pitfall 5 / A2).
     """
+    status = getattr(exc, "status_code", None) or getattr(
+        getattr(exc, "response", None), "status_code", None
+    )
+    if status == 400:
+        return True
     msg = str(exc).lower()
     return any(marker in msg for marker in _PARAM_REJECTION_MARKERS)
 
