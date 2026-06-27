@@ -113,6 +113,21 @@ class Field(BaseModel, Generic[T]):  # noqa: UP046
         """
         status = self.status
 
+        # values[] is only meaningful for conflicting status — a single present
+        # fact carrying a conflicting-values list is an incoherent state.
+        if status != FlagStatus.conflicting and self.values:
+            raise ValueError(
+                "values[] may only be populated when status == conflicting"
+            )
+
+        # Absence states assert nothing, so they must not carry source evidence —
+        # a missing/unsupported field with a snippet would surface grounding for
+        # something that, by status, is not there (CLAUDE.md §1/§8).
+        if status in (FlagStatus.missing, FlagStatus.unsupported) and self.evidence:
+            raise ValueError(
+                f"{status.value!r} status must not carry evidence — nothing is asserted"
+            )
+
         if status == FlagStatus.conflicting:
             if not self.values:
                 raise ValueError(
@@ -120,6 +135,11 @@ class Field(BaseModel, Generic[T]):  # noqa: UP046
                     "(each contradictory claim must carry its own evidence)"
                 )
             for i, cv in enumerate(self.values):
+                if cv.value is None:
+                    raise ValueError(
+                        f"conflicting values[{i}] must carry a value "
+                        "(a contradiction needs both claims)"
+                    )
                 if not cv.evidence:
                     raise ValueError(
                         f"conflicting values[{i}] has no evidence — "

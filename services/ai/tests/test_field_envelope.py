@@ -258,6 +258,53 @@ def test_field_conflicting_all_cvs_have_evidence_passes() -> None:
 
 
 # ---------------------------------------------------------------------------
+# WR-03: values[] only meaningful for conflicting status
+# ---------------------------------------------------------------------------
+
+
+def test_field_present_with_values_raises() -> None:
+    """A present fact carrying a conflicting-values list is incoherent (WR-03)."""
+    ev = Evidence(snippet="x", char_start=0, char_end=1, source_id="doc-1")
+    cv = ConflictingValue[str](value="y", evidence=[ev])
+    with pytest.raises(ValidationError):
+        Field[str](status=FlagStatus.present, value="x", evidence=[ev], values=[cv])
+
+
+# ---------------------------------------------------------------------------
+# WR-03: absence states must not carry evidence
+# ---------------------------------------------------------------------------
+
+
+def test_field_missing_with_evidence_raises() -> None:
+    """missing carrying source evidence is incoherent — nothing is asserted (WR-03)."""
+    ev = Evidence(snippet="x", char_start=0, char_end=1, source_id="doc-1")
+    with pytest.raises(ValidationError):
+        Field[str](status=FlagStatus.missing, evidence=[ev])
+
+
+def test_field_unsupported_with_evidence_raises() -> None:
+    """unsupported carrying source evidence is incoherent (WR-03)."""
+    ev = Evidence(snippet="x", char_start=0, char_end=1, source_id="doc-1")
+    with pytest.raises(ValidationError):
+        Field[str](status=FlagStatus.unsupported, evidence=[ev])
+
+
+# ---------------------------------------------------------------------------
+# WR-04: conflicting values must carry a non-None value
+# ---------------------------------------------------------------------------
+
+
+def test_field_conflicting_none_value_raises() -> None:
+    """A ConflictingValue(value=None) asserts no claim — a contradiction needs both (WR-04)."""
+    ev = Evidence(snippet="x", char_start=0, char_end=1, source_id="doc-1")
+    with pytest.raises(ValidationError):
+        Field[str](
+            status=FlagStatus.conflicting,
+            values=[ConflictingValue[str](value=None, evidence=[ev])],
+        )
+
+
+# ---------------------------------------------------------------------------
 # CR-02: Evidence offset sanity validation
 # ---------------------------------------------------------------------------
 
