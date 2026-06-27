@@ -411,7 +411,6 @@ def test_sse_event_taxonomy() -> None:
 # ---------------------------------------------------------------------------
 
 
-@pytest.mark.xfail(reason="Plan 03-04 not yet executed — trace capture not yet run", strict=True)
 def test_traces_committed() -> None:
     """docs/traces/ must contain >=3 JSON trace files with the required structure (D-13..D-15).
 

@@ -76,7 +76,9 @@ For every field with status `present`, `unclear`, or `conflicting`:
    Quote long enough passages to be unambiguous.
 
 3. **Your evidence snippets MUST be copied character-for-character from the vendor text.**
-   Any rephrasing, synonyms, or paraphrasing will cause the evidence to fail verification.
+   Any rephrasing, synonyms, or paraphrasing — including changing word order, substituting
+   near-synonyms, or adding/omitting a word — will cause the evidence to fail automated
+   verification. Copy the passage exactly as it appears, including punctuation and spacing.
 
 4. **Set `source_id`** to the exact value provided in the context header under
    `VENDOR SOURCE ID`. Do not invent or modify it.

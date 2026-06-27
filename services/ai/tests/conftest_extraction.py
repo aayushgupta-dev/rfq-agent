@@ -9,8 +9,6 @@ and inside test bodies without the pytest fixture injection machinery.
 """
 from __future__ import annotations
 
-from decimal import Decimal
-
 from schemas.envelope import Evidence, Field, FlagStatus
 
 _FABRICATED_EVIDENCE = [
@@ -58,5 +56,11 @@ def fabricated_field(value: object = "XYZNOTFOUND_VALUE") -> Field:  # type: ign
 
 
 def fabricated_decimal_field() -> Field:  # type: ignore[type-arg]
-    """Convenience wrapper: fabricated_field for Field[Decimal] attributes."""
-    return fabricated_field(Decimal("0"))
+    """Convenience wrapper: fabricated_field for formerly-Decimal, now Field[str] attributes.
+
+    # ponytail: pricing and total_price were Field[Decimal] in the plan stub but
+    # are Field[str] in the final schema (Plan 03-04: live runs showed models return
+    # range strings, currency prefixes, and conditional text that Decimal rejects).
+    # fabricated_decimal_field kept as an alias so test callsites need no rename.
+    """
+    return fabricated_field("0")

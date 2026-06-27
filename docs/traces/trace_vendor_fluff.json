@@ -1,0 +1,1115 @@
+{
+  "input": {
+    "vendor_name": "polished-fluff",
+    "source_id": "vendor_vendor_fluff",
+    "rfq_line_items": [
+      {
+        "id": "strategy-creative",
+        "name": "Strategy & Creative Development",
+        "description": "Development of GlowBite launch strategy and creative foundation across both consumer and trade audiences. Scope includes brand narrative, target audience segmentation, shopper and parent insight synthesis, brand positioning, messaging architecture, campaign platform, creative route development, and launch communications framework for retail sell-in and consumer activation."
+      },
+      {
+        "id": "tvc-development",
+        "name": "TVC Development",
+        "description": "Creative development of television commercial assets derived from the approved campaign platform. Scope includes concept adaptation for film, scriptwriting, storyboard development, animatic recommendation if required, director shortlist and treatment briefing, and casting brief preparation. This line item excludes physical production and post-production execution."
+      },
+      {
+        "id": "tvc-production",
+        "name": "TVC Production",
+        "description": "Full production and post-production of GlowBite launch film assets following approved scripts and compliance clearance. Scope includes pre-production planning, child and adult talent casting, location sourcing, shoot execution, edit, motion graphics, supers, colour grade, audio mix, legal text integration, and digital cutdowns. All nutritional, efficacy, and implied benefit claims must be substantiated prior to shoot; no health or medical claims may appear without regulatory clearance sign-off."
+      },
+      {
+        "id": "social-organic",
+        "name": "Social Organic Content",
+        "description": "Development of GlowBite organic social presence for launch period across Instagram, TikTok, and YouTube Shorts. Scope includes channel role definition, content planning, short-form asset creation, copywriting, posting guidance, community management playbook, and influencer identification brief for nano/micro creators suitable for family and parenting contexts."
+      },
+      {
+        "id": "paid-media-planning",
+        "name": "Paid Media Planning",
+        "description": "Integrated paid media planning for the 12-week launch window spanning TV, digital, and OOH. Scope includes budget allocation by channel, audience strategy, market weighting, timing and phasing, media rationale, KPI framework, reach/frequency modelling, and TV GRP target planning. The agency must define assumptions clearly and separate strategy/planning fees from media investment."
+      },
+      {
+        "id": "paid-media-buying",
+        "name": "Paid Media Buying",
+        "description": "Execution of the approved paid media plan, including buying, trafficking, optimisation, reconciliation, and reporting. Agency will manage media spend on behalf of Luminos and must pass through all media owner invoices with full transparency. Agency must disclose all rebates, incentives, and commercial arrangements with media owners. Reporting must include CPL, CTR, viewability, and brand-safety incidents. Any digital placements involving audiences under 13 must be designed and trafficked in a COPPA-compliant manner."
+      },
+      {
+        "id": "kids-compliance",
+        "name": "Kids Advertising & Claims Compliance",
+        "description": "Independent or embedded compliance review of all campaign assets and targeting practices relating to children ages 4-12. Scope includes pre-production review, substantiation review for nutritional and product benefit claims, digital privacy controls for under-13 audiences, review against COPPA requirements in the US, CAP/BCAP Code considerations for any UK-facing media, and CARU-aligned guidance for child-directed creative. Written sign-off is mandatory before any asset proceeds to production or trafficking."
+      },
+      {
+        "id": "launch-management",
+        "name": "Launch Program Management",
+        "description": "Central project management office for the 18-month GlowBite launch program, coordinating Luminos stakeholders and appointed agencies across strategy, production, media, compliance, and reporting workstreams. Scope includes workback planning, governance, dependency tracking, risk management, decision logging, weekly and monthly reporting, and launch-readiness control through the first campaign phase."
+      }
+    ],
+    "raw_text_preview": "**Apex Strategy Group**  \n**GlowBite Go-to-Market Marketing Services Proposal**  \n**Prepared for Luminos Consumer Brands**\n\n**Executive Summary**\n\nThank you for the opportunity to respond to the GlowBite 18-month go-to-market marketing services program. We see this as an exciting launch moment for a brand with the potential to build meaningful parent relevance, retail momentum, and cultural salience from day one.\n\nApex Strategy Group proposes an integrated launch partnership spanning **Strategy "
+  },
+  "resolved_prompt": {
+    "id": "extraction",
+    "version": 1,
+    "system_message": "You are a **procurement extraction agent**. Your job is to read one vendor's proposal\nand extract structured facts into the schema described below.\n\nYou operate under a strict **evidence contract**: every extracted fact must be traceable\nto a verbatim quote from the vendor's response. You never invent, infer, or paraphrase.\nIf you cannot find a verbatim passage in the response that supports a field, that field\nis absent — not filled with your best guess.\n\n---\n\n## THE FOUR FLAG STATES\n\nEvery field in the output schema uses one of exactly four status values. Use nothing else.\n\n### present\nYou found a clear, unambiguous statement in the vendor response and you can quote **at\nleast 20 characters and 3 words** of verbatim context. Use this status only when you are\nconfident the vendor stated this, unambiguously, in their response.\n\n### missing\nThe field has no relevant content anywhere in the vendor response. Set `value` to null\nand `evidence` to an empty list `[]`. **Never invent a value.** If the vendor simply\ndid not address this topic, it is `missing`.\n\n### unclear\nThe vendor addressed this topic but the statement is ambiguous, vague, conditional, or\nbundled with other items so that you cannot produce a confident, specific value. Include\nthe verbatim passage as evidence. **Prefer `unclear` over `present` when uncertain.**\nA confident `present` on weak evidence is a worse outcome than an honest `unclear`.\nExamples: \"pricing is competitive and flexible depending on scope\", bundled totals with\nno per-item breakdown, timelines stated as a quarter rather than a week count.\n\n### conflicting\nThe vendor made two or more statements that genuinely contradict each other on the same\nfield. Use the `values[]` list — include one entry per conflicting statement, each with\nits own evidence snippet. Do not pick one and discard the other. Both sides must appear.\n\n**CRITICAL:** You output only one of the four states above. Do not output any other\nstatus value. The division of labor is clean: you assign one of these four states;\nseparate code runs after you return and makes its own decisions about evidence quality.\nKeep these concerns cleanly separated — your job ends at the four states.\n\n---\n\n## EVIDENCE INSTRUCTIONS\n\nFor every field with status `present`, `unclear`, or `conflicting`:\n\n1. **Quote verbatim.** Copy the passage character-for-character from the vendor response.\n   Do NOT paraphrase, summarize, or substitute synonyms. The quoted text must appear\n   word-for-word in the vendor's document.\n\n2. **Minimum length.** The snippet must be **at least 20 characters and at least 3 words**.\n   A snippet shorter than this provides insufficient context and will fail verification.\n   Quote long enough passages to be unambiguous.\n\n3. **Your evidence snippets MUST be copied character-for-character from the vendor text.**\n   Any rephrasing, synonyms, or paraphrasing — including changing word order, substituting\n   near-synonyms, or adding/omitting a word — will cause the evidence to fail automated\n   verification. Copy the passage exactly as it appears, including punctuation and spacing.\n\n4. **Set `source_id`** to the exact value provided in the context header under\n   `VENDOR SOURCE ID`. Do not invent or modify it.\n\n5. **Set `char_start=0` and `char_end=1`** as placeholder values. The system locates the\n   snippet in the source text and recomputes the real character offsets — your offsets\n   are never used.\n\nFor fields with status `missing`: set `evidence` to `[]` and `value` to `null`.\n\n---\n\n## RFQ LINE ITEM EXTRACTION\n\nThe RFQ line items are listed in the context below under `RFQ LINE ITEMS`. For each\nline item you must extract two fields:\n\n- **`pricing`** — what the vendor quoted for this specific service item (dollar amount,\n  rate, or explicit statement about price).\n- **`scope_coverage`** — what the vendor said they would deliver for this item.\n\nApply these rules:\n\n- If the vendor did not address a line item at all, set both `pricing` and\n  `scope_coverage` to `status: \"missing\"`.\n- If the vendor **bundled pricing** across multiple items (e.g. a single total covering\n  several services), set per-item `pricing` to `status: \"unclear\"` and quote the bundle\n  statement as evidence. **Never split a bundled price into per-item amounts** — that\n  would be fabrication. Also set the document-level `pricing_structure` field with the\n  bundle statement.\n- If the vendor stated a price for the item but the statement is vague or conditional\n  (e.g. \"TBD pending budget confirmation\"), use `status: \"unclear\"`.\n\n---\n\n## DOCUMENT-LEVEL FIELDS\n\nExtract these fields at the document level (covering the whole proposal):\n\n- **`scope_summary`** — a brief narrative describing what the vendor is offering overall.\n  If the vendor gave a clear summary statement, quote it. If their scope is only\n  inferable from line items, use `status: \"unclear\"`.\n\n- **`pricing_structure`** — if the vendor stated an overall pricing model, grand total,\n  or bundle statement, quote it here. If no such statement exists, `missing`.\n\n- **`total_price`** — if a specific grand total figure is separable from the proposal,\n  extract it as a decimal number. If the vendor never stated a single total, `missing`.\n\n- **`commercial_terms`** — payment structure, milestone billing, discounts, surcharges,\n  or commercial conditions. Quote verbatim if stated.\n\n- **`timeline`** — the vendor's overall delivery schedule or project timeline narrative.\n\n---\n\n## PER-CLAIM FIELDS\n\nThese fields are lists — each item in the list is one distinct claim with its own\nevidence snippet. Do not aggregate multiple claims into one entry.\n\n- **`compliance_points`** — regulatory compliance statements the vendor made.\n- **`assumptions`** — explicit assumptions the vendor stated their pricing or scope\n  depends on.\n- **`exclusions`** — items or costs the vendor explicitly excluded from their proposal.\n- **`risks`** — risks or caveats the vendor identified.\n\nIf none exist, return an empty list `[]`.\n\n---\n\n## HUMILITY INSTRUCTION\n\nWhen in doubt, prefer `missing` or `unclear` over `present`. A confident `present` on\nweak evidence is worse than an honest `unclear`. The buyer would rather see a flag\nthan a fabricated number.\n\nIf a value seems plausible but you cannot find it word-for-word in the vendor response,\nit is `missing` or `unclear` — not `present`.\n\n---\n\n## OUTPUT FORMAT\n\nRespond with a JSON object conforming exactly to the `ExtractionResult` schema. All\n`Field` values must follow the flag state rules above. Do not add fields not in the\nschema. Do not add explanatory prose outside the JSON object.\n\n---\n\n## FEW-SHOT EXAMPLES\n\n### Example 1 — present\n\nVendor text contains: `\"Total project cost: $250,000 including all deliverables\"`\n\n```json\n{\n  \"pricing_structure\": {\n    \"status\": \"present\",\n    \"value\": \"$250,000 including all deliverables\",\n    \"evidence\": [\n      {\n        \"snippet\": \"Total project cost: $250,000 including all deliverables\",\n        \"source_id\": \"vendor_acme_agency\",\n        \"char_start\": 0,\n        \"char_end\": 1\n      }\n    ]\n  }\n}\n```\n\n### Example 2 — missing\n\nVendor response contains no mention of TVC Production pricing or scope.\n\n```json\n{\n  \"line_items\": [\n    {\n      \"line_item_id\": \"tvc-production\",\n      \"line_item_name\": \"TVC Production\",\n      \"pricing\": {\n        \"status\": \"missing\",\n        \"value\": null,\n        \"evidence\": []\n      },\n      \"scope_coverage\": {\n        \"status\": \"missing\",\n        \"value\": null,\n        \"evidence\": []\n      }\n    }\n  ]\n}\n```\n\n### Example 3 — unclear\n\nVendor text contains: `\"pricing is competitive and flexible depending on scope\"`\n\n```json\n{\n  \"pricing\": {\n    \"status\": \"unclear\",\n    \"value\": \"competitive and flexible depending on scope\",\n    \"evidence\": [\n      {\n        \"snippet\": \"pricing is competitive and flexible depending on scope\",\n        \"source_id\": \"vendor_acme_agency\",\n        \"char_start\": 0,\n        \"char_end\": 1\n      }\n    ]\n  }\n}\n```\n\n### Example 4 — conflicting\n\nVendor states the timeline in two different places with contradictory values.\n\n```json\n{\n  \"timeline\": {\n    \"status\": \"conflicting\",\n    \"values\": [\n      {\n        \"value\": \"6 months from project kick-off\",\n        \"evidence\": [\n          {\n            \"snippet\": \"We anticipate completing the full program within 6 months from project kick-off\",\n            \"source_id\": \"vendor_acme_agency\",\n            \"char_start\": 0,\n            \"char_end\": 1\n          }\n        ]\n      },\n      {\n        \"value\": \"8 to 10 months depending on feedback cycles\",\n        \"evidence\": [\n          {\n            \"snippet\": \"Realistic delivery is 8 to 10 months depending on feedback cycles and client approvals\",\n            \"source_id\": \"vendor_acme_agency\",\n            \"char_start\": 0,\n            \"char_end\": 1\n          }\n        ]\n      }\n    ]\n  }\n}\n```\n\n---\n\n## INPUT FORMAT\n\nThe human turn provides:\n\n1. **Vendor response** — the raw vendor proposal text to extract from.\n2. **RFQ line items (JSON)** — a JSON array of objects with `id`, `name`, and `description`\n   for each line item. Use these as the scaffold for the `line_items` array in your output.\n   The `line_item_id` and `line_item_name` in each `LineItemExtraction` must match the `id`\n   and `name` from this list exactly.\n\nThe **source_id** for all evidence snippets is the vendor's identifier. It is embedded in\nthe vendor response context — use the exact `source_id` value when populating evidence.",
+    "human_message_template": "Vendor source ID (use this exact value for all evidence source_id fields): {source_id}\n\nVendor response:\n{vendor_text}\n\nRFQ line items (JSON):\n{rfq_line_items}"
+  },
+  "raw_model_output": {
+    "vendor_name": "polished-fluff",
+    "scope_summary": {
+      "status": "present",
+      "value": "Apex Strategy Group proposes an integrated launch partnership spanning **Strategy & Creative Development**, **TVC Development**, **TVC Production**, **Social Organic Content**, **Paid Media Planning**, **Paid Media Buying**, **Kids Advertising & Claims Compliance**, and **Launch Program Management**.",
+      "evidence": [
+        {
+          "snippet": "Apex Strategy Group proposes an integrated launch partnership spanning **Strategy & Creative Development**, **TVC Development**, **TVC Production**, **Social Organic Content**, **Paid Media Planning**, **Paid Media Buying**, **Kids Advertising & Claims Compliance**, and **Launch Program Management**.",
+          "char_start": 0,
+          "char_end": 1,
+          "source_id": "vendor_vendor_fluff"
+        }
+      ],
+      "values": null
+    },
+    "line_items": [
+      {
+        "line_item_id": "strategy-creative",
+        "line_item_name": "Strategy & Creative Development",
+        "pricing": {
+          "status": "present",
+          "value": "USD 110,000 – 135,000",
+          "evidence": [
+            {
+              "snippet": "**1. Strategy & Creative Development**  \n**Investment Range:** USD 110,000 – 135,000  \n**Pricing Model:** Project fee",
+              "char_start": 0,
+              "char_end": 1,
+              "source_id": "vendor_vendor_fluff"
+            }
+          ],
+          "values": null
+        },
+        "scope_coverage": {
+          "status": "present",
+          "value": "We will deliver a focused but high-value strategic foundation for GlowBite, bringing together stakeholder alignment, audience segmentation, positioning development, campaign platform creation, and launch messaging principles.",
+          "evidence": [
+            {
+              "snippet": "We will deliver a focused but high-value strategic foundation for GlowBite, bringing together stakeholder alignment, audience segmentation, positioning development, campaign platform creation, and launch messaging principles.",
+              "char_start": 0,
+              "char_end": 1,
+              "source_id": "vendor_vendor_fluff"
+            }
+          ],
+          "values": null
+        }
+      },
+      {
+        "line_item_id": "tvc-development",
+        "line_item_name": "TVC Development",
+        "pricing": {
+          "status": "present",
+          "value": "USD 82,000 – 104,000",
+          "evidence": [
+            {
+              "snippet": "**2. TVC Development**  \n**Investment Range:** USD 82,000 – 104,000  \n**Pricing Model:** Project fee",
+              "char_start": 0,
+              "char_end": 1,
+              "source_id": "vendor_vendor_fluff"
+            }
+          ],
+          "values": null
+        },
+        "scope_coverage": {
+          "status": "present",
+          "value": "We will translate the approved platform into film-ready thinking, balancing emotional resonance, claim sensitivity, and efficient production planning.",
+          "evidence": [
+            {
+              "snippet": "We will translate the approved platform into film-ready thinking, balancing emotional resonance, claim sensitivity, and efficient production planning.",
+              "char_start": 0,
+              "char_end": 1,
+              "source_id": "vendor_vendor_fluff"
+            }
+          ],
+          "values": null
+        }
+      },
+      {
+        "line_item_id": "tvc-production",
+        "line_item_name": "TVC Production",
+        "pricing": {
+          "status": "present",
+          "value": "USD 305,000 – 365,000",
+          "evidence": [
+            {
+              "snippet": "**3. TVC Production**  \n**Investment Range:** USD 305,000 – 365,000  \n**Pricing Model:** Hybrid managed service + third-party pass-through",
+              "char_start": 0,
+              "char_end": 1,
+              "source_id": "vendor_vendor_fluff"
+            }
+          ],
+          "values": null
+        },
+        "scope_coverage": {
+          "status": "present",
+          "value": "Included agency/managed scope:\n\n- Production management and oversight\n- Pre-production coordination\n- Casting supervision\n- Location and shoot management\n- Edit supervision\n- Post-production oversight\n- Master delivery management\n- Digital cutdown adaptation stewardship",
+          "evidence": [
+            {
+              "snippet": "Included agency/managed scope:\n\n- Production management and oversight\n- Pre-production coordination\n- Casting supervision\n- Location and shoot management\n- Edit supervision\n- Post-production oversight\n- Master delivery management\n- Digital cutdown adaptation stewardship",
+              "char_start": 0,
+              "char_end": 1,
+              "source_id": "vendor_vendor_fluff"
+            }
+          ],
+          "values": null
+        }
+      },
+      {
+        "line_item_id": "social-organic",
+        "line_item_name": "Social Organic Content",
+        "pricing": {
+          "status": "present",
+          "value": "USD 92,000 – 126,000",
+          "evidence": [
+            {
+              "snippet": "**4. Social Organic Content**  \n**Investment Range:** USD 92,000 – 126,000  \n**Pricing Model:** Project fee",
+              "char_start": 0,
+              "char_end": 1,
+              "source_id": "vendor_vendor_fluff"
+            }
+          ],
+          "values": null
+        },
+        "scope_coverage": {
+          "status": "present",
+          "value": "Scope includes:\n\n- Platform role definition for Instagram, TikTok, and YouTube Shorts\n- 12-week editorial planning\n- 3-month content bank with launch-phase assets\n- Captioning and CTA guidance\n- Template system for reactive/community content\n- Community management playbook\n- Influencer identification brief\n- Monthly performance summaries\n- Editable source file handover",
+          "evidence": [
+            {
+              "snippet": "Scope includes:\n\n- Platform role definition for Instagram, TikTok, and YouTube Shorts\n- 12-week editorial planning\n- 3-month content bank with launch-phase assets\n- Captioning and CTA guidance\n- Template system for reactive/community content\n- Community management playbook\n- Influencer identification brief\n- Monthly performance summaries\n- Editable source file handover",
+              "char_start": 0,
+              "char_end": 1,
+              "source_id": "vendor_vendor_fluff"
+            }
+          ],
+          "values": null
+        }
+      },
+      {
+        "line_item_id": "paid-media-planning",
+        "line_item_name": "Paid Media Planning",
+        "pricing": {
+          "status": "present",
+          "value": "USD 68,000 – 90,000",
+          "evidence": [
+            {
+              "snippet": "**5. Paid Media Planning**  \n**Investment Range:** USD 68,000 – 90,000  \n**Pricing Model:** Project fee",
+              "char_start": 0,
+              "char_end": 1,
+              "source_id": "vendor_vendor_fluff"
+            }
+          ],
+          "values": null
+        },
+        "scope_coverage": {
+          "status": "present",
+          "value": "Planning outputs include:\n\n- Integrated 12-week media plan across TV, digital video, paid social, and search where applicable\n- Channel-mix rationale linked to audience priorities and launch objectives\n- Reach and frequency projections with methodology notes\n- TV schedule recommendation and flighting rationale\n- Monthly pacing and investment phasing\n- Parent/caregiver targeting framework and audience safeguards\n- KPI and measurement framework\n- One revised version following consolidated Luminos feedback\n- Final deck and budget workbook",
+          "evidence": [
+            {
+              "snippet": "Planning outputs include:\n\n- Integrated 12-week media plan across TV, digital video, paid social, and search where applicable\n- Channel-mix rationale linked to audience priorities and launch objectives\n- Reach and frequency projections with methodology notes\n- TV schedule recommendation and flighting rationale\n- Monthly pacing and investment phasing\n- Parent/caregiver targeting framework and audience safeguards\n- KPI and measurement framework\n- One revised version following consolidated Luminos feedback\n- Final deck and budget workbook",
+              "char_start": 0,
+              "char_end": 1,
+              "source_id": "vendor_vendor_fluff"
+            }
+          ],
+          "values": null
+        }
+      },
+      {
+        "line_item_id": "paid-media-buying",
+        "line_item_name": "Paid Media Buying",
+        "pricing": {
+          "status": "present",
+          "value": "USD 54,000 – 78,000 agency fees",
+          "evidence": [
+            {
+              "snippet": "**6. Paid Media Buying**  \n**Investment Range:** USD 54,000 – 78,000 agency fees  \n**Media Investment:** pass-through at cost, aligned to approved budget  \n**Pricing Model:** Service fee + pass-through media",
+              "char_start": 0,
+              "char_end": 1,
+              "source_id": "vendor_vendor_fluff"
+            }
+          ],
+          "values": null
+        },
+        "scope_coverage": {
+          "status": "present",
+          "value": "We will execute approved buying across TV and digital channels with full trafficking, optimisation, reporting, and reconciliation support.",
+          "evidence": [
+            {
+              "snippet": "We will execute approved buying across TV and digital channels with full trafficking, optimisation, reporting, and reconciliation support.",
+              "char_start": 0,
+              "char_end": 1,
+              "source_id": "vendor_vendor_fluff"
+            }
+          ],
+          "values": null
+        }
+      },
+      {
+        "line_item_id": "kids-compliance",
+        "line_item_name": "Kids Advertising & Claims Compliance",
+        "pricing": {
+          "status": "present",
+          "value": "USD 56,000 – 84,000",
+          "evidence": [
+            {
+              "snippet": "**7. Kids Advertising & Claims Compliance**  \n**Investment Range:** USD 56,000 – 84,000  \n**Pricing Model:** Project fee / advisory retainer hybrid",
+              "char_start": 0,
+              "char_end": 1,
+              "source_id": "vendor_vendor_fluff"
+            }
+          ],
+          "values": null
+        },
+        "scope_coverage": {
+          "status": "present",
+          "value": "Our role here would be to support confidence across script review, social asset review, claim sensitivity, and launch governance documentation, ensuring the programme is managed with care and responsibility throughout the campaign lifecycle.",
+          "evidence": [
+            {
+              "snippet": "Our role here would be to support confidence across script review, social asset review, claim sensitivity, and launch governance documentation, ensuring the programme is managed with care and responsibility throughout the campaign lifecycle.",
+              "char_start": 0,
+              "char_end": 1,
+              "source_id": "vendor_vendor_fluff"
+            }
+          ],
+          "values": null
+        }
+      },
+      {
+        "line_item_id": "launch-management",
+        "line_item_name": "Launch Program Management",
+        "pricing": {
+          "status": "present",
+          "value": "USD 82,000 – 116,000",
+          "evidence": [
+            {
+              "snippet": "**8. Launch Program Management**  \n**Investment Range:** USD 82,000 – 116,000  \n**Pricing Model:** Retained programme management fee",
+              "char_start": 0,
+              "char_end": 1,
+              "source_id": "vendor_vendor_fluff"
+            }
+          ],
+          "values": null
+        },
+        "scope_coverage": {
+          "status": "present",
+          "value": "We would provide a central PMO layer to coordinate workstreams, stakeholder decisions, dependencies, reporting, and launch readiness.",
+          "evidence": [
+            {
+              "snippet": "We would provide a central PMO layer to coordinate workstreams, stakeholder decisions, dependencies, reporting, and launch readiness.",
+              "char_start": 0,
+              "char_end": 1,
+              "source_id": "vendor_vendor_fluff"
+            }
+          ],
+          "values": null
+        }
+      }
+    ],
+    "pricing_structure": {
+      "status": "conflicting",
+      "value": null,
+      "evidence": [],
+      "values": [
+        {
+          "value": "Indicative total programme investment: USD 1.46M – 1.60M plus applicable taxes and final third-party selections",
+          "evidence": [
+            {
+              "snippet": "> [CALLOUT]: **Indicative total programme investment: USD 1.46M – 1.60M plus applicable taxes and final third-party selections**",
+              "char_start": 0,
+              "char_end": 1,
+              "source_id": "vendor_vendor_fluff"
+            }
+          ]
+        },
+        {
+          "value": "Our pricing approach is a hybrid model combining project fees for defined deliverables, managed service fees for production and media operations, and pass-through third-party costs where applicable.",
+          "evidence": [
+            {
+              "snippet": "Our pricing approach is a hybrid model combining project fees for defined deliverables, managed service fees for production and media operations, and pass-through third-party costs where applicable.",
+              "char_start": 0,
+              "char_end": 1,
+              "source_id": "vendor_vendor_fluff"
+            }
+          ]
+        },
+        {
+          "value": "Total Service + Managed Investment Range: USD 849,000 – 1,098,000 excluding media spend, plus applicable taxes",
+          "evidence": [
+            {
+              "snippet": "**Total Service + Managed Investment Range:**  \n**USD 849,000 – 1,098,000** excluding media spend, plus applicable taxes",
+              "char_start": 0,
+              "char_end": 1,
+              "source_id": "vendor_vendor_fluff"
+            }
+          ]
+        },
+        {
+          "value": "Projected Media Investment Envelope: USD 540,000 – 620,000 depending on final channel weighting, market timing, inventory conditions, and audience delivery strategy",
+          "evidence": [
+            {
+              "snippet": "**Projected Media Investment Envelope:**  \n**USD 540,000 – 620,000** depending on final channel weighting, market timing, inventory conditions, and audience delivery strategy",
+              "char_start": 0,
+              "char_end": 1,
+              "source_id": "vendor_vendor_fluff"
+            }
+          ]
+        }
+      ]
+    },
+    "total_price": {
+      "status": "conflicting",
+      "value": null,
+      "evidence": [],
+      "values": [
+        {
+          "value": "USD 1.46M – 1.60M",
+          "evidence": [
+            {
+              "snippet": "> [CALLOUT]: **Indicative total programme investment: USD 1.46M – 1.60M plus applicable taxes and final third-party selections**",
+              "char_start": 0,
+              "char_end": 1,
+              "source_id": "vendor_vendor_fluff"
+            }
+          ]
+        },
+        {
+          "value": "USD 1.39M – 1.72M",
+          "evidence": [
+            {
+              "snippet": "**Estimated Total Programme Envelope:**  \n**USD 1.39M – 1.72M**",
+              "char_start": 0,
+              "char_end": 1,
+              "source_id": "vendor_vendor_fluff"
+            }
+          ]
+        }
+      ]
+    },
+    "commercial_terms": {
+      "status": "present",
+      "value": "We are willing to work on the proposed **30% / 30% / 40%** payment structure, subject to milestone alignment by line item during contracting.",
+      "evidence": [
+        {
+          "snippet": "We are willing to work on the proposed **30% / 30% / 40%** payment structure, subject to milestone alignment by line item during contracting.",
+          "char_start": 0,
+          "char_end": 1,
+          "source_id": "vendor_vendor_fluff"
+        }
+      ],
+      "values": null
+    },
+    "timeline": {
+      "status": "conflicting",
+      "value": null,
+      "evidence": [],
+      "values": [
+        {
+          "value": "Our proposed program duration for launch management is 6 weeks post-launch",
+          "evidence": [
+            {
+              "snippet": "Our proposed program duration for launch management is **6 weeks post-launch**, ensuring the business is supported not only through go-live, but through early in-market learning and optimisation.",
+              "char_start": 0,
+              "char_end": 1,
+              "source_id": "vendor_vendor_fluff"
+            }
+          ]
+        },
+        {
+          "value": "TVC Production: approximately 14 weeks from greenlight through delivery, subject to casting, location, and approvals",
+          "evidence": [
+            {
+              "snippet": "- **TVC Production:** approximately **14 weeks** from greenlight through delivery, subject to casting, location, and approvals",
+              "char_start": 0,
+              "char_end": 1,
+              "source_id": "vendor_vendor_fluff"
+            }
+          ]
+        },
+        {
+          "value": "Launch Program Management: 18 weeks from kick-off",
+          "evidence": [
+            {
+              "snippet": "- **Launch Program Management:** **18 weeks from kick-off**",
+              "char_start": 0,
+              "char_end": 1,
+              "source_id": "vendor_vendor_fluff"
+            }
+          ]
+        },
+        {
+          "value": "We anticipate an 8 week approach from production greenlight through final master readiness, subject to final approval cadence.",
+          "evidence": [
+            {
+              "snippet": "We anticipate an **8 week** approach from production greenlight through final master readiness, subject to final approval cadence.",
+              "char_start": 0,
+              "char_end": 1,
+              "source_id": "vendor_vendor_fluff"
+            }
+          ]
+        }
+      ]
+    },
+    "compliance_points": [
+      {
+        "status": "present",
+        "value": "We are fully aligned with all relevant regulations governing children's advertising and follow industry best practices across all jurisdictions.",
+        "evidence": [
+          {
+            "snippet": "We are fully aligned with all relevant regulations governing children's advertising and follow industry best practices across all jurisdictions.",
+            "char_start": 0,
+            "char_end": 1,
+            "source_id": "vendor_vendor_fluff"
+          }
+        ],
+        "values": null
+      }
+    ],
+    "assumptions": [
+      {
+        "status": "present",
+        "value": "Up to two rounds of strategic refinement",
+        "evidence": [
+          {
+            "snippet": "Assumptions:\n\n- Up to two rounds of strategic refinement",
+            "char_start": 0,
+            "char_end": 1,
+            "source_id": "vendor_vendor_fluff"
+          }
+        ],
+        "values": null
+      },
+      {
+        "status": "present",
+        "value": "One consolidated feedback round per major deliverable",
+        "evidence": [
+          {
+            "snippet": "- One consolidated feedback round per major deliverable",
+            "char_start": 0,
+            "char_end": 1,
+            "source_id": "vendor_vendor_fluff"
+          }
+        ],
+        "values": null
+      },
+      {
+        "status": "present",
+        "value": "Inputs supplied by Luminos in a timely manner",
+        "evidence": [
+          {
+            "snippet": "- Inputs supplied by Luminos in a timely manner",
+            "char_start": 0,
+            "char_end": 1,
+            "source_id": "vendor_vendor_fluff"
+          }
+        ],
+        "values": null
+      },
+      {
+        "status": "present",
+        "value": "Regulatory language to be provided or validated during content refinement",
+        "evidence": [
+          {
+            "snippet": "- Regulatory language to be provided or validated during content refinement",
+            "char_start": 0,
+            "char_end": 1,
+            "source_id": "vendor_vendor_fluff"
+          }
+        ],
+        "values": null
+      }
+    ],
+    "exclusions": [
+      {
+        "status": "present",
+        "value": "Excludes final media owner spend fluctuations, location-specific production variances, extended talent usage outside agreed term/territory, extraordinary rework following scope change, and any unplanned localisation waves.",
+        "evidence": [
+          {
+            "snippet": "Excludes final media owner spend fluctuations, location-specific production variances, extended talent usage outside agreed term/territory, extraordinary rework following scope change, and any unplanned localisation waves.",
+            "char_start": 0,
+            "char_end": 1,
+            "source_id": "vendor_vendor_fluff"
+          }
+        ],
+        "values": null
+      },
+      {
+        "status": "present",
+        "value": "Out of scope triggers include major repositioning after route selection, net-new research commissioning, and incremental audience modules beyond agreed stakeholder groups.",
+        "evidence": [
+          {
+            "snippet": "Out of scope triggers include major repositioning after route selection, net-new research commissioning, and incremental audience modules beyond agreed stakeholder groups.",
+            "char_start": 0,
+            "char_end": 1,
+            "source_id": "vendor_vendor_fluff"
+          }
+        ],
+        "values": null
+      }
+    ],
+    "risks": [
+      {
+        "status": "present",
+        "value": "Incremental fees may apply where there are substantial scope shifts, additional deliverable versions, extended approval cycles requiring rework, or material creative redirection after sign-off gates.",
+        "evidence": [
+          {
+            "snippet": "Incremental fees may apply where there are substantial scope shifts, additional deliverable versions, extended approval cycles requiring rework, or material creative redirection after sign-off gates.",
+            "char_start": 0,
+            "char_end": 1,
+            "source_id": "vendor_vendor_fluff"
+          }
+        ],
+        "values": null
+      },
+      {
+        "status": "present",
+        "value": "Where milestones come under pressure, our recovery approach centres on rapid impact assessment, critical-path reset, prioritisation of must-have outputs, and compressed review sequencing where appropriate.",
+        "evidence": [
+          {
+            "snippet": "Where milestones come under pressure, our recovery approach centres on rapid impact assessment, critical-path reset, prioritisation of must-have outputs, and compressed review sequencing where appropriate.",
+            "char_start": 0,
+            "char_end": 1,
+            "source_id": "vendor_vendor_fluff"
+          }
+        ],
+        "values": null
+      }
+    ]
+  },
+  "grounding_step": {
+    "downgrade_report": {
+      "entries": []
+    },
+    "fields_downgraded": 0
+  },
+  "final_result": {
+    "vendor_name": "polished-fluff",
+    "scope_summary": {
+      "status": "present",
+      "value": "Apex Strategy Group proposes an integrated launch partnership spanning **Strategy & Creative Development**, **TVC Development**, **TVC Production**, **Social Organic Content**, **Paid Media Planning**, **Paid Media Buying**, **Kids Advertising & Claims Compliance**, and **Launch Program Management**.",
+      "evidence": [
+        {
+          "snippet": "Apex Strategy Group proposes an integrated launch partnership spanning **Strategy & Creative Development**, **TVC Development**, **TVC Production**, **Social Organic Content**, **Paid Media Planning**, **Paid Media Buying**, **Kids Advertising & Claims Compliance**, and **Launch Program Management**.",
+          "char_start": 418,
+          "char_end": 719,
+          "source_id": "vendor_vendor_fluff"
+        }
+      ],
+      "values": null
+    },
+    "line_items": [
+      {
+        "line_item_id": "strategy-creative",
+        "line_item_name": "Strategy & Creative Development",
+        "pricing": {
+          "status": "present",
+          "value": "USD 110,000 – 135,000",
+          "evidence": [
+            {
+              "snippet": "**1. Strategy & Creative Development**  \n**Investment Range:** USD 110,000 – 135,000  \n**Pricing Model:** Project fee",
+              "char_start": 3557,
+              "char_end": 3674,
+              "source_id": "vendor_vendor_fluff"
+            }
+          ],
+          "values": null
+        },
+        "scope_coverage": {
+          "status": "present",
+          "value": "We will deliver a focused but high-value strategic foundation for GlowBite, bringing together stakeholder alignment, audience segmentation, positioning development, campaign platform creation, and launch messaging principles.",
+          "evidence": [
+            {
+              "snippet": "We will deliver a focused but high-value strategic foundation for GlowBite, bringing together stakeholder alignment, audience segmentation, positioning development, campaign platform creation, and launch messaging principles.",
+              "char_start": 3676,
+              "char_end": 3901,
+              "source_id": "vendor_vendor_fluff"
+            }
+          ],
+          "values": null
+        }
+      },
+      {
+        "line_item_id": "tvc-development",
+        "line_item_name": "TVC Development",
+        "pricing": {
+          "status": "present",
+          "value": "USD 82,000 – 104,000",
+          "evidence": [
+            {
+              "snippet": "**2. TVC Development**  \n**Investment Range:** USD 82,000 – 104,000  \n**Pricing Model:** Project fee",
+              "char_start": 4828,
+              "char_end": 4928,
+              "source_id": "vendor_vendor_fluff"
+            }
+          ],
+          "values": null
+        },
+        "scope_coverage": {
+          "status": "present",
+          "value": "We will translate the approved platform into film-ready thinking, balancing emotional resonance, claim sensitivity, and efficient production planning.",
+          "evidence": [
+            {
+              "snippet": "We will translate the approved platform into film-ready thinking, balancing emotional resonance, claim sensitivity, and efficient production planning.",
+              "char_start": 4930,
+              "char_end": 5080,
+              "source_id": "vendor_vendor_fluff"
+            }
+          ],
+          "values": null
+        }
+      },
+      {
+        "line_item_id": "tvc-production",
+        "line_item_name": "TVC Production",
+        "pricing": {
+          "status": "present",
+          "value": "USD 305,000 – 365,000",
+          "evidence": [
+            {
+              "snippet": "**3. TVC Production**  \n**Investment Range:** USD 305,000 – 365,000  \n**Pricing Model:** Hybrid managed service + third-party pass-through",
+              "char_start": 5574,
+              "char_end": 5712,
+              "source_id": "vendor_vendor_fluff"
+            }
+          ],
+          "values": null
+        },
+        "scope_coverage": {
+          "status": "present",
+          "value": "Included agency/managed scope:\n\n- Production management and oversight\n- Pre-production coordination\n- Casting supervision\n- Location and shoot management\n- Edit supervision\n- Post-production oversight\n- Master delivery management\n- Digital cutdown adaptation stewardship",
+          "evidence": [
+            {
+              "snippet": "Included agency/managed scope:\n\n- Production management and oversight\n- Pre-production coordination\n- Casting supervision\n- Location and shoot management\n- Edit supervision\n- Post-production oversight\n- Master delivery management\n- Digital cutdown adaptation stewardship",
+              "char_start": 5971,
+              "char_end": 6241,
+              "source_id": "vendor_vendor_fluff"
+            }
+          ],
+          "values": null
+        }
+      },
+      {
+        "line_item_id": "social-organic",
+        "line_item_name": "Social Organic Content",
+        "pricing": {
+          "status": "present",
+          "value": "USD 92,000 – 126,000",
+          "evidence": [
+            {
+              "snippet": "**4. Social Organic Content**  \n**Investment Range:** USD 92,000 – 126,000  \n**Pricing Model:** Project fee",
+              "char_start": 6713,
+              "char_end": 6820,
+              "source_id": "vendor_vendor_fluff"
+            }
+          ],
+          "values": null
+        },
+        "scope_coverage": {
+          "status": "present",
+          "value": "Scope includes:\n\n- Platform role definition for Instagram, TikTok, and YouTube Shorts\n- 12-week editorial planning\n- 3-month content bank with launch-phase assets\n- Captioning and CTA guidance\n- Template system for reactive/community content\n- Community management playbook\n- Influencer identification brief\n- Monthly performance summaries\n- Editable source file handover",
+          "evidence": [
+            {
+              "snippet": "Scope includes:\n\n- Platform role definition for Instagram, TikTok, and YouTube Shorts\n- 12-week editorial planning\n- 3-month content bank with launch-phase assets\n- Captioning and CTA guidance\n- Template system for reactive/community content\n- Community management playbook\n- Influencer identification brief\n- Monthly performance summaries\n- Editable source file handover",
+              "char_start": 7034,
+              "char_end": 7405,
+              "source_id": "vendor_vendor_fluff"
+            }
+          ],
+          "values": null
+        }
+      },
+      {
+        "line_item_id": "paid-media-planning",
+        "line_item_name": "Paid Media Planning",
+        "pricing": {
+          "status": "present",
+          "value": "USD 68,000 – 90,000",
+          "evidence": [
+            {
+              "snippet": "**5. Paid Media Planning**  \n**Investment Range:** USD 68,000 – 90,000  \n**Pricing Model:** Project fee",
+              "char_start": 7574,
+              "char_end": 7677,
+              "source_id": "vendor_vendor_fluff"
+            }
+          ],
+          "values": null
+        },
+        "scope_coverage": {
+          "status": "present",
+          "value": "Planning outputs include:\n\n- Integrated 12-week media plan across TV, digital video, paid social, and search where applicable\n- Channel-mix rationale linked to audience priorities and launch objectives\n- Reach and frequency projections with methodology notes\n- TV schedule recommendation and flighting rationale\n- Monthly pacing and investment phasing\n- Parent/caregiver targeting framework and audience safeguards\n- KPI and measurement framework\n- One revised version following consolidated Luminos feedback\n- Final deck and budget workbook",
+          "evidence": [
+            {
+              "snippet": "Planning outputs include:\n\n- Integrated 12-week media plan across TV, digital video, paid social, and search where applicable\n- Channel-mix rationale linked to audience priorities and launch objectives\n- Reach and frequency projections with methodology notes\n- TV schedule recommendation and flighting rationale\n- Monthly pacing and investment phasing\n- Parent/caregiver targeting framework and audience safeguards\n- KPI and measurement framework\n- One revised version following consolidated Luminos feedback\n- Final deck and budget workbook",
+              "char_start": 7870,
+              "char_end": 8411,
+              "source_id": "vendor_vendor_fluff"
+            }
+          ],
+          "values": null
+        }
+      },
+      {
+        "line_item_id": "paid-media-buying",
+        "line_item_name": "Paid Media Buying",
+        "pricing": {
+          "status": "present",
+          "value": "USD 54,000 – 78,000 agency fees",
+          "evidence": [
+            {
+              "snippet": "**6. Paid Media Buying**  \n**Investment Range:** USD 54,000 – 78,000 agency fees  \n**Media Investment:** pass-through at cost, aligned to approved budget  \n**Pricing Model:** Service fee + pass-through media",
+              "char_start": 8671,
+              "char_end": 8878,
+              "source_id": "vendor_vendor_fluff"
+            }
+          ],
+          "values": null
+        },
+        "scope_coverage": {
+          "status": "present",
+          "value": "We will execute approved buying across TV and digital channels with full trafficking, optimisation, reporting, and reconciliation support.",
+          "evidence": [
+            {
+              "snippet": "We will execute approved buying across TV and digital channels with full trafficking, optimisation, reporting, and reconciliation support.",
+              "char_start": 8880,
+              "char_end": 9018,
+              "source_id": "vendor_vendor_fluff"
+            }
+          ],
+          "values": null
+        }
+      },
+      {
+        "line_item_id": "kids-compliance",
+        "line_item_name": "Kids Advertising & Claims Compliance",
+        "pricing": {
+          "status": "present",
+          "value": "USD 56,000 – 84,000",
+          "evidence": [
+            {
+              "snippet": "**7. Kids Advertising & Claims Compliance**  \n**Investment Range:** USD 56,000 – 84,000  \n**Pricing Model:** Project fee / advisory retainer hybrid",
+              "char_start": 9587,
+              "char_end": 9734,
+              "source_id": "vendor_vendor_fluff"
+            }
+          ],
+          "values": null
+        },
+        "scope_coverage": {
+          "status": "present",
+          "value": "Our role here would be to support confidence across script review, social asset review, claim sensitivity, and launch governance documentation, ensuring the programme is managed with care and responsibility throughout the campaign lifecycle.",
+          "evidence": [
+            {
+              "snippet": "Our role here would be to support confidence across script review, social asset review, claim sensitivity, and launch governance documentation, ensuring the programme is managed with care and responsibility throughout the campaign lifecycle.",
+              "char_start": 9882,
+              "char_end": 10123,
+              "source_id": "vendor_vendor_fluff"
+            }
+          ],
+          "values": null
+        }
+      },
+      {
+        "line_item_id": "launch-management",
+        "line_item_name": "Launch Program Management",
+        "pricing": {
+          "status": "present",
+          "value": "USD 82,000 – 116,000",
+          "evidence": [
+            {
+              "snippet": "**8. Launch Program Management**  \n**Investment Range:** USD 82,000 – 116,000  \n**Pricing Model:** Retained programme management fee",
+              "char_start": 10125,
+              "char_end": 10257,
+              "source_id": "vendor_vendor_fluff"
+            }
+          ],
+          "values": null
+        },
+        "scope_coverage": {
+          "status": "present",
+          "value": "We would provide a central PMO layer to coordinate workstreams, stakeholder decisions, dependencies, reporting, and launch readiness.",
+          "evidence": [
+            {
+              "snippet": "We would provide a central PMO layer to coordinate workstreams, stakeholder decisions, dependencies, reporting, and launch readiness.",
+              "char_start": 10259,
+              "char_end": 10392,
+              "source_id": "vendor_vendor_fluff"
+            }
+          ],
+          "values": null
+        }
+      }
+    ],
+    "pricing_structure": {
+      "status": "conflicting",
+      "value": null,
+      "evidence": [],
+      "values": [
+        {
+          "value": "Indicative total programme investment: USD 1.46M – 1.60M plus applicable taxes and final third-party selections",
+          "evidence": [
+            {
+              "snippet": "> [CALLOUT]: **Indicative total programme investment: USD 1.46M – 1.60M plus applicable taxes and final third-party selections**",
+              "char_start": 2013,
+              "char_end": 2141,
+              "source_id": "vendor_vendor_fluff"
+            }
+          ]
+        },
+        {
+          "value": "Our pricing approach is a hybrid model combining project fees for defined deliverables, managed service fees for production and media operations, and pass-through third-party costs where applicable.",
+          "evidence": [
+            {
+              "snippet": "Our pricing approach is a hybrid model combining project fees for defined deliverables, managed service fees for production and media operations, and pass-through third-party costs where applicable.",
+              "char_start": 1659,
+              "char_end": 1857,
+              "source_id": "vendor_vendor_fluff"
+            }
+          ]
+        },
+        {
+          "value": "Total Service + Managed Investment Range: USD 849,000 – 1,098,000 excluding media spend, plus applicable taxes",
+          "evidence": [
+            {
+              "snippet": "**Total Service + Managed Investment Range:**  \n**USD 849,000 – 1,098,000** excluding media spend, plus applicable taxes",
+              "char_start": 11351,
+              "char_end": 11471,
+              "source_id": "vendor_vendor_fluff"
+            }
+          ]
+        },
+        {
+          "value": "Projected Media Investment Envelope: USD 540,000 – 620,000 depending on final channel weighting, market timing, inventory conditions, and audience delivery strategy",
+          "evidence": [
+            {
+              "snippet": "**Projected Media Investment Envelope:**  \n**USD 540,000 – 620,000** depending on final channel weighting, market timing, inventory conditions, and audience delivery strategy",
+              "char_start": 11473,
+              "char_end": 11647,
+              "source_id": "vendor_vendor_fluff"
+            }
+          ]
+        }
+      ]
+    },
+    "total_price": {
+      "status": "conflicting",
+      "value": null,
+      "evidence": [],
+      "values": [
+        {
+          "value": "USD 1.46M – 1.60M",
+          "evidence": [
+            {
+              "snippet": "> [CALLOUT]: **Indicative total programme investment: USD 1.46M – 1.60M plus applicable taxes and final third-party selections**",
+              "char_start": 2013,
+              "char_end": 2141,
+              "source_id": "vendor_vendor_fluff"
+            }
+          ]
+        },
+        {
+          "value": "USD 1.39M – 1.72M",
+          "evidence": [
+            {
+              "snippet": "**Estimated Total Programme Envelope:**  \n**USD 1.39M – 1.72M**",
+              "char_start": 11649,
+              "char_end": 11712,
+              "source_id": "vendor_vendor_fluff"
+            }
+          ]
+        }
+      ]
+    },
+    "commercial_terms": {
+      "status": "present",
+      "value": "We are willing to work on the proposed **30% / 30% / 40%** payment structure, subject to milestone alignment by line item during contracting.",
+      "evidence": [
+        {
+          "snippet": "We are willing to work on the proposed **30% / 30% / 40%** payment structure, subject to milestone alignment by line item during contracting.",
+          "char_start": 15832,
+          "char_end": 15973,
+          "source_id": "vendor_vendor_fluff"
+        }
+      ],
+      "values": null
+    },
+    "timeline": {
+      "status": "conflicting",
+      "value": null,
+      "evidence": [],
+      "values": [
+        {
+          "value": "Our proposed program duration for launch management is 6 weeks post-launch",
+          "evidence": [
+            {
+              "snippet": "Our proposed program duration for launch management is **6 weeks post-launch**, ensuring the business is supported not only through go-live, but through early in-market learning and optimisation.",
+              "char_start": 1437,
+              "char_end": 1632,
+              "source_id": "vendor_vendor_fluff"
+            }
+          ]
+        },
+        {
+          "value": "TVC Production: approximately 14 weeks from greenlight through delivery, subject to casting, location, and approvals",
+          "evidence": [
+            {
+              "snippet": "- **TVC Production:** approximately **14 weeks** from greenlight through delivery, subject to casting, location, and approvals",
+              "char_start": 16536,
+              "char_end": 16662,
+              "source_id": "vendor_vendor_fluff"
+            }
+          ]
+        },
+        {
+          "value": "Launch Program Management: 18 weeks from kick-off",
+          "evidence": [
+            {
+              "snippet": "- **Launch Program Management:** **18 weeks from kick-off**",
+              "char_start": 16987,
+              "char_end": 17046,
+              "source_id": "vendor_vendor_fluff"
+            }
+          ]
+        },
+        {
+          "value": "We anticipate an 8 week approach from production greenlight through final master readiness, subject to final approval cadence.",
+          "evidence": [
+            {
+              "snippet": "We anticipate an **8 week** approach from production greenlight through final master readiness, subject to final approval cadence.",
+              "char_start": 5839,
+              "char_end": 5969,
+              "source_id": "vendor_vendor_fluff"
+            }
+          ]
+        }
+      ]
+    },
+    "compliance_points": [
+      {
+        "status": "present",
+        "value": "We are fully aligned with all relevant regulations governing children's advertising and follow industry best practices across all jurisdictions.",
+        "evidence": [
+          {
+            "snippet": "We are fully aligned with all relevant regulations governing children's advertising and follow industry best practices across all jurisdictions.",
+            "char_start": 9736,
+            "char_end": 9880,
+            "source_id": "vendor_vendor_fluff"
+          }
+        ],
+        "values": null
+      }
+    ],
+    "assumptions": [
+      {
+        "status": "present",
+        "value": "Up to two rounds of strategic refinement",
+        "evidence": [
+          {
+            "snippet": "Assumptions:\n\n- Up to two rounds of strategic refinement",
+            "char_start": 4417,
+            "char_end": 4473,
+            "source_id": "vendor_vendor_fluff"
+          }
+        ],
+        "values": null
+      },
+      {
+        "status": "present",
+        "value": "One consolidated feedback round per major deliverable",
+        "evidence": [
+          {
+            "snippet": "- One consolidated feedback round per major deliverable",
+            "char_start": 4474,
+            "char_end": 4529,
+            "source_id": "vendor_vendor_fluff"
+          }
+        ],
+        "values": null
+      },
+      {
+        "status": "present",
+        "value": "Inputs supplied by Luminos in a timely manner",
+        "evidence": [
+          {
+            "snippet": "- Inputs supplied by Luminos in a timely manner",
+            "char_start": 4530,
+            "char_end": 4577,
+            "source_id": "vendor_vendor_fluff"
+          }
+        ],
+        "values": null
+      },
+      {
+        "status": "present",
+        "value": "Regulatory language to be provided or validated during content refinement",
+        "evidence": [
+          {
+            "snippet": "- Regulatory language to be provided or validated during content refinement",
+            "char_start": 4578,
+            "char_end": 4653,
+            "source_id": "vendor_vendor_fluff"
+          }
+        ],
+        "values": null
+      }
+    ],
+    "exclusions": [
+      {
+        "status": "present",
+        "value": "Excludes final media owner spend fluctuations, location-specific production variances, extended talent usage outside agreed term/territory, extraordinary rework following scope change, and any unplanned localisation waves.",
+        "evidence": [
+          {
+            "snippet": "Excludes final media owner spend fluctuations, location-specific production variances, extended talent usage outside agreed term/territory, extraordinary rework following scope change, and any unplanned localisation waves.",
+            "char_start": 2392,
+            "char_end": 2614,
+            "source_id": "vendor_vendor_fluff"
+          }
+        ],
+        "values": null
+      },
+      {
+        "status": "present",
+        "value": "Out of scope triggers include major repositioning after route selection, net-new research commissioning, and incremental audience modules beyond agreed stakeholder groups.",
+        "evidence": [
+          {
+            "snippet": "Out of scope triggers include major repositioning after route selection, net-new research commissioning, and incremental audience modules beyond agreed stakeholder groups.",
+            "char_start": 4655,
+            "char_end": 4826,
+            "source_id": "vendor_vendor_fluff"
+          }
+        ],
+        "values": null
+      }
+    ],
+    "risks": [
+      {
+        "status": "present",
+        "value": "Incremental fees may apply where there are substantial scope shifts, additional deliverable versions, extended approval cycles requiring rework, or material creative redirection after sign-off gates.",
+        "evidence": [
+          {
+            "snippet": "Incremental fees may apply where there are substantial scope shifts, additional deliverable versions, extended approval cycles requiring rework, or material creative redirection after sign-off gates.",
+            "char_start": 14670,
+            "char_end": 14869,
+            "source_id": "vendor_vendor_fluff"
+          }
+        ],
+        "values": null
+      },
+      {
+        "status": "present",
+        "value": "Where milestones come under pressure, our recovery approach centres on rapid impact assessment, critical-path reset, prioritisation of must-have outputs, and compressed review sequencing where appropriate.",
+        "evidence": [
+          {
+            "snippet": "Where milestones come under pressure, our recovery approach centres on rapid impact assessment, critical-path reset, prioritisation of must-have outputs, and compressed review sequencing where appropriate.",
+            "char_start": 15293,
+            "char_end": 15498,
+            "source_id": "vendor_vendor_fluff"
+          }
+        ],
+        "values": null
+      }
+    ]
+  }
+}

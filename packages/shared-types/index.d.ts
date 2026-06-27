@@ -95,7 +95,7 @@ export interface ExtractionResult {
   scope_summary: FieldStr1;
   line_items?: LineItemExtraction[];
   pricing_structure: FieldStr1;
-  total_price: FieldDecimal;
+  total_price: FieldStr1;
   commercial_terms: FieldStr1;
   timeline: FieldStr1;
   compliance_points?: FieldStr1[];
@@ -119,18 +119,8 @@ export interface FieldStr1 {
 export interface LineItemExtraction {
   line_item_id: string;
   line_item_name: string;
-  pricing: FieldDecimal;
+  pricing: FieldStr1;
   scope_coverage: FieldStr1;
-}
-export interface FieldDecimal {
-  status: FlagStatus;
-  value?: string | null;
-  evidence?: Evidence[];
-  values?: ConflictingValueDecimal[] | null;
-}
-export interface ConflictingValueDecimal {
-  value?: string | null;
-  evidence?: Evidence[];
 }
 /**
  * Marketing-services Request for Quotation.

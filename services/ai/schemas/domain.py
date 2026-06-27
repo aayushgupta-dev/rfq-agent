@@ -17,8 +17,6 @@ ComparisonResult remains a Phase 4 stub.
 """
 from __future__ import annotations
 
-from decimal import Decimal
-
 from pydantic import BaseModel, ConfigDict, model_validator
 from pydantic import Field as pydantic_Field
 
@@ -127,7 +125,10 @@ class LineItemExtraction(BaseModel):
 
     line_item_id: str  # matches RFQ.line_items[*].id — provenance, not grounded
     line_item_name: str  # matches RFQ.line_items[*].name — provenance, not grounded
-    pricing: Field[Decimal]  # vendor's stated price for this item; missing if not bid
+    # ponytail: Field[str] not Field[Decimal] — real vendor pricing uses ranges, currency
+    # prefixes, and conditional text ("TBD", "USD 110,000 – 135,000") that Decimal rejects.
+    # Plan 03-04 confirmed this in live runs. The gate is value-type-agnostic; str works.
+    pricing: Field[str]  # vendor's stated price for this item; missing if not bid
     scope_coverage: Field[str]  # what the vendor covers for this item; missing if not bid
 
 
@@ -147,11 +148,10 @@ class ExtractionResult(BaseModel):
     scope_summary: Field[str]  # doc-level narrative summary of what vendor is offering
     line_items: list[LineItemExtraction] = pydantic_Field(default_factory=list)  # D-01: one entry per RFQ line item
     pricing_structure: Field[str]  # D-02: verbatim bundle/grand total statement; unclear if not stated
-    total_price: Field[Decimal]  # D-02: stated grand total if separable; missing if bundled-only
-    # ponytail: Field[Decimal] for total_price — if with_structured_output(method="json_schema")
-    # produces schema friction during Plan 03 (model fills it inconsistently or parse errors occur),
-    # downgrade to Field[str] here; the gate is value-type-agnostic. Check by running:
-    # python -c "from schemas.domain import ExtractionResult; print('ok')" after Plan 03 wires the chain.
+    # ponytail: Field[str] not Field[Decimal] for total_price — live runs (Plan 03-04) showed models
+    # return values like "USD 1.46M – 1.60M" (conflicting range) and "approximately USD 600,000"
+    # which Decimal rejects. The gate is value-type-agnostic; str preserves the verbatim value.
+    total_price: Field[str]  # D-02: stated grand total if separable; missing if bundled-only
     commercial_terms: Field[str]  # payment terms, milestones, discounts, conditions
     timeline: Field[str]  # delivery timeline / project schedule narrative
     compliance_points: list[Field[str]] = pydantic_Field(default_factory=list)  # D-03: each compliance statement
