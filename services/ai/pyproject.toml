@@ -41,6 +41,9 @@ testpaths = ["tests"]
 python_files = ["test_*.py"]
 python_classes = ["Test*"]
 python_functions = ["test_*"]
+markers = [
+    "live: marks tests that require a live OpenAI API key (skipped in CI unless -m live)",
+]
 
 [dependency-groups]
 dev = [
