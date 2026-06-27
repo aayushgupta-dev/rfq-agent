@@ -65,6 +65,21 @@ _llm_with_raw = get_llm("reasoning").with_structured_output(
 _chain = _prompt | _llm_with_raw
 
 
+def _rfq_items_json(rfq: RFQ) -> str:
+    """Serialize RFQ line items to the JSON shape the extraction prompt expects.
+
+    Single source of truth for the SSE path (_run_extraction_impl) and the trace
+    path (generate_extraction_with_trace) so a prompt-contract change to the
+    serialized item shape updates both at once (W-R3).
+    """
+    return json.dumps(
+        [
+            {"id": li.id, "name": li.name, "description": li.description}
+            for li in rfq.line_items
+        ]
+    )
+
+
 # ---------------------------------------------------------------------------
 # Core node implementation (separated for testability)
 # ---------------------------------------------------------------------------
@@ -89,12 +104,7 @@ def _run_extraction_impl(
     vendor: VendorResponse = state["vendor"]
     rfq: RFQ = state["rfq"]
 
-    rfq_json = json.dumps(
-        [
-            {"id": li.id, "name": li.name, "description": li.description}
-            for li in rfq.line_items
-        ]
-    )
+    rfq_json = _rfq_items_json(rfq)
 
     emit(
         {
@@ -183,8 +193,49 @@ def _run_extraction_impl(
             )
             return {"error": "unexpected_type"}
 
+        # --- SUCCESS PATH ---
+        # CR-01: kept INSIDE the try so model_copy / ground_model / model_dump
+        # failures also map to a safe error event. Nothing on the success path may
+        # crash the node uncaught and skip the SSE error event (B-R2 / D-07).
+
+        # W-R4: use model_copy(update=...) not attribute mutation — keeps immutability.
+        raw: ExtractionResult = parsed.model_copy(update={"vendor_name": vendor.vendor_name})
+
+        emit(
+            {
+                "type": "status",
+                "payload": {"message": "running grounding gate", "phase": "grounding"},
+            }
+        )
+
+        # D-07: ground_model runs BEFORE result event is emitted — no ungrounded facts
+        # cross the SSE boundary.
+        grounded, report = ground_model(raw, {vendor.source_id: vendor.raw_text})
+
+        # ponytail: extraction fields inlined at payload top level so callers can access
+        # payload["line_items"], payload["pricing_structure"], etc. directly.
+        # IN-02: assert no collision before the spread — a future ExtractionResult
+        # field literally named "downgrade_report" would silently shadow the grounding
+        # report sibling key. Fail loudly here rather than ship a corrupted payload.
+        grounded_payload = grounded.model_dump(mode="json")
+        assert "downgrade_report" not in grounded_payload, (
+            "ExtractionResult gained a 'downgrade_report' field — it collides with the "
+            "grounding report sibling key in the /extract/vendor result payload."
+        )
+        result_event = {
+            "type": "result",
+            "payload": {
+                **grounded_payload,
+                "downgrade_report": report.model_dump(mode="json"),
+            },
+        }
+        emit(result_event)
+
+        return {"result": grounded, "report": report, "result_sse_event": result_event}
+
     except Exception as exc:
-        # Bare exception catch — any other failure maps to a safe error event.
+        # Bare exception catch — any other failure (including success-path errors)
+        # maps to a safe error event (CR-01).
         emit(
             {
                 "type": "error",
@@ -196,38 +247,6 @@ def _run_extraction_impl(
             }
         )
         return {"error": "extraction_error"}
-
-    # --- SUCCESS PATH ---
-    # Only reached after ALL failure shapes are ruled out.
-
-    # W-R4: use model_copy(update=...) not attribute mutation — keeps immutability.
-    raw: ExtractionResult = parsed.model_copy(update={"vendor_name": vendor.vendor_name})
-
-    emit(
-        {
-            "type": "status",
-            "payload": {"message": "running grounding gate", "phase": "grounding"},
-        }
-    )
-
-    # D-07: ground_model runs BEFORE result event is emitted — no ungrounded facts
-    # cross the SSE boundary.
-    grounded, report = ground_model(raw, {vendor.source_id: vendor.raw_text})
-
-    # ponytail: extraction fields inlined at payload top level so callers can access
-    # payload["line_items"], payload["pricing_structure"], etc. directly.
-    # downgrade_report is a sibling key — no key collision since ExtractionResult
-    # has no field named "downgrade_report".
-    result_event = {
-        "type": "result",
-        "payload": {
-            **grounded.model_dump(mode="json"),
-            "downgrade_report": report.model_dump(mode="json"),
-        },
-    }
-    emit(result_event)
-
-    return {"result": grounded, "report": report, "result_sse_event": result_event}
 
 
 # ---------------------------------------------------------------------------
@@ -344,12 +363,7 @@ def generate_extraction_with_trace(
     # ponytail: exposes raw vs grounded pair from production chain for D-14 trace
     # capture; not used in the production SSE path.
     """
-    rfq_json = json.dumps(
-        [
-            {"id": li.id, "name": li.name, "description": li.description}
-            for li in rfq.line_items
-        ]
-    )
+    rfq_json = _rfq_items_json(rfq)
 
     try:
         raw_output = _chain.invoke(

@@ -1,12 +1,13 @@
 """
-test_extraction_agent.py — RED test stubs for Phase 3 extraction agent (Wave 0).
+test_extraction_agent.py — Phase 3 extraction agent verification gates.
 
-All 9 tests are marked @pytest.mark.xfail(strict=True) — they must FAIL until
-the corresponding implementation plan executes. pytest reports them as XFAIL
-(expected failure), not ERROR.
+These began as RED stubs in Wave 0 and went GREEN as each implementation plan
+landed. Tests 1–8 are active assertions covering the live extraction agent,
+schema, grounding, and SSE taxonomy.
 
-test_truncation_live_guard is additionally marked @pytest.mark.live so it is
-skipped in normal CI (needs a real OpenAI key + langchain-openai installed).
+test_truncation_live_guard (test 9) is the only remaining @pytest.mark.xfail and
+is additionally marked @pytest.mark.live, so it is skipped in normal CI (needs a
+real OpenAI key + langchain-openai installed).
 Run with `uv run pytest -m live` to validate the RESEARCH.md MEDIUM-confidence
 assumption that the installed langchain-openai raises LengthFinishReasonError on
 finish_reason=length truncation.
@@ -209,7 +210,7 @@ def test_truncation_raises_error_event() -> None:
     {code, message, recoverable: true}, and NOT parse any partial output.
     """
     # Import inside body — agents.extraction does not exist until Plan 03-03
-    from agents.extraction import run_extraction  # type: ignore[import-not-found]
+    from agents.extraction import run_extraction
 
     with patch("agents.extraction._chain") as mock_chain:
         mock_chain.invoke.side_effect = LengthFinishReasonError(
@@ -243,7 +244,7 @@ def test_refusal_raises_error_event() -> None:
     Detection path (RESEARCH.md): include_raw=True → raw AIMessage →
     additional_kwargs["refusal"] is non-None and parsed is None.
     """
-    from agents.extraction import run_extraction  # type: ignore[import-not-found]
+    from agents.extraction import run_extraction
 
     raw_msg = MagicMock()
     raw_msg.additional_kwargs = {"refusal": "I cannot process this request."}
@@ -277,7 +278,7 @@ def test_missing_line_items_surface_as_missing() -> None:
     The SSE 'result' event payload must carry line items with missing status
     intact — they must never be collapsed to None or omitted.
     """
-    from agents.extraction import run_extraction  # type: ignore[import-not-found]
+    from agents.extraction import run_extraction
     from schemas.domain import ExtractionResult, LineItemExtraction  # type: ignore[attr-defined]
 
     li = LineItemExtraction(
@@ -339,8 +340,8 @@ def test_sse_event_taxonomy() -> None:
     Uses TestClient without lifespan (no startup access check).
     """
     # Import inside body — api.app route and agents.extraction don't exist yet
-    from api.app import app  # type: ignore[import-not-found]
-    from agents.extraction import _chain  # type: ignore[import-not-found,attr-defined] # noqa: F401
+    from api.app import app
+    from agents.extraction import _chain  # noqa: F401
     from schemas.domain import ExtractionResult, VendorResponse, RFQ
 
     from fastapi.testclient import TestClient
@@ -533,7 +534,7 @@ def _trace_source_text(trace: dict) -> str:
 # ---------------------------------------------------------------------------
 
 
-@pytest.mark.xfail(reason="Plan 03-03 not yet executed — agents.extraction._chain not yet built", strict=True)
+@pytest.mark.xfail(reason="Live-only guard: real truncation needs a live OpenAI call (run with -m live)", strict=True)
 @pytest.mark.live
 def test_truncation_live_guard() -> None:
     """Live guard: confirms installed langchain-openai raises LengthFinishReasonError on truncation.
@@ -545,10 +546,17 @@ def test_truncation_live_guard() -> None:
     # (#29700/#25510). Skipped in CI. Run with `uv run pytest -m live` to validate against
     # the installed langchain-openai before shipping EXTRACT-05.
     """
-    from agents.extraction import _chain  # type: ignore[import-not-found,attr-defined]
+    from agents.extraction import _chain
 
     with pytest.raises(LengthFinishReasonError):
         _chain.invoke(
-            {"vendor_text": "x" * 50000, "rfq_line_items": ""},
+            # CR-02: the prompt template requires source_id, vendor_text, AND
+            # rfq_line_items — omitting source_id raised KeyError at render time,
+            # masking the LengthFinishReasonError this guard exists to assert.
+            {
+                "vendor_text": "x" * 50000,
+                "rfq_line_items": "",
+                "source_id": "live-guard-test",
+            },
             config={"max_tokens": 1},
         )

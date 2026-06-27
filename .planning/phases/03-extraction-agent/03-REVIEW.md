@@ -17,7 +17,19 @@ findings:
   warning: 3
   info: 3
   total: 8
-status: issues_found
+status: resolved
+resolution:
+  date: 2026-06-28
+  fixed: [CR-01, CR-02, WR-01, WR-02, WR-03, IN-01, IN-02]
+  accepted: [IN-03]
+  notes: >
+    7/8 fixed in code (commit follows). CR-01 verified with a targeted probe
+    (success-path exception now emits a safe error event). Full suite GREEN
+    (116 passed, 1 xfailed). IN-03 accepted: index.d.ts is pydantic2ts-generated
+    ("do not modify by hand") and guarded by test_codegen_drift — the FieldStr/
+    FieldStr1 duplicate is structurally identical, not consumed until Phase 5 UI,
+    and a correct fix requires a codegen post-process step. Hand-editing would
+    break the drift gate. Deferred to Phase 5.
 ---
 
 # Phase 03: Code Review Report

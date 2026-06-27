@@ -102,24 +102,36 @@ class ExtractionRequest(BaseModel):
     """Request body for POST /extract/vendor (EXTRACT-03).
 
     vendor_response carries the full VendorResponse; rfq carries the full RFQ.
-    A model_validator enforces the 200k-char limit on raw_text at the data layer.
 
-    # ponytail: max_length on nested raw_text enforced via model_validator because
-    # pydantic_Field max_length only applies to direct str fields, not nested model
-    # attributes. Server-level body size limit should be set via uvicorn
-    # --limit-max-requests or nginx for production; 200k char raw_text is the
-    # operative guard for this prototype (W-R2).
+    # ponytail: max_length on nested str fields can't be enforced via
+    # pydantic_Field (it only applies to direct str fields, not nested model
+    # attributes), so a model_validator caps both the vendor raw_text and the
+    # aggregate request size. The aggregate cap covers the RFQ free-text fields
+    # (questionnaire, compliance_requirements, line-item descriptions/deliverables)
+    # that an attacker could otherwise inflate independently of raw_text (W-R2).
+    # This is an app-layer best-effort cap — the body is already deserialized by
+    # the time it runs. The authoritative request-body size limit is server-level
+    # (uvicorn --limit-* / reverse proxy) and is deferred to SHIP-01.
     """
 
     vendor_response: VendorResponse
     rfq: RFQ
 
+    _MAX_RAW_TEXT = 200_000
+    _MAX_TOTAL = 500_000
+
     @model_validator(mode="after")
-    def _check_raw_text_length(self) -> "ExtractionRequest":
-        if len(self.vendor_response.raw_text) > 200_000:
+    def _check_payload_size(self) -> "ExtractionRequest":
+        if len(self.vendor_response.raw_text) > self._MAX_RAW_TEXT:
             raise ValueError(
-                f"vendor_response.raw_text exceeds 200,000 chars "
+                f"vendor_response.raw_text exceeds {self._MAX_RAW_TEXT:,} chars "
                 f"(got {len(self.vendor_response.raw_text)})"
+            )
+        total = len(self.model_dump_json())
+        if total > self._MAX_TOTAL:
+            raise ValueError(
+                f"extraction request exceeds {self._MAX_TOTAL:,} chars total "
+                f"(got {total}) — RFQ free-text included"
             )
         return self
 
