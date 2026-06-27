@@ -104,13 +104,49 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| (populated by the roadmapper) | — | Pending |
+| PLAT-01 | Phase 1 | Pending |
+| PLAT-02 | Phase 1 | Pending |
+| PLAT-03 | Phase 1 | Pending |
+| PLAT-04 | Phase 1 | Pending |
+| PROMPT-01 | Phase 1 | Pending |
+| EXTRACT-04 | Phase 2 | Pending |
+| DATA-01 | Phase 2 | Pending |
+| DATA-02 | Phase 2 | Pending |
+| DATA-03 | Phase 2 | Pending |
+| DATA-04 | Phase 2 | Pending |
+| PROMPT-04 | Phase 2 | Pending |
+| EXTRACT-01 | Phase 3 | Pending |
+| EXTRACT-02 | Phase 3 | Pending |
+| EXTRACT-03 | Phase 3 | Pending |
+| EXTRACT-05 | Phase 3 | Pending |
+| PROMPT-03 | Phase 3 | Pending |
+| COMPARE-01 | Phase 4 | Pending |
+| COMPARE-02 | Phase 4 | Pending |
+| COMPARE-03 | Phase 4 | Pending |
+| COMPARE-04 | Phase 4 | Pending |
+| COMPARE-05 | Phase 4 | Pending |
+| INPUT-01 | Phase 5 | Pending |
+| INPUT-02 | Phase 5 | Pending |
+| INPUT-03 | Phase 5 | Pending |
+| INPUT-04 | Phase 5 | Pending |
+| UI-01 | Phase 5 | Pending |
+| UI-02 | Phase 5 | Pending |
+| UI-03 | Phase 5 | Pending |
+| UI-04 | Phase 5 | Pending |
+| UI-05 | Phase 5 | Pending |
+| UI-06 | Phase 5 | Pending |
+| PROMPT-02 | Phase 5 | Pending |
+| SHIP-01 | Phase 5 | Pending |
+| SHIP-02 | Phase 5 | Pending |
+| SHIP-03 | Phase 5 | Pending |
+| SHIP-04 | Phase 5 | Pending |
+| SHIP-05 | Phase 5 | Pending |
 
 **Coverage:**
 - v1 requirements: 31 total
-- Mapped to phases: 0 (pending roadmap)
-- Unmapped: 31 ⚠️
+- Mapped to phases: 31 ✓
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-06-27*
-*Last updated: 2026-06-27 after initial definition*
+*Last updated: 2026-06-27 after roadmap creation*
