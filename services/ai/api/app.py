@@ -11,7 +11,15 @@ Provides:
   - GET /stream/demo: streams the trivial LangGraph demo graph as SSE events
     in {type, payload} format, observable via `curl -N` (PLAT-04).
 
+  - GET /data/rfq: live-regenerate the marketing-services RFQ (DATA-04).
+
+  - POST /data/vendor-gen: live-regenerate a vendor response for a given persona (DATA-04).
+    Accepts optional rfq_text body parameter so callers can pass the same RFQ context
+    to all vendors (ensuring a valid comparison). If rfq_text is omitted, a fresh RFQ
+    is generated inline.
+
 Security: verify_access() never logs the API key (T-03-01 mitigation).
+POST /data/vendor-gen validates persona against MESS_SPECS keys before use (T-02-11).
 No CORS or proxy-buffering config — deferred to Phase 5 (SHIP-01).
 """
 
@@ -21,9 +29,12 @@ from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
+from pydantic import BaseModel
 from sse_starlette import EventSourceResponse
 
 from agents._demo import demo_graph
+from agents.rfq_gen import generate_rfq, render_rfq_md
+from agents.vendor_gen import MESS_SPECS, generate_vendor_response
 from llm.factory import verify_access
 from schemas.events import EventEnvelope
 
@@ -41,6 +52,50 @@ async def lifespan(app_: FastAPI) -> AsyncGenerator[None, None]:
 
 
 app = FastAPI(title="Bid Desk AI", lifespan=lifespan)
+
+
+class VendorGenRequest(BaseModel):
+    """Request body for POST /data/vendor-gen (DATA-04)."""
+
+    persona: str
+    rfq_text: str | None = None
+
+
+@app.get("/data/rfq")
+async def get_rfq() -> dict:
+    """Live-regenerate the marketing-services RFQ via rfq-gen prompt (DATA-04).
+
+    Makes a live OpenAI call — not served from the committed fixture.
+    Returns: JSON-serializable RFQ dict.
+    """
+    rfq = generate_rfq()
+    return rfq.model_dump(mode="json")
+
+
+@app.post("/data/vendor-gen")
+async def post_vendor_gen(req: VendorGenRequest) -> dict:
+    """Live-regenerate a vendor response for the given persona (DATA-04).
+
+    req.persona: one of "thorough-but-pricey", "cheap-but-incomplete", "polished-fluff".
+    req.rfq_text: optional RFQ Markdown text. If provided, all vendors see the same RFQ
+                  (required for a valid comparison). If omitted, a fresh RFQ is generated.
+    Returns: JSON-serializable VendorResponse dict.
+
+    Security: persona is validated against MESS_SPECS keys before use (T-02-11).
+    """
+    if req.persona not in MESS_SPECS:
+        from fastapi import HTTPException
+
+        raise HTTPException(
+            status_code=400,
+            detail=f"Unknown persona: {req.persona!r}. Must be one of {list(MESS_SPECS)}",
+        )
+    rfq_text = req.rfq_text
+    if rfq_text is None:
+        rfq = generate_rfq()
+        rfq_text = render_rfq_md(rfq)
+    vendor = generate_vendor_response(rfq_text, req.persona, MESS_SPECS[req.persona])
+    return vendor.model_dump(mode="json")
 
 
 @app.get("/stream/demo")
