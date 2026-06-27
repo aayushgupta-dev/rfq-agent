@@ -62,7 +62,7 @@ def load(prompt_id: str, base_dir: pathlib.Path = _DIR) -> frontmatter.Post:
         ValueError: if prompt_id does not match ``^[a-z0-9-]+$``.
         KeyError:   if no file matching ``{prompt_id}.v*.md`` exists in base_dir.
     """
-    if not re.fullmatch(r"^[a-z0-9-]+$", prompt_id):
+    if not _ID_RE.fullmatch(prompt_id):
         raise ValueError(f"invalid prompt_id '{prompt_id}': must match ^[a-z0-9-]+$")
     file_path = _find_latest(prompt_id, base_dir)
     return frontmatter.load(file_path)
