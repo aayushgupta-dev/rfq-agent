@@ -1,0 +1,8 @@
+{
+  "name": "@aerchain/shared-types",
+  "version": "0.1.0",
+  "private": true,
+  "types": "index.d.ts",
+  "main": "index.d.ts",
+  "description": "TypeScript contract types generated from services/ai pydantic schemas"
+}

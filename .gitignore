@@ -46,7 +46,8 @@ build/
 dist/
 .swc/
 *.tsbuildinfo
-next-env.d.ts
+# next-env.d.ts is committed (Plan 01-01: apps/web workspace link proof)
+!apps/web/next-env.d.ts
 
 # ── Turborepo ─────────────────────────────────────────────────────────────--
 .turbo/
