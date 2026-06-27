@@ -22,6 +22,7 @@ import json
 
 import pytest
 from fastapi.testclient import TestClient
+from pydantic import ValidationError
 
 # --- Import the FastAPI app --- #
 # This import must NOT trigger the lifespan (startup access check).
@@ -125,6 +126,18 @@ class TestSseDemoRoute:
         for i, event in enumerate(events):
             extra = set(event.keys()) - {"type", "payload"}
             assert not extra, f"Event {i} has extra keys {extra}: {event}"
+
+
+def test_wire_rejects_event_outside_taxonomy() -> None:
+    """The SSE emit path validates each chunk through EventEnvelope (WR-02).
+
+    A node emitting a type outside the closed taxonomy must raise rather than
+    stream the malformed event to the client.
+    """
+    from schemas.events import EventEnvelope
+
+    with pytest.raises(ValidationError):
+        EventEnvelope(type="frobnicate", payload={})
 
 
 def _parse_sse_events(body: str) -> list[dict]:

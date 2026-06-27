@@ -17,7 +17,6 @@ No CORS or proxy-buffering config — deferred to Phase 5 (SHIP-01).
 
 from __future__ import annotations
 
-import json
 from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
 
@@ -26,10 +25,11 @@ from sse_starlette import EventSourceResponse
 
 from agents._demo import demo_graph
 from llm.factory import verify_access
+from schemas.events import EventEnvelope
 
 
 @asynccontextmanager
-async def lifespan(app_: FastAPI):  # noqa: ANN201
+async def lifespan(app_: FastAPI) -> AsyncGenerator[None, None]:
     """FastAPI lifespan handler — calls verify_access() on boot (D-16).
 
     If verify_access() raises (access denied or param error), the exception
@@ -58,9 +58,12 @@ async def stream_demo() -> EventSourceResponse:
     """
 
     async def _generate() -> AsyncGenerator[dict, None]:
+        # Validate every chunk through the closed envelope before serializing —
+        # a malformed emit (unknown type, missing payload, extra keys) fails
+        # loudly here rather than streaming unchecked to the client.
         async for chunk in demo_graph.astream({}, stream_mode="custom"):
-            yield {"data": json.dumps(chunk)}
+            yield {"data": EventEnvelope(**chunk).model_dump_json()}
         # Final "done" event appended by the route after the graph completes.
-        yield {"data": json.dumps({"type": "done", "payload": {}})}
+        yield {"data": EventEnvelope(type="done", payload={}).model_dump_json()}
 
     return EventSourceResponse(_generate())
