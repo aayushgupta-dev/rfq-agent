@@ -82,16 +82,26 @@ export interface EventEnvelope {
   payload: unknown;
 }
 /**
- * Structured extraction for one vendor response (stub — full fields in Phase 3).
+ * Structured extraction for one vendor response (Phase 3 — D-01..D-05).
  *
- * # ponytail: P3 placeholder — real fields (scope, pricing breakdown, commercial
- * # terms, timeline, compliance, assumptions, exclusions, risks + evidence spans
- * # for each) land in Phase 3 (extraction agent).
+ * vendor_name is plain str (D-05): provenance metadata from VendorResponse, not an
+ * extracted claim — grounding a known name against raw_text could spuriously fail.
+ *
+ * All multi-claim categories use list[Field[T]] for per-claim grounding (D-03).
+ * No dict[str, Field] shapes — only list[BaseModel] and list[Field[T]] (D-04).
  */
 export interface ExtractionResult {
-  vendor_name?: FieldStr1;
-  scope_summary?: FieldStr2;
-  total_price?: FieldDecimal;
+  vendor_name: string;
+  scope_summary: FieldStr1;
+  line_items?: LineItemExtraction[];
+  pricing_structure: FieldStr1;
+  total_price: FieldDecimal;
+  commercial_terms: FieldStr1;
+  timeline: FieldStr1;
+  compliance_points?: FieldStr1[];
+  assumptions?: FieldStr1[];
+  exclusions?: FieldStr1[];
+  risks?: FieldStr1[];
 }
 export interface FieldStr1 {
   status: FlagStatus;
@@ -99,11 +109,18 @@ export interface FieldStr1 {
   evidence?: Evidence[];
   values?: ConflictingValueStr[] | null;
 }
-export interface FieldStr2 {
-  status: FlagStatus;
-  value?: string | null;
-  evidence?: Evidence[];
-  values?: ConflictingValueStr[] | null;
+/**
+ * Per-RFQ-line-item extraction — pricing and scope coverage for one service item (D-01).
+ *
+ * line_item_id and line_item_name are copied from RFQ context at extraction time.
+ * # ponytail: line_item_id and line_item_name are copied from RFQ context at extraction time,
+ * # not extracted from vendor text — they are scaffold/provenance, not grounded facts.
+ */
+export interface LineItemExtraction {
+  line_item_id: string;
+  line_item_name: string;
+  pricing: FieldDecimal;
+  scope_coverage: FieldStr1;
 }
 export interface FieldDecimal {
   status: FlagStatus;
