@@ -596,17 +596,19 @@ async def extract_vendor(req: ExtractionRequest) -> EventSourceResponse:
 
 ---
 
-## Open Questions
+## Open Questions (RESOLVED)
 
-1. **Refusal detection reliability with pydantic schema**
+1. **Refusal detection reliability with pydantic schema** — *resolved in planning (Plan 03-01 + 03-03).*
    - What we know: With a dict schema, refusals are not in `additional_kwargs` (bug #25510). With pydantic schema, it reportedly works.
    - What's unclear: Whether langchain-openai `>=1.3.3` (the installed version) has backported a fix.
    - Recommendation: Add a targeted unit test that mocks a refused response and verifies the detection path. If it fails, fall back to `include_raw=True` for refusal inspection + `try/except` for truncation.
+   - **Resolution:** Plan 03-01 Task 1 adds a `test_refusal_raises_error_event` RED stub (mocks a refused response, asserts an `error` event `{recoverable: false}` and that no `ExtractionResult` is parsed). Plan 03-03 Task 1 implements detection via `additional_kwargs.get("refusal")` on the raw message (`include_raw=True` for the refusal-check path) — NOT keyed off `str(ValidationError)` — and turns that stub GREEN. The mock test pins the behavior regardless of whether the installed langchain-openai backported a fix.
 
-2. **Truncation risk for the single-call schema**
+2. **Truncation risk for the single-call schema** — *resolved as a runtime contingency (D-06; Plan 03-03 + 03-04).*
    - What we know: 8 line items × (pricing + scope coverage + evidence) + 6 doc-level categories, each as `Field[T]` with evidence, is the schema. Vendor fixture sizes are 13–27KB of raw text.
    - What's unclear: Whether gpt-5.4's output token limit will be hit in practice with a verbosity-moderate extraction prompt.
    - Recommendation: Run the extraction on all 3 committed vendor fixtures before finalizing the single-call approach. If any fixture triggers `LengthFinishReasonError`, implement the D-06 sectioned fallback at that point.
+   - **Resolution:** Single-call is planned first (D-06, YAGNI). Plan 03-03 Task 1 wraps the model call in `try/except openai.LengthFinishReasonError` → `error` event `{recoverable: true}`, never parsing truncated output (`test_truncation_raises_error_event`). Plan 03-04 Task 2 captures traces on all 3 committed fixtures — the empirical check the recommendation calls for. The D-06 sectioned 2-call split stays a researched contingency, built only if a fixture actually triggers truncation during that run.
 
 ---
 
