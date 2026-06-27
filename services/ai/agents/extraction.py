@@ -28,6 +28,7 @@ import asyncio
 import json
 from typing import Any, Callable
 
+from langchain_core.messages import SystemMessage
 from langchain_core.prompts import ChatPromptTemplate
 from langgraph.config import get_stream_writer
 from langgraph.graph import END, START, StateGraph
@@ -45,12 +46,15 @@ from schemas.events import EVENT_TYPES, ErrorPayload
 # ---------------------------------------------------------------------------
 
 _post = load("extraction")
+# ponytail: SystemMessage object (not a ("system", content) tuple) prevents LangChain
+# from parsing the prompt body as an f-string template — the extraction prompt
+# contains JSON examples with {braces} that are NOT template variables.
 _prompt = ChatPromptTemplate.from_messages(
     [
-        ("system", _post.content),
+        SystemMessage(content=_post.content),
         (
             "human",
-            "Vendor response:\n{vendor_text}\n\nRFQ line items (JSON):\n{rfq_line_items}",
+            "Vendor source ID (use this exact value for all evidence source_id fields): {source_id}\n\nVendor response:\n{vendor_text}\n\nRFQ line items (JSON):\n{rfq_line_items}",
         ),
     ]
 )
@@ -110,6 +114,7 @@ def _run_extraction_impl(
                 {
                     "vendor_text": vendor.raw_text,
                     "rfq_line_items": rfq_json,
+                    "source_id": vendor.source_id,
                 }
             )
         except LengthFinishReasonError:
@@ -351,6 +356,7 @@ def generate_extraction_with_trace(
             {
                 "vendor_text": vendor_response.raw_text,
                 "rfq_line_items": rfq_json,
+                "source_id": vendor_response.source_id,
             }
         )
     except LengthFinishReasonError as exc:
