@@ -23,16 +23,15 @@ fails, the AI must not hallucinate a number or a claim.
 
 ### Validated
 
-(None yet — ship to validate)
+- ✓ Generate one realistic marketing-services RFQ (8 line items, scope, timelines, commercials, questionnaire, compliance) via prompt — feels like a real procurement event, not a clean sample. — Phase 2 (DATA-01)
+- ✓ Generate ≥3 deliberately messy vendor responses via prompt — differ in pricing structure, completeness, scope, timelines, assumptions, clarity; inject real-world complexity (missing pricing, unclear tax/currency, partial scope, vague timelines, weak compliance). — Phase 2 (DATA-02/03)
+- ✓ Grounding enforced in code (the gate): evidence spans validated against source text, model-supplied offsets ignored and recomputed, fabricated spans downgraded to `unsupported` — not taken on the model's word. Mechanism built + unit/functionally proven (full per-fact wiring lands with extraction/UI). — Phase 2 (EXTRACT-04)
 
 ### Active
 
-- [ ] Generate one realistic marketing-services RFQ (8 line items, scope, timelines, commercials, questionnaire, compliance) via prompt — feels like a real procurement event, not a clean sample.
-- [ ] Generate ≥3 deliberately messy vendor responses via prompt — differ in pricing structure, completeness, scope, timelines, assumptions, clarity; inject real-world complexity (missing pricing, unclear tax/currency, partial scope, vague timelines, weak compliance).
-- [ ] Commit the generated RFQ + ≥3 vendor responses as sample data AND support live generation/upload in-app (dynamic processing, never hardcoded outputs).
+- [ ] Commit the generated RFQ + ≥3 vendor responses as sample data AND support live generation/upload in-app (dynamic processing, never hardcoded outputs). — generation + live-regen done (Phase 2, DATA-04); in-app upload pending (Phase 5).
 - [ ] Accept vendor responses via paste (text/Markdown/JSON) and file upload (PDF, Word, Excel, PPT) using best-effort text extraction — full OCR not required (assignment §11).
 - [ ] Extraction agent: per-vendor structured extraction (scope, pricing, commercial terms, timeline, compliance, assumptions, exclusions, risks) with evidence snippets and missing/unclear/conflicting/unsupported flags. Never fills missing info.
-- [ ] Grounding enforced in code: every shown fact's evidence span is validated against the source text — not taken on the model's word.
 - [ ] Comparison agent: side-by-side across technical, commercial, scope, timeline, compliance, risk; establishes comparability first; surfaces buyer attention points + clarification questions; never misleads.
 - [ ] Five buyer screens: RFQ Overview, Vendor Upload/Input, Extraction Review (with evidence), Vendor Comparison, Prompt Trace / Prompt Pack view.
 - [ ] The Prompt Pack: versioned, first-class prompt source for RFQ gen, vendor gen, messy-data gen, UI/UX gen, extraction, comparison, clarification/exception handling — each documented (what/why/how it handles unreliable info).
@@ -114,4 +113,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-06-27 after Phase 1 (foundation)*
+*Last updated: 2026-06-27 after Phase 2 (grounding gate & messy data)*
