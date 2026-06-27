@@ -1,57 +1,108 @@
 """
-domain.py — Minimal compiling domain schema stubs (D-08).
+domain.py — Domain schemas: RFQ, VendorResponse, and supporting models (Phase 2).
 
-RFQ, VendorResponse, ExtractionResult, and ComparisonResult are defined here
-as the smallest stubs that:
-  1. Compile cleanly with pydantic.
-  2. Reference Field[T] across at least Field[str], Field[Decimal], and Field[int]
-     so codegen monomorphizes FieldStr / FieldDecimal / FieldInt — proving D-05.
-  3. Serve as the Phase 1 contract placeholder that P2/P3/P4 extend with real fields.
+RFQ is the structured procurement event — our own clean artifact, never grounded
+against (D-11). Plain Python types only; no Field[T] wrappers.
 
-# ponytail: stub fields carry a comment marking them as the P2/P3/P4 contract
-# placeholder. Kept-complexity is intentional — the contract precedes the agents
-# that fill it (D-08).
-#
-# The `# type: ignore[call-arg]` on each stub is a known limitation of calling a
-# generic pydantic model (Field[T](...)) — the type checker cannot infer the
-# missing T-typed `value` is optional. These ignores are scoped to placeholder
-# stubs ONLY: real P2+ fields are populated by validated agent output / fixtures,
-# not constructed inline here, so the ignores must not propagate into them.
+VendorResponse carries raw messy text + provenance metadata (D-12). The extraction
+agent reads raw_text and produces ExtractionResult; this schema does not pre-extract
+any facts.
+
+MessSpecItem is the typed mess-spec entry (D-08/D-09) — a hand-authored instruction
+for the vendor-gen prompt describing one deliberate flaw to inject. list[dict] avoided
+to keep the TS contract typed via pydantic2ts.
+
+ExtractionResult and ComparisonResult remain Phase 3/4 stubs (unchanged from Phase 1).
+
+# ponytail: ExtractionResult/ComparisonResult stay as P3/P4 contract placeholders —
+# the Field[T] stubs prove codegen monomorphizes FieldStr/FieldDecimal/FieldInt and
+# establish the absence-envelope contract before the agents that fill them exist (D-08).
+# The `# type: ignore[call-arg]` on stub fields is scoped to placeholder construction
+# only — real P3/P4 fields are populated by validated agent output, not inline stubs.
 """
 from __future__ import annotations
 
 from decimal import Decimal
 
 from pydantic import BaseModel, ConfigDict
+from pydantic import Field as pydantic_Field
 
 from schemas.envelope import Field
 
 
-class RFQ(BaseModel):
-    """Marketing-services Request for Quotation (stub — full fields in Phase 2).
+class MessSpecItem(BaseModel):
+    """Typed mess-spec entry (D-08/D-09).
 
-    # ponytail: P2 placeholder — real fields (8 line items, scope, timelines,
-    # commercials, questionnaire, compliance) land in Phase 2 (RFQ/vendor generation).
+    list[dict] avoided — keeps the TS contract typed and the generated
+    shared-types accurate. Each entry instructs the vendor-gen prompt to inject
+    one deliberate flaw into a specific line item.
     """
 
     model_config = ConfigDict(extra="forbid")
 
-    title: Field[str] = Field[str](status="missing")  # type: ignore[call-arg]
-    budget_total: Field[Decimal] = Field[Decimal](status="missing")  # type: ignore[call-arg]
+    line_item: str
+    issue_type: str
+    instruction: str
+
+
+class LineItem(BaseModel):
+    """One line item in the RFQ — a discrete service or deliverable category.
+
+    budget_range_usd uses list[int] with a 2-element convention (min, max) instead
+    of tuple[int, int] — OpenAI structured output does not support Python tuples
+    in JSON schema (Pitfall 6 from RESEARCH.md).
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    id: str
+    name: str
+    description: str
+    deliverables: list[str]
+    timeline_weeks: int | None = None
+    budget_range_usd: list[int] | None = None
+
+
+class RFQ(BaseModel):
+    """Marketing-services Request for Quotation.
+
+    Our own clean procurement artifact — plain Python types, no Field[T] wrappers
+    (D-11). The rfq-gen prompt targets structured output against this schema.
+    The 8-line-item requirement is enforced by test_rfq_fixture_valid(), not by a
+    model_validator here — see plan 02-03 decision note.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    title: str
+    client_name: str
+    issue_date: str
+    response_deadline: str
+    scope_summary: str
+    line_items: list[LineItem]
+    commercial_expectations: str
+    questionnaire: list[str] = pydantic_Field(default_factory=list)
+    compliance_requirements: list[str] = pydantic_Field(default_factory=list)
+    budget_total_usd: int | None = None
 
 
 class VendorResponse(BaseModel):
-    """A single vendor's response to the RFQ (stub — full fields in Phase 2).
+    """A single vendor's response to the RFQ — raw text + provenance (D-12).
 
-    # ponytail: P2 placeholder — real fields (pricing structure, completeness,
-    # scope, assumptions, timelines) land in Phase 2.
+    raw_text is the vendor's messy prose document exactly as generated (or
+    uploaded). mess_spec is the typed list[MessSpecItem] so the TS contract
+    stays accurate. The extraction agent reads raw_text and produces
+    ExtractionResult — no pre-extracted fields live here.
     """
 
     model_config = ConfigDict(extra="forbid")
 
-    vendor_name: Field[str] = Field[str](status="missing")  # type: ignore[call-arg]
-    proposed_total: Field[Decimal] = Field[Decimal](status="missing")  # type: ignore[call-arg]
-    response_completeness_score: Field[int] = Field[int](status="missing")  # type: ignore[call-arg]
+    vendor_name: str
+    persona: str
+    mess_spec: list[MessSpecItem] = pydantic_Field(default_factory=list)
+    source_id: str
+    format_label: str
+    raw_text: str
 
 
 class ExtractionResult(BaseModel):

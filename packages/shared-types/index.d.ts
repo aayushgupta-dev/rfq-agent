@@ -116,53 +116,65 @@ export interface ConflictingValueDecimal {
   evidence?: Evidence[];
 }
 /**
- * Marketing-services Request for Quotation (stub — full fields in Phase 2).
+ * Marketing-services Request for Quotation.
  *
- * # ponytail: P2 placeholder — real fields (8 line items, scope, timelines,
- * # commercials, questionnaire, compliance) land in Phase 2 (RFQ/vendor generation).
+ * Our own clean procurement artifact — plain Python types, no Field[T] wrappers
+ * (D-11). The rfq-gen prompt targets structured output against this schema.
+ * The 8-line-item requirement is enforced by test_rfq_fixture_valid(), not by a
+ * model_validator here — see plan 02-03 decision note.
  */
 export interface RFQ {
-  title?: FieldStr3;
-  budget_total?: FieldDecimal1;
-}
-export interface FieldStr3 {
-  status: FlagStatus;
-  value?: string | null;
-  evidence?: Evidence[];
-  values?: ConflictingValueStr[] | null;
-}
-export interface FieldDecimal1 {
-  status: FlagStatus;
-  value?: string | null;
-  evidence?: Evidence[];
-  values?: ConflictingValueDecimal[] | null;
+  title: string;
+  client_name: string;
+  issue_date: string;
+  response_deadline: string;
+  scope_summary: string;
+  line_items: LineItem[];
+  commercial_expectations: string;
+  questionnaire?: string[];
+  compliance_requirements?: string[];
+  budget_total_usd?: number | null;
 }
 /**
- * A single vendor's response to the RFQ (stub — full fields in Phase 2).
+ * One line item in the RFQ — a discrete service or deliverable category.
  *
- * # ponytail: P2 placeholder — real fields (pricing structure, completeness,
- * # scope, assumptions, timelines) land in Phase 2.
+ * budget_range_usd uses list[int] with a 2-element convention (min, max) instead
+ * of tuple[int, int] — OpenAI structured output does not support Python tuples
+ * in JSON schema (Pitfall 6 from RESEARCH.md).
+ */
+export interface LineItem {
+  id: string;
+  name: string;
+  description: string;
+  deliverables: string[];
+  timeline_weeks?: number | null;
+  budget_range_usd?: number[] | null;
+}
+/**
+ * A single vendor's response to the RFQ — raw text + provenance (D-12).
+ *
+ * raw_text is the vendor's messy prose document exactly as generated (or
+ * uploaded). mess_spec is the typed list[MessSpecItem] so the TS contract
+ * stays accurate. The extraction agent reads raw_text and produces
+ * ExtractionResult — no pre-extracted fields live here.
  */
 export interface VendorResponse {
-  vendor_name?: FieldStr4;
-  proposed_total?: FieldDecimal2;
-  response_completeness_score?: FieldInt1;
+  vendor_name: string;
+  persona: string;
+  mess_spec?: MessSpecItem[];
+  source_id: string;
+  format_label: string;
+  raw_text: string;
 }
-export interface FieldStr4 {
-  status: FlagStatus;
-  value?: string | null;
-  evidence?: Evidence[];
-  values?: ConflictingValueStr[] | null;
-}
-export interface FieldDecimal2 {
-  status: FlagStatus;
-  value?: string | null;
-  evidence?: Evidence[];
-  values?: ConflictingValueDecimal[] | null;
-}
-export interface FieldInt1 {
-  status: FlagStatus;
-  value?: number | null;
-  evidence?: Evidence[];
-  values?: ConflictingValueInt[] | null;
+/**
+ * Typed mess-spec entry (D-08/D-09).
+ *
+ * list[dict] avoided — keeps the TS contract typed and the generated
+ * shared-types accurate. Each entry instructs the vendor-gen prompt to inject
+ * one deliberate flaw into a specific line item.
+ */
+export interface MessSpecItem {
+  line_item: string;
+  issue_type: string;
+  instruction: string;
 }
