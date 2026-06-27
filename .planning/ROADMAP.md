@@ -21,7 +21,7 @@ documented prompt(s) rather than being a standalone phase.
 
 Decimal phases appear between their surrounding integers in numeric order.
 
-- [ ] **Phase 1: Foundation** - Schemas, pydantic→TS contract, env LLM client, SSE proof, Prompt Pack skeleton
+- [x] **Phase 1: Foundation** - Schemas, pydantic→TS contract, env LLM client, SSE proof, Prompt Pack skeleton (completed 2026-06-27)
 - [ ] **Phase 2: Grounding Gate & Messy Data** - Code-enforced grounding (LLM-free, unit-tested) + RFQ/vendor generation with mess specs
 - [ ] **Phase 3: Extraction Agent** - Grounding-gated extraction with evidence, four flag types, safe structured output, SSE streaming, first trace
 - [ ] **Phase 4: Comparison Agent** - Comparability-before-ranking over `ExtractionResult[]` with clarification questions
@@ -42,7 +42,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 **Plans**: 4 plans (2 waves)
   - [x] 01-01-PLAN.md — Monorepo scaffold (relocate Python to services/ai, pnpm+turbo workspace, apps/web shell, shared-types pkg) + dev tooling spine (ruff/pytest, prettier/eslint)
   - [x] 01-02-PLAN.md — Contract primitives (generic Field[T] envelope, evidence, 5-state flag enum, SSE event envelope) + 4 domain stubs + pydantic2ts codegen + drift-check test
-  - [ ] 01-03-PLAN.md — LLM tier factory + live gpt-5.4/mini access ping + FastAPI startup check + trivial LangGraph {type,payload} SSE proof (curl -N)
+  - [x] 01-03-PLAN.md — LLM tier factory + live gpt-5.4/mini access ping + FastAPI startup check + trivial LangGraph {type,payload} SSE proof (curl -N)
   - [x] 01-04-PLAN.md — Prompt Pack registry skeleton + all 7 versioned prompt stubs
 
 ### Phase 2: Grounding Gate & Messy Data
@@ -103,7 +103,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation | 3/4 | In Progress|  |
+| 1. Foundation | 4/4 | Complete   | 2026-06-27 |
 | 2. Grounding Gate & Messy Data | 0/TBD | Not started | - |
 | 3. Extraction Agent | 0/TBD | Not started | - |
 | 4. Comparison Agent | 0/TBD | Not started | - |

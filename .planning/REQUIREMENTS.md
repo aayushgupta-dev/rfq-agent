@@ -13,8 +13,8 @@
 
 - [x] **PLAT-01**: pydantic schemas define RFQ, VendorResponse, ExtractionResult, ComparisonResult, and the SSE event envelope — with absence as a first-class enum state per field (`{status: present|missing|unclear|conflicting|unsupported, value?, evidence?}`), never a nullable that collapses to a blank.
 - [x] **PLAT-02**: pydantic schemas mechanically generate the `packages/shared-types` TS contract (pydantic2ts codegen) — the UI/AI contract is never hand-mirrored.
-- [ ] **PLAT-03**: env-configured LLM client (`gpt-5.4` reasoning-heavy / `gpt-5.4-mini` cheap tasks); GPT-5.4 API access verified by a live ping before anything is built on it.
-- [ ] **PLAT-04**: agent responses stream to the UI over SSE using a single `{type, payload}` envelope (FastAPI emits, Next.js consumes) — never buffer-and-return long agent work.
+- [x] **PLAT-03**: env-configured LLM client (`gpt-5.4` reasoning-heavy / `gpt-5.4-mini` cheap tasks); GPT-5.4 API access verified by a live ping before anything is built on it.
+- [x] **PLAT-04**: agent responses stream to the UI over SSE using a single `{type, payload}` envelope (FastAPI emits, Next.js consumes) — never buffer-and-return long agent work.
 
 ### Prompt Pack (30%)
 
@@ -106,8 +106,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 |-------------|-------|--------|
 | PLAT-01 | Phase 1 | Complete |
 | PLAT-02 | Phase 1 | Complete |
-| PLAT-03 | Phase 1 | Pending |
-| PLAT-04 | Phase 1 | Pending |
+| PLAT-03 | Phase 1 | Complete |
+| PLAT-04 | Phase 1 | Complete |
 | PROMPT-01 | Phase 1 | Complete |
 | EXTRACT-04 | Phase 2 | Pending |
 | DATA-01 | Phase 2 | Pending |
