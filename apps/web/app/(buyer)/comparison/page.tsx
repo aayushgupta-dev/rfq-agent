@@ -471,6 +471,8 @@ export default function ComparisonPage() {
     const controller = new AbortController();
     abortRef.current = controller;
     let cancelled = false;
+    // runComparison kicks off the SSE compare stream (external-system sync) and sets pending UI.
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- intentional async-stream kickoff
     void runComparison(snapshot, rfq, controller, () => cancelled);
 
     return () => { cancelled = true; controller.abort(); };

@@ -28,19 +28,6 @@ const PHASE_LABELS: Record<string, string> = {
   grounding: "Verifying every extracted fact against the vendor's own words…",
 };
 
-// D-09 category layout — maps to ExtractionResult field paths
-const CATEGORIES: { label: string; key: keyof ExtractionResult }[] = [
-  { label: "Scope", key: "scope_summary" },
-  { label: "Pricing", key: "pricing_structure" },
-  { label: "Pricing", key: "total_price" },
-  { label: "Commercial Terms", key: "commercial_terms" },
-  { label: "Timeline", key: "timeline" },
-  { label: "Compliance", key: "compliance_points" },
-  { label: "Assumptions", key: "assumptions" },
-  { label: "Exclusions", key: "exclusions" },
-  { label: "Risks", key: "risks" },
-];
-
 // D-08 severity order for Gaps & Risks panel
 const SEVERITY: FlagStatus[] = ["missing", "conflicting", "unclear", "unsupported"];
 
@@ -245,12 +232,10 @@ export default function ExtractionPage() {
   // ponytail: AbortController ref — T-05-06-C mitigate (SSE stream that never closes)
   const abortRef = useRef<AbortController | null>(null);
 
-  // Set initial vendor selection (RFQ is the committed fixture — no fetch needed)
-  useEffect(() => {
-    if (!selectedVendor && loadedVendors.length > 0) {
-      setSelectedVendor(loadedVendors[0].vendor_name);
-    }
-  }, [loadedVendors, selectedVendor]);
+  // Effective selection: the user's explicit pick, else default to the first loaded
+  // vendor. Derived during render (not stored via an effect) — no extra render cycle,
+  // no set-state-in-effect.
+  const activeVendor = selectedVendor || loadedVendors[0]?.vendor_name || "";
 
   // Session cache check + SSE trigger.
   // The effect OWNS its AbortController: the cleanup aborts this run's request on
@@ -258,15 +243,17 @@ export default function ExtractionPage() {
   // (e.g. React strict-mode's mount→cleanup→mount, or a fast tab switch) from writing
   // state after its stream was aborted. (T-05-06-C)
   useEffect(() => {
-    if (!selectedVendor || !rfq) return;
-    if (extractions[selectedVendor]) return; // cached — render instantly (D-02)
+    if (!activeVendor || !rfq) return;
+    if (extractions[activeVendor]) return; // cached — render instantly (D-02)
 
-    const vendor = loadedVendors.find((v) => v.vendor_name === selectedVendor);
+    const vendor = loadedVendors.find((v) => v.vendor_name === activeVendor);
     if (!vendor) return;
 
     const controller = new AbortController();
     abortRef.current = controller;
     let cancelled = false;
+    // Starting the SSE extraction stream is an external-system sync; reset the pending UI first.
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- intentional async-stream kickoff
     setStreaming(true);
     setPhase("");
     setProgressValue(0);
@@ -287,8 +274,8 @@ export default function ExtractionPage() {
             const { result, downgrade_report } = normalizeExtractionPayload(
               event.payload as Record<string, unknown>,
             );
-            setExtraction(selectedVendor, result);
-            setDowngradeReport(selectedVendor, downgrade_report);
+            setExtraction(activeVendor, result);
+            setDowngradeReport(activeVendor, downgrade_report);
             setProgressValue(100);
             setStreaming(false);
             break; // terminal — a late error must not flip the cached extraction to an error state (WR-04)
@@ -309,9 +296,9 @@ export default function ExtractionPage() {
     })();
 
     return () => { cancelled = true; controller.abort(); };
-  }, [selectedVendor, rfq]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [activeVendor, rfq]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const extraction = selectedVendor ? extractions[selectedVendor] : undefined;
+  const extraction = activeVendor ? extractions[activeVendor] : undefined;
 
   // No vendors loaded
   if (loadedVendors.length === 0) {
@@ -343,7 +330,7 @@ export default function ExtractionPage() {
       {/* D-10: vendor selector Tabs */}
       <Tabs
         data-testid="vendor-tabs"
-        value={selectedVendor}
+        value={activeVendor}
         onValueChange={(v) => {
           setError(null);
           setSelectedVendor(v);
@@ -359,7 +346,7 @@ export default function ExtractionPage() {
 
         {loadedVendors.map((v) => (
           <TabsContent key={v.vendor_name} value={v.vendor_name}>
-            {streaming && v.vendor_name === selectedVendor && (
+            {streaming && v.vendor_name === activeVendor && (
               <div className="space-y-4">
                 <StreamProgress phase={phase} value={progressValue} />
                 {[...Array(4)].map((_, i) => (
@@ -368,7 +355,7 @@ export default function ExtractionPage() {
               </div>
             )}
 
-            {error && v.vendor_name === selectedVendor && (
+            {error && v.vendor_name === activeVendor && (
               <Alert variant="destructive" data-testid="extraction-error">
                 <AlertDescription>
                   Extraction could not complete. {error} — Try reloading or check the AI service is running.
@@ -376,7 +363,7 @@ export default function ExtractionPage() {
               </Alert>
             )}
 
-            {extraction && v.vendor_name === selectedVendor && !streaming && (
+            {extraction && v.vendor_name === activeVendor && !streaming && (
               <ExtractionView extraction={extraction} />
             )}
           </TabsContent>
