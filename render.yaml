@@ -1,0 +1,26 @@
+# Render Blueprint — AI service (FastAPI + LangGraph). SHIP-01.
+# Deploy: Render Dashboard → New → Blueprint → connect this repo → Apply.
+# Then set OPENAI_API_KEY (sync:false) when prompted.
+#
+# NOTE: no healthCheckPath — the cheapest health route here would still be /data/rfq,
+# which live-regenerates the RFQ via gpt-5.4 (a paid call). Render's default port-bind
+# liveness check is sufficient and free.
+services:
+  - type: web
+    name: rfq-agent-ai
+    runtime: python
+    plan: free
+    rootDir: services/ai
+    buildCommand: pip install uv && uv sync --frozen
+    startCommand: uv run uvicorn api.app:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.12.7"
+      - key: OPENAI_API_KEY
+        sync: false # set in the Render dashboard; never commit the key
+      - key: MODEL_REASONING
+        value: gpt-5.4
+      - key: MODEL_CHEAP
+        value: gpt-5.4-mini
+      - key: X_ACCEL_BUFFERING
+        value: "no" # secondary SSE-buffering hint; primary fix is the response header in code
