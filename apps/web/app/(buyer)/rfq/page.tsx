@@ -113,7 +113,7 @@ export default function RfqPage() {
           </CardHeader>
           <CardContent className="space-y-4">
             {rfq.line_items.map((li) => (
-              <div key={li.id} className="rounded-lg border border-border p-4 space-y-2">
+              <div key={li.id} data-testid="rfq-line-item" className="rounded-lg border border-border p-4 space-y-2">
                 <div className="flex items-start justify-between gap-4">
                   <p className="text-sm font-semibold text-foreground">{li.name}</p>
                   {li.budget_range_usd && li.budget_range_usd.length >= 2 && (

@@ -16,14 +16,33 @@
  *   data-testid="vendor-card-fluff"      — Fluff sample card
  */
 
-import { Browser, BrowserContext, Page, chromium, test, expect } from "@playwright/test";
+import { BrowserContext, Page, test, expect } from "@playwright/test";
 
 const BASE_URL = process.env.PLAYWRIGHT_BASE_URL ?? "http://localhost:3000";
 
 test.describe.serial("Phase 5 — Buyer Journey E2E", () => {
   test.setTimeout(90_000);
 
-  test("RFQ Overview loads committed data", async ({ page }) => {
+  // Tests 1–6 build on each other's session state (load a vendor, then a second,
+  // then compare). Playwright's per-test `page` fixture would give each test a fresh
+  // context with empty sessionStorage, so the serial build-up needs ONE shared page.
+  // Test 7 (empty-state) deliberately uses its own fresh context instead.
+  let context: BrowserContext;
+  let page: Page;
+
+  test.beforeAll(async ({ browser }) => {
+    context = await browser.newContext();
+    page = await context.newPage();
+  });
+
+  test.afterAll(async () => {
+    await context.close();
+  });
+
+  // Live GPT-5.4 calls (extraction, comparison) exceed the 5s default expect timeout.
+  const LIVE = { timeout: 75_000 };
+
+  test("RFQ Overview loads committed data", async () => {
     await page.goto(`${BASE_URL}/rfq`);
     // Assert RFQ heading visible
     await expect(page.getByRole("heading", { name: /rfq/i })).toBeVisible();
@@ -33,7 +52,7 @@ test.describe.serial("Phase 5 — Buyer Journey E2E", () => {
     await expect(page.getByRole("button", { name: /regenerate rfq/i })).toBeVisible();
   });
 
-  test("Vendor Input — sample load hero path (D-04)", async ({ page }) => {
+  test("Vendor Input — sample load hero path (D-04)", async () => {
     await page.goto(`${BASE_URL}/input`);
     // Three sample vendor cards visible
     await expect(page.locator('[data-testid="vendor-card-thorough"]')).toBeVisible();
@@ -44,11 +63,11 @@ test.describe.serial("Phase 5 — Buyer Journey E2E", () => {
     await page.waitForURL(`${BASE_URL}/extraction`, { timeout: 30_000 });
   });
 
-  test("Extraction Review — gaps panel visible with evidence (D-07, D-08, UI-06)", async ({ page }) => {
+  test("Extraction Review — gaps panel visible with evidence (D-07, D-08, UI-06)", async () => {
     // Serial: Thorough vendor is in session state from test 2
     await page.goto(`${BASE_URL}/extraction`);
-    // Gaps & Risks panel
-    await expect(page.locator('[data-testid="gaps-panel"]')).toBeVisible();
+    // Gaps & Risks panel — waits for the live extraction stream to complete
+    await expect(page.locator('[data-testid="gaps-panel"]')).toBeVisible(LIVE);
     // At least one non-present flag badge
     await expect(page.locator('[data-testid="flag-badge"]:not([data-status="present"])').first()).toBeVisible();
     // Evidence snippet with "Source:" label
@@ -57,7 +76,7 @@ test.describe.serial("Phase 5 — Buyer Journey E2E", () => {
     await expect(page.locator('[data-testid="extraction-result"]')).toBeVisible();
   });
 
-  test("Vendor Input — load second vendor (Cheap) for comparison", async ({ page }) => {
+  test("Vendor Input — load second vendor (Cheap) for comparison", async () => {
     await page.goto(`${BASE_URL}/input`);
     // Load Cheap — BuyerContext.setLoadedVendors must append (Plan 05-04)
     await page.locator('[data-testid="vendor-card-cheap"]').getByRole("button", { name: /load sample/i }).click();
@@ -65,18 +84,18 @@ test.describe.serial("Phase 5 — Buyer Journey E2E", () => {
     await page.waitForURL(`${BASE_URL}/extraction`, { timeout: 30_000 });
   });
 
-  test("Comparison — comparability matrix renders + no-rank framing (D-11, D-13, D-14)", async ({ page }) => {
+  test("Comparison — comparability matrix renders + no-rank framing (D-11, D-13, D-14)", async () => {
     // Serial: ≥2 vendors in session state from tests 2 + 4
     await page.goto(`${BASE_URL}/comparison`);
-    // Comparability matrix table
-    await expect(page.locator('[data-testid="comparability-matrix"]')).toBeVisible();
+    // Comparability matrix table — waits for the live comparison stream to complete
+    await expect(page.locator('[data-testid="comparability-matrix"]')).toBeVisible(LIVE);
     // Data readiness label
     await expect(page.getByText("Data readiness")).toBeVisible();
     // No-rank framing text (D-13: comparability determined in code)
     await expect(page.getByText("Comparability determined in code from evidence")).toBeVisible();
   });
 
-  test("Prompt Trace — trace selector and downgrade diff visible (D-15)", async ({ page }) => {
+  test("Prompt Trace — trace selector and downgrade diff visible (D-15)", async () => {
     await page.goto(`${BASE_URL}/trace`);
     // Trace file tabs visible
     await expect(page.getByRole("tab").first()).toBeVisible();

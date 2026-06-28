@@ -149,3 +149,6 @@ desktop.ini
 tmp/
 .tmp/
 .cache-loader/
+
+# Local
+.playwright-mcp/

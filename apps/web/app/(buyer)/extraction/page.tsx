@@ -231,12 +231,11 @@ export default function ExtractionPage() {
     }
   }, [loadedVendors, selectedVendor]);
 
-  // Abort any in-flight SSE on unmount (T-05-06-C)
-  useEffect(() => {
-    return () => { abortRef.current?.abort(); };
-  }, []);
-
-  // Session cache check + SSE trigger
+  // Session cache check + SSE trigger.
+  // The effect OWNS its AbortController: the cleanup aborts this run's request on
+  // unmount AND on deps-change re-run. A `cancelled` guard prevents a torn-down run
+  // (e.g. React strict-mode's mount→cleanup→mount, or a fast tab switch) from writing
+  // state after its stream was aborted. (T-05-06-C)
   useEffect(() => {
     if (!selectedVendor || !rfq) return;
     if (extractions[selectedVendor]) return; // cached — render instantly (D-02)
@@ -246,6 +245,7 @@ export default function ExtractionPage() {
 
     const controller = new AbortController();
     abortRef.current = controller;
+    let cancelled = false;
     setStreaming(true);
     setPhase("");
     setProgressValue(0);
@@ -254,6 +254,7 @@ export default function ExtractionPage() {
     (async () => {
       try {
         for await (const event of streamExtract(vendor, rfq, controller.signal)) {
+          if (cancelled) return;
           if (event.type === "status") {
             const { phase: p } = event.payload as { message: string; phase: string };
             setPhase(p);
@@ -277,12 +278,14 @@ export default function ExtractionPage() {
           if (event.type === "done") setStreaming(false);
         }
       } catch (e) {
-        if ((e as Error).name !== "AbortError") {
+        if (!cancelled && (e as Error).name !== "AbortError") {
           setError("Connection lost. Check the AI service is running.");
           setStreaming(false);
         }
       }
     })();
+
+    return () => { cancelled = true; controller.abort(); };
   }, [selectedVendor, rfq]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const extraction = selectedVendor ? extractions[selectedVendor] : undefined;

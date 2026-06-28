@@ -28,51 +28,55 @@ function hydrateFromSession<T>(key: string, fallback: T): T {
 }
 
 export function BuyerProvider({ children }: { children: React.ReactNode }) {
-  const [loadedVendors, setLoadedVendorsState] = useState<VendorResponse[]>(() =>
-    hydrateFromSession<VendorResponse[]>("loadedVendors", []),
-  );
-  const [extractions, setExtractionsState] = useState<Record<string, ExtractionResult>>(() =>
-    hydrateFromSession<Record<string, ExtractionResult>>("extractions", {}),
-  );
-  const [downgradeReports, setDowngradeReportsState] = useState<Record<string, unknown>>(() =>
-    hydrateFromSession<Record<string, unknown>>("downgradeReports", {}),
-  );
-  const [comparison, setComparisonState] = useState<ComparisonResult | null>(() =>
-    hydrateFromSession<ComparisonResult | null>("comparison", null),
-  );
+  // SSR-safe: first client render must match the server (empty), so we DON'T read
+  // sessionStorage during render. We rehydrate in a post-mount effect below.
+  // Reading sessionStorage in the useState initializer caused a hydration mismatch
+  // (server renders empty, client renders stored data) that regenerated the tree.
+  const [loadedVendors, setLoadedVendorsState] = useState<VendorResponse[]>([]);
+  const [extractions, setExtractionsState] = useState<Record<string, ExtractionResult>>({});
+  const [downgradeReports, setDowngradeReportsState] = useState<Record<string, unknown>>({});
+  const [comparison, setComparisonState] = useState<ComparisonResult | null>(null);
+  const [hydrated, setHydrated] = useState(false);
 
-  // Persist to sessionStorage on each state mutation
+  // Rehydrate from sessionStorage once, after mount (post-hydration)
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      try {
-        sessionStorage.setItem("loadedVendors", JSON.stringify(loadedVendors));
-      } catch { /* quota errors are non-fatal */ }
-    }
-  }, [loadedVendors]);
+    setLoadedVendorsState(hydrateFromSession<VendorResponse[]>("loadedVendors", []));
+    setExtractionsState(hydrateFromSession<Record<string, ExtractionResult>>("extractions", {}));
+    setDowngradeReportsState(hydrateFromSession<Record<string, unknown>>("downgradeReports", {}));
+    setComparisonState(hydrateFromSession<ComparisonResult | null>("comparison", null));
+    setHydrated(true);
+  }, []);
 
+  // Persist to sessionStorage on each state mutation.
+  // Gated on `hydrated` so the initial empty state never clobbers stored data
+  // before rehydration runs.
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      try {
-        sessionStorage.setItem("extractions", JSON.stringify(extractions));
-      } catch { /* quota errors are non-fatal */ }
-    }
-  }, [extractions]);
-
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      try {
-        sessionStorage.setItem("downgradeReports", JSON.stringify(downgradeReports));
-      } catch { /* quota errors are non-fatal */ }
-    }
-  }, [downgradeReports]);
+    if (!hydrated) return;
+    try {
+      sessionStorage.setItem("loadedVendors", JSON.stringify(loadedVendors));
+    } catch { /* quota errors are non-fatal */ }
+  }, [loadedVendors, hydrated]);
 
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      try {
-        sessionStorage.setItem("comparison", JSON.stringify(comparison));
-      } catch { /* quota errors are non-fatal */ }
-    }
-  }, [comparison]);
+    if (!hydrated) return;
+    try {
+      sessionStorage.setItem("extractions", JSON.stringify(extractions));
+    } catch { /* quota errors are non-fatal */ }
+  }, [extractions, hydrated]);
+
+  useEffect(() => {
+    if (!hydrated) return;
+    try {
+      sessionStorage.setItem("downgradeReports", JSON.stringify(downgradeReports));
+    } catch { /* quota errors are non-fatal */ }
+  }, [downgradeReports, hydrated]);
+
+  useEffect(() => {
+    if (!hydrated) return;
+    try {
+      sessionStorage.setItem("comparison", JSON.stringify(comparison));
+    } catch { /* quota errors are non-fatal */ }
+  }, [comparison, hydrated]);
 
   // APPEND-BY-DEFAULT: setLoadedVendors appends; use clearVendors() for replacement
   function setLoadedVendors(
