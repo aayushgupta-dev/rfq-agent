@@ -1,0 +1,728 @@
+{
+  "_live_mode": true,
+  "_model_reasoning": "gpt-5.4 (MODEL_REASONING)",
+  "_model_clarification": "gpt-5.4-mini (MODEL_CHEAP)",
+  "input": {
+    "rfq_title": "Request for Quotation (RFQ) - GlowBite 18-Month Go-to-Market Marketing Services Program",
+    "vendors": [
+      "cheap-but-incomplete",
+      "polished-fluff",
+      "thorough-but-pricey"
+    ]
+  },
+  "clamp_step": {
+    "entries": [],
+    "live_downgrade_count": 0
+  },
+  "clarification_questions": [
+    {
+      "vendor_name": "cheap-but-incomplete",
+      "field_path": "line_items[2].pricing",
+      "flag_status": "missing",
+      "question": "Regarding your pricing for line item 2, your response does not include the price for this item. Could you provide the specific fee for line_items[2]?",
+      "why_needed": "This is needed to compare the vendor\u2019s cost for the same deliverable against other proposals."
+    },
+    {
+      "vendor_name": "cheap-but-incomplete",
+      "field_path": "line_items[2].scope_coverage",
+      "flag_status": "missing",
+      "question": "Regarding line item 2, your response does not include the scope coverage for this deliverable. Could you confirm exactly what is included in line_items[2]?",
+      "why_needed": "This is needed to verify that the quoted item covers the required scope before comparing offers."
+    },
+    {
+      "vendor_name": "cheap-but-incomplete",
+      "field_path": "line_items[6].pricing",
+      "flag_status": "missing",
+      "question": "Regarding your pricing for line item 6, your response does not include the price for this item. Could you provide the specific fee for line_items[6]?",
+      "why_needed": "This is needed to compare the vendor\u2019s cost for the same deliverable against other proposals."
+    },
+    {
+      "vendor_name": "cheap-but-incomplete",
+      "field_path": "total_price",
+      "flag_status": "missing",
+      "question": "Your response does not include a total project price. Could you provide the overall total fee for the full scope?",
+      "why_needed": "This is needed to compare the vendor\u2019s overall bid on an equal basis with other proposals."
+    },
+    {
+      "vendor_name": "thorough-but-pricey",
+      "field_path": "total_price",
+      "flag_status": "missing",
+      "question": "Your response does not include a total project price. Could you provide the overall total fee for the full scope?",
+      "why_needed": "This is needed to compare the vendor\u2019s overall bid on an equal basis with other proposals."
+    },
+    {
+      "vendor_name": "cheap-but-incomplete",
+      "field_path": "line_items[5].pricing",
+      "flag_status": "unclear",
+      "question": "Regarding your pricing for line item 5, the amount shown is unclear. Could you confirm the exact fee for line_items[5] and whether it is a fixed price or an estimate?",
+      "why_needed": "This is needed to ensure the stated amount can be compared accurately with other vendors\u2019 pricing."
+    },
+    {
+      "vendor_name": "cheap-but-incomplete",
+      "field_path": "line_items[6].scope_coverage",
+      "flag_status": "unclear",
+      "question": "Regarding line item 6, the scope coverage is unclear. Could you clarify exactly which tasks or deliverables are included in line_items[6]?",
+      "why_needed": "This is needed to confirm whether the quoted item matches the required scope for comparison."
+    },
+    {
+      "vendor_name": "cheap-but-incomplete",
+      "field_path": "timeline",
+      "flag_status": "unclear",
+      "question": "Your timeline is described unclearly. Could you confirm the expected delivery schedule, including the start date, key milestones, and final completion date?",
+      "why_needed": "This is needed to compare delivery timing across vendors on a consistent basis."
+    },
+    {
+      "vendor_name": "thorough-but-pricey",
+      "field_path": "line_items[0].pricing",
+      "flag_status": "unclear",
+      "question": "Regarding your pricing for line item 0, the amount shown is unclear. Could you confirm the exact fee for line_items[0] and whether it is a fixed price or an estimate?",
+      "why_needed": "This is needed to ensure the stated amount can be compared accurately with other vendors\u2019 pricing."
+    },
+    {
+      "vendor_name": "thorough-but-pricey",
+      "field_path": "line_items[1].pricing",
+      "flag_status": "unclear",
+      "question": "Regarding your pricing for line item 1, the amount shown is unclear. Could you confirm the exact fee for line_items[1] and whether it is a fixed price or an estimate?",
+      "why_needed": "This is needed to ensure the stated amount can be compared accurately with other vendors\u2019 pricing."
+    },
+    {
+      "vendor_name": "thorough-but-pricey",
+      "field_path": "line_items[4].pricing",
+      "flag_status": "unclear",
+      "question": "Regarding your pricing for line item 4, the amount shown is unclear. Could you confirm the exact fee for line_items[4] and whether it is a fixed price or an estimate?",
+      "why_needed": "This is needed to ensure the stated amount can be compared accurately with other vendors\u2019 pricing."
+    },
+    {
+      "vendor_name": "thorough-but-pricey",
+      "field_path": "line_items[5].pricing",
+      "flag_status": "unclear",
+      "question": "Regarding your pricing for line item 5, the amount shown is unclear. Could you confirm the exact fee for line_items[5] and whether it is a fixed price or an estimate?",
+      "why_needed": "This is needed to ensure the stated amount can be compared accurately with other vendors\u2019 pricing."
+    },
+    {
+      "vendor_name": "polished-fluff",
+      "field_path": "pricing_structure",
+      "flag_status": "conflicting",
+      "question": "Your response contains conflicting statements about the pricing structure. Could you confirm the correct pricing structure and indicate which terms apply?",
+      "why_needed": "This is needed to understand how the vendor\u2019s fees are structured for consistent comparison."
+    },
+    {
+      "vendor_name": "polished-fluff",
+      "field_path": "total_price",
+      "flag_status": "conflicting",
+      "question": "Your response contains conflicting statements about the total price. Could you confirm the correct overall total fee?",
+      "why_needed": "This is needed to compare the vendor\u2019s overall bid on an equal basis with other proposals."
+    },
+    {
+      "vendor_name": "polished-fluff",
+      "field_path": "timeline",
+      "flag_status": "conflicting",
+      "question": "Your response contains conflicting statements about the timeline. Could you confirm the correct delivery schedule and final completion date?",
+      "why_needed": "This is needed to compare delivery timing across vendors on a consistent basis."
+    },
+    {
+      "vendor_name": "thorough-but-pricey",
+      "field_path": "line_items[2].pricing",
+      "flag_status": "conflicting",
+      "question": "Regarding your pricing for line item 2, there appear to be conflicting statements about the fee. Could you confirm the correct price for line_items[2]?",
+      "why_needed": "This is needed to ensure the line-item cost is interpreted correctly for comparison."
+    }
+  ],
+  "vendor_readiness": [
+    {
+      "vendor_name": "cheap-but-incomplete",
+      "comparable_count": 1,
+      "total_dimensions": 6,
+      "descriptor": "1 of 6 dimensions comparable; blocked on technical, commercial, scope, timeline, compliance"
+    },
+    {
+      "vendor_name": "polished-fluff",
+      "comparable_count": 3,
+      "total_dimensions": 6,
+      "descriptor": "3 of 6 dimensions comparable; blocked on commercial, timeline, compliance"
+    },
+    {
+      "vendor_name": "thorough-but-pricey",
+      "comparable_count": 5,
+      "total_dimensions": 6,
+      "descriptor": "5 of 6 dimensions comparable; blocked on commercial"
+    }
+  ],
+  "result": {
+    "vendor_names": [
+      "cheap-but-incomplete",
+      "polished-fluff",
+      "thorough-but-pricey"
+    ],
+    "dimensions": [
+      {
+        "dimension": "technical",
+        "verdicts": [
+          {
+            "vendor_name": "cheap-but-incomplete",
+            "verdict": "not_comparable",
+            "reason": "This response covers several line items, but TVC Production scope is missing and Kids Advertising & Claims Compliance scope is only stated in general terms, so the technical offer is incomplete.",
+            "model_proposed": "not_comparable"
+          },
+          {
+            "vendor_name": "polished-fluff",
+            "verdict": "comparable",
+            "reason": "All bid line items have present scope coverage statements and the proposal addresses the full RFQ program at a usable technical level.",
+            "model_proposed": "comparable"
+          },
+          {
+            "vendor_name": "thorough-but-pricey",
+            "verdict": "comparable",
+            "reason": "The proposal provides present scope coverage across all RFQ line items, even where some workstreams are bundled commercially.",
+            "model_proposed": "comparable"
+          }
+        ],
+        "narrative": "The technical comparison is uneven across vendors. polished-fluff and thorough-but-pricey both present full-program scope coverage across all listed line items, while cheap-but-incomplete leaves material gaps, particularly for TVC Production and a clearly defined kids compliance workstream. Buyers can compare the latter two more directly on technical breadth, but cheap-but-incomplete needs scope clarification before a like-for-like technical review is reliable."
+      },
+      {
+        "dimension": "commercial",
+        "verdicts": [
+          {
+            "vendor_name": "cheap-but-incomplete",
+            "verdict": "not_comparable",
+            "reason": "Paid Media Buying pricing is unclear, Kids Advertising & Claims Compliance pricing is missing, TVC Production pricing is missing, and no total price is provided.",
+            "model_proposed": "not_comparable"
+          },
+          {
+            "vendor_name": "polished-fluff",
+            "verdict": "partially",
+            "reason": "Commercial detail is broad and mostly present, but pricing structure and total price are internally conflicting and several figures are given as ranges rather than fixed amounts.",
+            "model_proposed": "partially"
+          },
+          {
+            "vendor_name": "thorough-but-pricey",
+            "verdict": "not_comparable",
+            "reason": "Several major line items are commercially bundled or unclear, TVC Production pricing is conflicting, and no total price is provided.",
+            "model_proposed": "not_comparable"
+          }
+        ],
+        "narrative": "Commercial comparability is limited across all three responses. cheap-but-incomplete and thorough-but-pricey both have blocking gaps because key line-item pricing is missing, unclear, or bundled in ways that prevent a clean line-by-line comparison, while polished-fluff is more complete but still uses ranges and contains conflicting total commercial figures. Further buyer review should focus first on resolving missing and inconsistent pricing before drawing commercial conclusions."
+      },
+      {
+        "dimension": "scope",
+        "verdicts": [
+          {
+            "vendor_name": "cheap-but-incomplete",
+            "verdict": "not_comparable",
+            "reason": "At least one RFQ item has missing scope coverage, with TVC Production absent and Kids Advertising & Claims Compliance not clearly mapped to the requested deliverables.",
+            "model_proposed": "not_comparable"
+          },
+          {
+            "vendor_name": "polished-fluff",
+            "verdict": "comparable",
+            "reason": "Each RFQ line item has present scope coverage, allowing item-by-item review across the full requested program.",
+            "model_proposed": "comparable"
+          },
+          {
+            "vendor_name": "thorough-but-pricey",
+            "verdict": "comparable",
+            "reason": "All RFQ line items are addressed with present scope coverage, although some are packaged together commercially.",
+            "model_proposed": "comparable"
+          }
+        ],
+        "narrative": "On scope completeness, polished-fluff and thorough-but-pricey both address all RFQ line items, which supports a fuller side-by-side review. cheap-but-incomplete does not, because one line item is missing entirely and another is only loosely described relative to the RFQ's compliance-specific requirements. As a result, scope comparison is currently strongest between the two fuller submissions."
+      },
+      {
+        "dimension": "timeline",
+        "verdicts": [
+          {
+            "vendor_name": "cheap-but-incomplete",
+            "verdict": "partially",
+            "reason": "The response gives several item-specific timing references, but the overall schedule is not consolidated and some timing is conditional or vague.",
+            "model_proposed": "partially"
+          },
+          {
+            "vendor_name": "polished-fluff",
+            "verdict": "partially",
+            "reason": "Timeline information is present but internally conflicting, including inconsistent duration references for production and launch management.",
+            "model_proposed": "partially"
+          },
+          {
+            "vendor_name": "thorough-but-pricey",
+            "verdict": "comparable",
+            "reason": "A program timeline is present and grounded, even though it is stated at a higher level than a full workback schedule.",
+            "model_proposed": "comparable"
+          }
+        ],
+        "narrative": "Timeline comparability is mixed rather than clean. cheap-but-incomplete provides fragmented line-item timing without a clear integrated schedule, and polished-fluff contains conflicting duration statements that need reconciliation. thorough-but-pricey is the clearest at overall program level, but buyers would still need a more detailed milestone view to compare delivery readiness across all vendors."
+      },
+      {
+        "dimension": "compliance",
+        "verdicts": [
+          {
+            "vendor_name": "cheap-but-incomplete",
+            "verdict": "partially",
+            "reason": "The vendor provides some compliance claims and internal review language, but the statements are high level and do not clearly map to the RFQ's detailed child-advertising and claims-control requirements.",
+            "model_proposed": "partially"
+          },
+          {
+            "vendor_name": "polished-fluff",
+            "verdict": "partially",
+            "reason": "The proposal includes a compliance statement, but it is brief and less specific than the RFQ's requested frameworks, sign-off controls, and evidence handling expectations.",
+            "model_proposed": "partially"
+          },
+          {
+            "vendor_name": "thorough-but-pricey",
+            "verdict": "comparable",
+            "reason": "The proposal provides multiple specific compliance points, including written sign-off memos, disclosure language, and insurance confirmation, giving a fuller basis for compliance comparison.",
+            "model_proposed": "comparable"
+          }
+        ],
+        "narrative": "Compliance coverage varies significantly in depth. cheap-but-incomplete and polished-fluff both make positive compliance statements, but they remain relatively generic against the RFQ's detailed requirements for COPPA, claims substantiation, sign-off records, and governance controls. thorough-but-pricey gives the most explicit compliance content and is presently the strongest basis for compliance-side comparison."
+      },
+      {
+        "dimension": "risk",
+        "verdicts": [
+          {
+            "vendor_name": "cheap-but-incomplete",
+            "verdict": "comparable",
+            "reason": "The vendor identifies timeline and scope-change risks with specific examples, providing a usable risk view.",
+            "model_proposed": "comparable"
+          },
+          {
+            "vendor_name": "polished-fluff",
+            "verdict": "comparable",
+            "reason": "The proposal identifies delivery and scope-change risks and describes a recovery approach if milestones come under pressure.",
+            "model_proposed": "comparable"
+          },
+          {
+            "vendor_name": "thorough-but-pricey",
+            "verdict": "comparable",
+            "reason": "The response contains multiple concrete risk statements covering timeline, budget flex, inventory constraints, and escalation triggers.",
+            "model_proposed": "comparable"
+          }
+        ],
+        "narrative": "Risk disclosure is the most comparable dimension across the three submissions. All vendors identify at least some delivery or scope-related risks, though the depth varies, with thorough-but-pricey providing the most detailed set of operational risks. This dimension can be reviewed comparatively now, while noting that the quality and specificity of mitigation detail is not uniform."
+      }
+    ],
+    "line_item_offers": [
+      {
+        "line_item_id": "strategy-creative",
+        "line_item_name": "Strategy & Creative Development",
+        "vendor_name": "cheap-but-incomplete",
+        "pricing_verbatim": "$112,000 project fee",
+        "pricing_status": "present",
+        "scope_verbatim": "We would run this as an 8-week sprint with a working session up front, stakeholder interviews as needed, audience review, messaging development and concept creation.",
+        "scope_status": "present",
+        "non_equivalence_flag": null
+      },
+      {
+        "line_item_id": "tvc-development",
+        "line_item_name": "TVC Development",
+        "vendor_name": "cheap-but-incomplete",
+        "pricing_verbatim": "$84,000 project fee",
+        "pricing_status": "present",
+        "scope_verbatim": "We would take the approved campaign platform into film territory and build out script and storyboard materials ready for production handoff.",
+        "scope_status": "present",
+        "non_equivalence_flag": null
+      },
+      {
+        "line_item_id": "tvc-production",
+        "line_item_name": "TVC Production",
+        "vendor_name": "cheap-but-incomplete",
+        "pricing_verbatim": null,
+        "pricing_status": "missing",
+        "scope_verbatim": null,
+        "scope_status": "missing",
+        "non_equivalence_flag": null
+      },
+      {
+        "line_item_id": "social-organic",
+        "line_item_name": "Social Organic Content",
+        "vendor_name": "cheap-but-incomplete",
+        "pricing_verbatim": "$89,000 project fee",
+        "pricing_status": "present",
+        "scope_verbatim": "Our scope here would cover:\n- platform role definition for Instagram, TikTok and YouTube Shorts\n- editorial calendar for launch period\n- content bank of 36 finished pieces across static/carousel/short-form\n- caption copy and CTA guidance\n- template set for reactive content\n- community management playbook\n- influencer identification brief\n- monthly performance summaries\n- editable source files",
+        "scope_status": "present",
+        "non_equivalence_flag": null
+      },
+      {
+        "line_item_id": "paid-media-planning",
+        "line_item_name": "Paid Media Planning",
+        "vendor_name": "cheap-but-incomplete",
+        "pricing_verbatim": "$68,000",
+        "pricing_status": "present",
+        "scope_verbatim": "We can support the 12-week launch planning across TV, digital and OOH with a channel strategy and investment framework.",
+        "scope_status": "present",
+        "non_equivalence_flag": null
+      },
+      {
+        "line_item_id": "paid-media-buying",
+        "line_item_name": "Paid Media Buying",
+        "vendor_name": "cheap-but-incomplete",
+        "pricing_verbatim": null,
+        "pricing_status": "unclear",
+        "scope_verbatim": "In principle we can support:\n- trafficking and booking coordination\n- optimisation during campaign\n- weekly and monthly reporting\n- reconciliation support",
+        "scope_status": "present",
+        "non_equivalence_flag": null
+      },
+      {
+        "line_item_id": "kids-compliance",
+        "line_item_name": "Kids Advertising & Claims Compliance",
+        "vendor_name": "cheap-but-incomplete",
+        "pricing_verbatim": null,
+        "pricing_status": "missing",
+        "scope_verbatim": null,
+        "scope_status": "unclear",
+        "non_equivalence_flag": null
+      },
+      {
+        "line_item_id": "launch-management",
+        "line_item_name": "Launch Program Management",
+        "vendor_name": "cheap-but-incomplete",
+        "pricing_verbatim": "$76,000 over the program period",
+        "pricing_status": "present",
+        "scope_verbatim": "Included:\n- master plan/workback\n- weekly status reporting\n- weekly cross-agency coordination agenda and action tracking\n- monthly leadership summary\n- risk and change log\n- launch readiness checklist\n- post-launch retrospective",
+        "scope_status": "present",
+        "non_equivalence_flag": null
+      },
+      {
+        "line_item_id": "strategy-creative",
+        "line_item_name": "Strategy & Creative Development",
+        "vendor_name": "polished-fluff",
+        "pricing_verbatim": "USD 110,000 \u2013 135,000",
+        "pricing_status": "present",
+        "scope_verbatim": "We will deliver a focused but high-value strategic foundation for GlowBite, bringing together stakeholder alignment, audience segmentation, positioning development, campaign platform creation, and launch messaging principles.",
+        "scope_status": "present",
+        "non_equivalence_flag": null
+      },
+      {
+        "line_item_id": "tvc-development",
+        "line_item_name": "TVC Development",
+        "vendor_name": "polished-fluff",
+        "pricing_verbatim": "USD 82,000 \u2013 104,000",
+        "pricing_status": "present",
+        "scope_verbatim": "We will translate the approved platform into film-ready thinking, balancing emotional resonance, claim sensitivity, and efficient production planning.",
+        "scope_status": "present",
+        "non_equivalence_flag": null
+      },
+      {
+        "line_item_id": "tvc-production",
+        "line_item_name": "TVC Production",
+        "vendor_name": "polished-fluff",
+        "pricing_verbatim": "USD 305,000 \u2013 365,000",
+        "pricing_status": "present",
+        "scope_verbatim": "Included agency/managed scope:\n\n- Production management and oversight\n- Pre-production coordination\n- Casting supervision\n- Location and shoot management\n- Edit supervision\n- Post-production oversight\n- Master delivery management\n- Digital cutdown adaptation stewardship",
+        "scope_status": "present",
+        "non_equivalence_flag": null
+      },
+      {
+        "line_item_id": "social-organic",
+        "line_item_name": "Social Organic Content",
+        "vendor_name": "polished-fluff",
+        "pricing_verbatim": "USD 92,000 \u2013 126,000",
+        "pricing_status": "present",
+        "scope_verbatim": "Scope includes:\n\n- Platform role definition for Instagram, TikTok, and YouTube Shorts\n- 12-week editorial planning\n- 3-month content bank with launch-phase assets\n- Captioning and CTA guidance\n- Template system for reactive/community content\n- Community management playbook\n- Influencer identification brief\n- Monthly performance summaries\n- Editable source file handover",
+        "scope_status": "present",
+        "non_equivalence_flag": null
+      },
+      {
+        "line_item_id": "paid-media-planning",
+        "line_item_name": "Paid Media Planning",
+        "vendor_name": "polished-fluff",
+        "pricing_verbatim": "USD 68,000 \u2013 90,000",
+        "pricing_status": "present",
+        "scope_verbatim": "Planning outputs include:\n\n- Integrated 12-week media plan across TV, digital video, paid social, and search where applicable\n- Channel-mix rationale linked to audience priorities and launch objectives\n- Reach and frequency projections with methodology notes\n- TV schedule recommendation and flighting rationale\n- Monthly pacing and investment phasing\n- Parent/caregiver targeting framework and audience safeguards\n- KPI and measurement framework\n- One revised version following consolidated Luminos feedback\n- Final deck and budget workbook",
+        "scope_status": "present",
+        "non_equivalence_flag": null
+      },
+      {
+        "line_item_id": "paid-media-buying",
+        "line_item_name": "Paid Media Buying",
+        "vendor_name": "polished-fluff",
+        "pricing_verbatim": "USD 54,000 \u2013 78,000 agency fees",
+        "pricing_status": "present",
+        "scope_verbatim": "We will execute approved buying across TV and digital channels with full trafficking, optimisation, reporting, and reconciliation support.",
+        "scope_status": "present",
+        "non_equivalence_flag": null
+      },
+      {
+        "line_item_id": "kids-compliance",
+        "line_item_name": "Kids Advertising & Claims Compliance",
+        "vendor_name": "polished-fluff",
+        "pricing_verbatim": "USD 56,000 \u2013 84,000",
+        "pricing_status": "present",
+        "scope_verbatim": "Our role here would be to support confidence across script review, social asset review, claim sensitivity, and launch governance documentation, ensuring the programme is managed with care and responsibility throughout the campaign lifecycle.",
+        "scope_status": "present",
+        "non_equivalence_flag": null
+      },
+      {
+        "line_item_id": "launch-management",
+        "line_item_name": "Launch Program Management",
+        "vendor_name": "polished-fluff",
+        "pricing_verbatim": "USD 82,000 \u2013 116,000",
+        "pricing_status": "present",
+        "scope_verbatim": "We would provide a central PMO layer to coordinate workstreams, stakeholder decisions, dependencies, reporting, and launch readiness.",
+        "scope_status": "present",
+        "non_equivalence_flag": null
+      },
+      {
+        "line_item_id": "strategy-creative",
+        "line_item_name": "Strategy & Creative Development",
+        "vendor_name": "thorough-but-pricey",
+        "pricing_verbatim": null,
+        "pricing_status": "unclear",
+        "scope_verbatim": "Kick-off workshop with Luminos stakeholders across brand, sales, regulatory, and procurement",
+        "scope_status": "present",
+        "non_equivalence_flag": null
+      },
+      {
+        "line_item_id": "tvc-development",
+        "line_item_name": "TVC Development",
+        "vendor_name": "thorough-but-pricey",
+        "pricing_verbatim": null,
+        "pricing_status": "unclear",
+        "scope_verbatim": "Film adaptation briefing",
+        "scope_status": "present",
+        "non_equivalence_flag": null
+      },
+      {
+        "line_item_id": "tvc-production",
+        "line_item_name": "TVC Production",
+        "vendor_name": "thorough-but-pricey",
+        "pricing_verbatim": null,
+        "pricing_status": "conflicting",
+        "scope_verbatim": "Pre-production planning and scheduling",
+        "scope_status": "present",
+        "non_equivalence_flag": null
+      },
+      {
+        "line_item_id": "social-organic",
+        "line_item_name": "Social Organic Content",
+        "vendor_name": "thorough-but-pricey",
+        "pricing_verbatim": "USD 154,000",
+        "pricing_status": "present",
+        "scope_verbatim": "Platform-specific content strategy across Instagram, TikTok, and YouTube Shorts",
+        "scope_status": "present",
+        "non_equivalence_flag": null
+      },
+      {
+        "line_item_id": "paid-media-planning",
+        "line_item_name": "Paid Media Planning",
+        "vendor_name": "thorough-but-pricey",
+        "pricing_verbatim": null,
+        "pricing_status": "unclear",
+        "scope_verbatim": "Integrated 12-week media plan across TV, digital video, paid social, search where applicable, and OOH",
+        "scope_status": "present",
+        "non_equivalence_flag": null
+      },
+      {
+        "line_item_id": "paid-media-buying",
+        "line_item_name": "Paid Media Buying",
+        "vendor_name": "thorough-but-pricey",
+        "pricing_verbatim": null,
+        "pricing_status": "unclear",
+        "scope_verbatim": "Buying, booking, trafficking, optimisation, and reporting",
+        "scope_status": "present",
+        "non_equivalence_flag": null
+      },
+      {
+        "line_item_id": "kids-compliance",
+        "line_item_name": "Kids Advertising & Claims Compliance",
+        "vendor_name": "thorough-but-pricey",
+        "pricing_verbatim": "USD 118,000",
+        "pricing_status": "present",
+        "scope_verbatim": "Compliance framework document",
+        "scope_status": "present",
+        "non_equivalence_flag": null
+      },
+      {
+        "line_item_id": "launch-management",
+        "line_item_name": "Launch Program Management",
+        "vendor_name": "thorough-but-pricey",
+        "pricing_verbatim": "132,000 plus applicable statutory taxes and levies",
+        "pricing_status": "present",
+        "scope_verbatim": "Master project plan in Gantt format",
+        "scope_status": "present",
+        "non_equivalence_flag": null
+      }
+    ],
+    "vendor_readiness": [
+      {
+        "vendor_name": "cheap-but-incomplete",
+        "comparable_count": 1,
+        "total_dimensions": 6,
+        "descriptor": "1 of 6 dimensions comparable; blocked on technical, commercial, scope, timeline, compliance"
+      },
+      {
+        "vendor_name": "polished-fluff",
+        "comparable_count": 3,
+        "total_dimensions": 6,
+        "descriptor": "3 of 6 dimensions comparable; blocked on commercial, timeline, compliance"
+      },
+      {
+        "vendor_name": "thorough-but-pricey",
+        "comparable_count": 5,
+        "total_dimensions": 6,
+        "descriptor": "5 of 6 dimensions comparable; blocked on commercial"
+      }
+    ],
+    "attention_points": [
+      {
+        "trigger_type": "comparability_blocker",
+        "summary": "",
+        "vendors_affected": [
+          "cheap-but-incomplete"
+        ],
+        "dimension_or_field": "technical"
+      },
+      {
+        "trigger_type": "comparability_blocker",
+        "summary": "",
+        "vendors_affected": [
+          "cheap-but-incomplete",
+          "thorough-but-pricey"
+        ],
+        "dimension_or_field": "commercial"
+      },
+      {
+        "trigger_type": "comparability_blocker",
+        "summary": "",
+        "vendors_affected": [
+          "cheap-but-incomplete"
+        ],
+        "dimension_or_field": "scope"
+      },
+      {
+        "trigger_type": "missing_pricing",
+        "summary": "",
+        "vendors_affected": [
+          "cheap-but-incomplete"
+        ],
+        "dimension_or_field": "pricing_structure / line_items[*].pricing"
+      },
+      {
+        "trigger_type": "cross_vendor_conflict",
+        "summary": "",
+        "vendors_affected": [
+          "cheap-but-incomplete",
+          "polished-fluff",
+          "thorough-but-pricey"
+        ],
+        "dimension_or_field": "commercial_terms"
+      }
+    ],
+    "clarification_questions": [
+      {
+        "vendor_name": "cheap-but-incomplete",
+        "field_path": "line_items[2].pricing",
+        "flag_status": "missing",
+        "question": "Regarding your pricing for line item 2, your response does not include the price for this item. Could you provide the specific fee for line_items[2]?",
+        "why_needed": "This is needed to compare the vendor\u2019s cost for the same deliverable against other proposals."
+      },
+      {
+        "vendor_name": "cheap-but-incomplete",
+        "field_path": "line_items[2].scope_coverage",
+        "flag_status": "missing",
+        "question": "Regarding line item 2, your response does not include the scope coverage for this deliverable. Could you confirm exactly what is included in line_items[2]?",
+        "why_needed": "This is needed to verify that the quoted item covers the required scope before comparing offers."
+      },
+      {
+        "vendor_name": "cheap-but-incomplete",
+        "field_path": "line_items[6].pricing",
+        "flag_status": "missing",
+        "question": "Regarding your pricing for line item 6, your response does not include the price for this item. Could you provide the specific fee for line_items[6]?",
+        "why_needed": "This is needed to compare the vendor\u2019s cost for the same deliverable against other proposals."
+      },
+      {
+        "vendor_name": "cheap-but-incomplete",
+        "field_path": "total_price",
+        "flag_status": "missing",
+        "question": "Your response does not include a total project price. Could you provide the overall total fee for the full scope?",
+        "why_needed": "This is needed to compare the vendor\u2019s overall bid on an equal basis with other proposals."
+      },
+      {
+        "vendor_name": "thorough-but-pricey",
+        "field_path": "total_price",
+        "flag_status": "missing",
+        "question": "Your response does not include a total project price. Could you provide the overall total fee for the full scope?",
+        "why_needed": "This is needed to compare the vendor\u2019s overall bid on an equal basis with other proposals."
+      },
+      {
+        "vendor_name": "cheap-but-incomplete",
+        "field_path": "line_items[5].pricing",
+        "flag_status": "unclear",
+        "question": "Regarding your pricing for line item 5, the amount shown is unclear. Could you confirm the exact fee for line_items[5] and whether it is a fixed price or an estimate?",
+        "why_needed": "This is needed to ensure the stated amount can be compared accurately with other vendors\u2019 pricing."
+      },
+      {
+        "vendor_name": "cheap-but-incomplete",
+        "field_path": "line_items[6].scope_coverage",
+        "flag_status": "unclear",
+        "question": "Regarding line item 6, the scope coverage is unclear. Could you clarify exactly which tasks or deliverables are included in line_items[6]?",
+        "why_needed": "This is needed to confirm whether the quoted item matches the required scope for comparison."
+      },
+      {
+        "vendor_name": "cheap-but-incomplete",
+        "field_path": "timeline",
+        "flag_status": "unclear",
+        "question": "Your timeline is described unclearly. Could you confirm the expected delivery schedule, including the start date, key milestones, and final completion date?",
+        "why_needed": "This is needed to compare delivery timing across vendors on a consistent basis."
+      },
+      {
+        "vendor_name": "thorough-but-pricey",
+        "field_path": "line_items[0].pricing",
+        "flag_status": "unclear",
+        "question": "Regarding your pricing for line item 0, the amount shown is unclear. Could you confirm the exact fee for line_items[0] and whether it is a fixed price or an estimate?",
+        "why_needed": "This is needed to ensure the stated amount can be compared accurately with other vendors\u2019 pricing."
+      },
+      {
+        "vendor_name": "thorough-but-pricey",
+        "field_path": "line_items[1].pricing",
+        "flag_status": "unclear",
+        "question": "Regarding your pricing for line item 1, the amount shown is unclear. Could you confirm the exact fee for line_items[1] and whether it is a fixed price or an estimate?",
+        "why_needed": "This is needed to ensure the stated amount can be compared accurately with other vendors\u2019 pricing."
+      },
+      {
+        "vendor_name": "thorough-but-pricey",
+        "field_path": "line_items[4].pricing",
+        "flag_status": "unclear",
+        "question": "Regarding your pricing for line item 4, the amount shown is unclear. Could you confirm the exact fee for line_items[4] and whether it is a fixed price or an estimate?",
+        "why_needed": "This is needed to ensure the stated amount can be compared accurately with other vendors\u2019 pricing."
+      },
+      {
+        "vendor_name": "thorough-but-pricey",
+        "field_path": "line_items[5].pricing",
+        "flag_status": "unclear",
+        "question": "Regarding your pricing for line item 5, the amount shown is unclear. Could you confirm the exact fee for line_items[5] and whether it is a fixed price or an estimate?",
+        "why_needed": "This is needed to ensure the stated amount can be compared accurately with other vendors\u2019 pricing."
+      },
+      {
+        "vendor_name": "polished-fluff",
+        "field_path": "pricing_structure",
+        "flag_status": "conflicting",
+        "question": "Your response contains conflicting statements about the pricing structure. Could you confirm the correct pricing structure and indicate which terms apply?",
+        "why_needed": "This is needed to understand how the vendor\u2019s fees are structured for consistent comparison."
+      },
+      {
+        "vendor_name": "polished-fluff",
+        "field_path": "total_price",
+        "flag_status": "conflicting",
+        "question": "Your response contains conflicting statements about the total price. Could you confirm the correct overall total fee?",
+        "why_needed": "This is needed to compare the vendor\u2019s overall bid on an equal basis with other proposals."
+      },
+      {
+        "vendor_name": "polished-fluff",
+        "field_path": "timeline",
+        "flag_status": "conflicting",
+        "question": "Your response contains conflicting statements about the timeline. Could you confirm the correct delivery schedule and final completion date?",
+        "why_needed": "This is needed to compare delivery timing across vendors on a consistent basis."
+      },
+      {
+        "vendor_name": "thorough-but-pricey",
+        "field_path": "line_items[2].pricing",
+        "flag_status": "conflicting",
+        "question": "Regarding your pricing for line item 2, there appear to be conflicting statements about the fee. Could you confirm the correct price for line_items[2]?",
+        "why_needed": "This is needed to ensure the line-item cost is interpreted correctly for comparison."
+      }
+    ],
+    "clamp_report": {
+      "entries": []
+    }
+  }
+}

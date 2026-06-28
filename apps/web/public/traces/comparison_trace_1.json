@@ -1,0 +1,470 @@
+{
+  "_fixture_mode": true,
+  "input": {
+    "vendor_names": [
+      "cheap-but-incomplete",
+      "polished-fluff",
+      "thorough-but-pricey"
+    ],
+    "rfq_title": "Request for Quotation (RFQ) - GlowBite 18-Month Go-to-Market Marketing Services Program",
+    "extraction_summaries": [
+      {
+        "vendor_name": "cheap-but-incomplete",
+        "flag_counts": {
+          "missing": 4,
+          "unclear": 3
+        }
+      },
+      {
+        "vendor_name": "polished-fluff",
+        "flag_counts": {
+          "conflicting": 3
+        }
+      },
+      {
+        "vendor_name": "thorough-but-pricey",
+        "flag_counts": {
+          "missing": 1,
+          "unclear": 4,
+          "conflicting": 1
+        }
+      }
+    ]
+  },
+  "resolved_prompt": {
+    "id": "comparison",
+    "version": 1,
+    "system_message_excerpt": "You are a procurement analyst comparing vendor responses to a marketing-services RFQ.\nYou receive structured extraction objects — one per vendor — and an RFQ for context.\nYour job is to compare the vendors across six dimensions and surface where they are\ncomparable, where data is insufficient, and what requires further review.\n\n## Your role\n\nYou ONLY phrase comparisons and narrative text. You do NOT:\n- Invent pricing, timelines, or scope details not present in the extractions\n- Compute a numeric..."
+  },
+  "raw_model_output": {
+    "dimensions": [
+      {
+        "dimension": "technical",
+        "verdicts": [
+          {
+            "vendor_name": "cheap-but-incomplete",
+            "model_proposed": "comparable",
+            "reason": "fixture: proposed comparable for all vendors on all dimensions"
+          },
+          {
+            "vendor_name": "polished-fluff",
+            "model_proposed": "comparable",
+            "reason": "fixture: proposed comparable for all vendors on all dimensions"
+          },
+          {
+            "vendor_name": "thorough-but-pricey",
+            "model_proposed": "comparable",
+            "reason": "fixture: proposed comparable for all vendors on all dimensions"
+          }
+        ],
+        "narrative": "Fixture narrative for technical dimension — all vendors proposed comparable before code clamp."
+      },
+      {
+        "dimension": "commercial",
+        "verdicts": [
+          {
+            "vendor_name": "cheap-but-incomplete",
+            "model_proposed": "comparable",
+            "reason": "fixture: proposed comparable for all vendors on all dimensions"
+          },
+          {
+            "vendor_name": "polished-fluff",
+            "model_proposed": "comparable",
+            "reason": "fixture: proposed comparable for all vendors on all dimensions"
+          },
+          {
+            "vendor_name": "thorough-but-pricey",
+            "model_proposed": "comparable",
+            "reason": "fixture: proposed comparable for all vendors on all dimensions"
+          }
+        ],
+        "narrative": "Fixture narrative for commercial dimension — all vendors proposed comparable before code clamp."
+      },
+      {
+        "dimension": "scope",
+        "verdicts": [
+          {
+            "vendor_name": "cheap-but-incomplete",
+            "model_proposed": "comparable",
+            "reason": "fixture: proposed comparable for all vendors on all dimensions"
+          },
+          {
+            "vendor_name": "polished-fluff",
+            "model_proposed": "comparable",
+            "reason": "fixture: proposed comparable for all vendors on all dimensions"
+          },
+          {
+            "vendor_name": "thorough-but-pricey",
+            "model_proposed": "comparable",
+            "reason": "fixture: proposed comparable for all vendors on all dimensions"
+          }
+        ],
+        "narrative": "Fixture narrative for scope dimension — all vendors proposed comparable before code clamp."
+      },
+      {
+        "dimension": "timeline",
+        "verdicts": [
+          {
+            "vendor_name": "cheap-but-incomplete",
+            "model_proposed": "comparable",
+            "reason": "fixture: proposed comparable for all vendors on all dimensions"
+          },
+          {
+            "vendor_name": "polished-fluff",
+            "model_proposed": "comparable",
+            "reason": "fixture: proposed comparable for all vendors on all dimensions"
+          },
+          {
+            "vendor_name": "thorough-but-pricey",
+            "model_proposed": "comparable",
+            "reason": "fixture: proposed comparable for all vendors on all dimensions"
+          }
+        ],
+        "narrative": "Fixture narrative for timeline dimension — all vendors proposed comparable before code clamp."
+      },
+      {
+        "dimension": "compliance",
+        "verdicts": [
+          {
+            "vendor_name": "cheap-but-incomplete",
+            "model_proposed": "comparable",
+            "reason": "fixture: proposed comparable for all vendors on all dimensions"
+          },
+          {
+            "vendor_name": "polished-fluff",
+            "model_proposed": "comparable",
+            "reason": "fixture: proposed comparable for all vendors on all dimensions"
+          },
+          {
+            "vendor_name": "thorough-but-pricey",
+            "model_proposed": "comparable",
+            "reason": "fixture: proposed comparable for all vendors on all dimensions"
+          }
+        ],
+        "narrative": "Fixture narrative for compliance dimension — all vendors proposed comparable before code clamp."
+      },
+      {
+        "dimension": "risk",
+        "verdicts": [
+          {
+            "vendor_name": "cheap-but-incomplete",
+            "model_proposed": "comparable",
+            "reason": "fixture: proposed comparable for all vendors on all dimensions"
+          },
+          {
+            "vendor_name": "polished-fluff",
+            "model_proposed": "comparable",
+            "reason": "fixture: proposed comparable for all vendors on all dimensions"
+          },
+          {
+            "vendor_name": "thorough-but-pricey",
+            "model_proposed": "comparable",
+            "reason": "fixture: proposed comparable for all vendors on all dimensions"
+          }
+        ],
+        "narrative": "Fixture narrative for risk dimension — all vendors proposed comparable before code clamp."
+      }
+    ],
+    "narrative_summary": "Fixture draft: model proposed 'comparable' for all vendors on all dimensions. Code clamped this where flag statuses dictate not_comparable or partially."
+  },
+  "clamp_step": {
+    "entries": [
+      {
+        "vendor_name": "cheap-but-incomplete",
+        "dimension": "technical",
+        "model_proposed": "comparable",
+        "code_ceiling": "not_comparable",
+        "clamped_to": "not_comparable",
+        "ceiling_reason": "technical ceiling=not_comparable for cheap-but-incomplete"
+      },
+      {
+        "vendor_name": "cheap-but-incomplete",
+        "dimension": "commercial",
+        "model_proposed": "comparable",
+        "code_ceiling": "not_comparable",
+        "clamped_to": "not_comparable",
+        "ceiling_reason": "commercial ceiling=not_comparable for cheap-but-incomplete"
+      },
+      {
+        "vendor_name": "polished-fluff",
+        "dimension": "commercial",
+        "model_proposed": "comparable",
+        "code_ceiling": "partially",
+        "clamped_to": "partially",
+        "ceiling_reason": "commercial ceiling=partially for polished-fluff"
+      },
+      {
+        "vendor_name": "thorough-but-pricey",
+        "dimension": "commercial",
+        "model_proposed": "comparable",
+        "code_ceiling": "not_comparable",
+        "clamped_to": "not_comparable",
+        "ceiling_reason": "commercial ceiling=not_comparable for thorough-but-pricey"
+      },
+      {
+        "vendor_name": "cheap-but-incomplete",
+        "dimension": "scope",
+        "model_proposed": "comparable",
+        "code_ceiling": "not_comparable",
+        "clamped_to": "not_comparable",
+        "ceiling_reason": "scope ceiling=not_comparable for cheap-but-incomplete"
+      },
+      {
+        "vendor_name": "cheap-but-incomplete",
+        "dimension": "timeline",
+        "model_proposed": "comparable",
+        "code_ceiling": "partially",
+        "clamped_to": "partially",
+        "ceiling_reason": "timeline ceiling=partially for cheap-but-incomplete"
+      },
+      {
+        "vendor_name": "polished-fluff",
+        "dimension": "timeline",
+        "model_proposed": "comparable",
+        "code_ceiling": "partially",
+        "clamped_to": "partially",
+        "ceiling_reason": "timeline ceiling=partially for polished-fluff"
+      }
+    ]
+  },
+  "clarification_step": {
+    "flagged_fields_input": [],
+    "note": "fixture mode — no live model call; clarification not executed"
+  },
+  "final_result": {
+    "vendor_names": [
+      "cheap-but-incomplete",
+      "polished-fluff",
+      "thorough-but-pricey"
+    ],
+    "dimensions": [
+      {
+        "dimension": "technical",
+        "verdicts": [
+          {
+            "vendor_name": "cheap-but-incomplete",
+            "verdict": "not_comparable",
+            "reason": "fixture: proposed comparable for all vendors on all dimensions",
+            "model_proposed": "comparable"
+          },
+          {
+            "vendor_name": "polished-fluff",
+            "verdict": "comparable",
+            "reason": "fixture: proposed comparable for all vendors on all dimensions",
+            "model_proposed": "comparable"
+          },
+          {
+            "vendor_name": "thorough-but-pricey",
+            "verdict": "comparable",
+            "reason": "fixture: proposed comparable for all vendors on all dimensions",
+            "model_proposed": "comparable"
+          }
+        ],
+        "narrative": "Fixture narrative for technical dimension — all vendors proposed comparable before code clamp."
+      },
+      {
+        "dimension": "commercial",
+        "verdicts": [
+          {
+            "vendor_name": "cheap-but-incomplete",
+            "verdict": "not_comparable",
+            "reason": "fixture: proposed comparable for all vendors on all dimensions",
+            "model_proposed": "comparable"
+          },
+          {
+            "vendor_name": "polished-fluff",
+            "verdict": "partially",
+            "reason": "fixture: proposed comparable for all vendors on all dimensions",
+            "model_proposed": "comparable"
+          },
+          {
+            "vendor_name": "thorough-but-pricey",
+            "verdict": "not_comparable",
+            "reason": "fixture: proposed comparable for all vendors on all dimensions",
+            "model_proposed": "comparable"
+          }
+        ],
+        "narrative": "Fixture narrative for commercial dimension — all vendors proposed comparable before code clamp."
+      },
+      {
+        "dimension": "scope",
+        "verdicts": [
+          {
+            "vendor_name": "cheap-but-incomplete",
+            "verdict": "not_comparable",
+            "reason": "fixture: proposed comparable for all vendors on all dimensions",
+            "model_proposed": "comparable"
+          },
+          {
+            "vendor_name": "polished-fluff",
+            "verdict": "comparable",
+            "reason": "fixture: proposed comparable for all vendors on all dimensions",
+            "model_proposed": "comparable"
+          },
+          {
+            "vendor_name": "thorough-but-pricey",
+            "verdict": "comparable",
+            "reason": "fixture: proposed comparable for all vendors on all dimensions",
+            "model_proposed": "comparable"
+          }
+        ],
+        "narrative": "Fixture narrative for scope dimension — all vendors proposed comparable before code clamp."
+      },
+      {
+        "dimension": "timeline",
+        "verdicts": [
+          {
+            "vendor_name": "cheap-but-incomplete",
+            "verdict": "partially",
+            "reason": "fixture: proposed comparable for all vendors on all dimensions",
+            "model_proposed": "comparable"
+          },
+          {
+            "vendor_name": "polished-fluff",
+            "verdict": "partially",
+            "reason": "fixture: proposed comparable for all vendors on all dimensions",
+            "model_proposed": "comparable"
+          },
+          {
+            "vendor_name": "thorough-but-pricey",
+            "verdict": "comparable",
+            "reason": "fixture: proposed comparable for all vendors on all dimensions",
+            "model_proposed": "comparable"
+          }
+        ],
+        "narrative": "Fixture narrative for timeline dimension — all vendors proposed comparable before code clamp."
+      },
+      {
+        "dimension": "compliance",
+        "verdicts": [
+          {
+            "vendor_name": "cheap-but-incomplete",
+            "verdict": "comparable",
+            "reason": "fixture: proposed comparable for all vendors on all dimensions",
+            "model_proposed": "comparable"
+          },
+          {
+            "vendor_name": "polished-fluff",
+            "verdict": "comparable",
+            "reason": "fixture: proposed comparable for all vendors on all dimensions",
+            "model_proposed": "comparable"
+          },
+          {
+            "vendor_name": "thorough-but-pricey",
+            "verdict": "comparable",
+            "reason": "fixture: proposed comparable for all vendors on all dimensions",
+            "model_proposed": "comparable"
+          }
+        ],
+        "narrative": "Fixture narrative for compliance dimension — all vendors proposed comparable before code clamp."
+      },
+      {
+        "dimension": "risk",
+        "verdicts": [
+          {
+            "vendor_name": "cheap-but-incomplete",
+            "verdict": "comparable",
+            "reason": "fixture: proposed comparable for all vendors on all dimensions",
+            "model_proposed": "comparable"
+          },
+          {
+            "vendor_name": "polished-fluff",
+            "verdict": "comparable",
+            "reason": "fixture: proposed comparable for all vendors on all dimensions",
+            "model_proposed": "comparable"
+          },
+          {
+            "vendor_name": "thorough-but-pricey",
+            "verdict": "comparable",
+            "reason": "fixture: proposed comparable for all vendors on all dimensions",
+            "model_proposed": "comparable"
+          }
+        ],
+        "narrative": "Fixture narrative for risk dimension — all vendors proposed comparable before code clamp."
+      }
+    ],
+    "line_item_offers": [],
+    "vendor_readiness": [
+      {
+        "vendor_name": "cheap-but-incomplete",
+        "comparable_count": 2,
+        "total_dimensions": 6,
+        "descriptor": "2 of 6 dimensions comparable; blocked on technical, commercial, scope, timeline"
+      },
+      {
+        "vendor_name": "polished-fluff",
+        "comparable_count": 4,
+        "total_dimensions": 6,
+        "descriptor": "4 of 6 dimensions comparable; blocked on commercial, timeline"
+      },
+      {
+        "vendor_name": "thorough-but-pricey",
+        "comparable_count": 5,
+        "total_dimensions": 6,
+        "descriptor": "5 of 6 dimensions comparable; blocked on commercial"
+      }
+    ],
+    "attention_points": [],
+    "clarification_questions": [],
+    "clamp_report": {
+      "entries": [
+        {
+          "vendor_name": "cheap-but-incomplete",
+          "dimension": "technical",
+          "model_proposed": "comparable",
+          "code_ceiling": "not_comparable",
+          "clamped_to": "not_comparable",
+          "ceiling_reason": "technical ceiling=not_comparable for cheap-but-incomplete"
+        },
+        {
+          "vendor_name": "cheap-but-incomplete",
+          "dimension": "commercial",
+          "model_proposed": "comparable",
+          "code_ceiling": "not_comparable",
+          "clamped_to": "not_comparable",
+          "ceiling_reason": "commercial ceiling=not_comparable for cheap-but-incomplete"
+        },
+        {
+          "vendor_name": "polished-fluff",
+          "dimension": "commercial",
+          "model_proposed": "comparable",
+          "code_ceiling": "partially",
+          "clamped_to": "partially",
+          "ceiling_reason": "commercial ceiling=partially for polished-fluff"
+        },
+        {
+          "vendor_name": "thorough-but-pricey",
+          "dimension": "commercial",
+          "model_proposed": "comparable",
+          "code_ceiling": "not_comparable",
+          "clamped_to": "not_comparable",
+          "ceiling_reason": "commercial ceiling=not_comparable for thorough-but-pricey"
+        },
+        {
+          "vendor_name": "cheap-but-incomplete",
+          "dimension": "scope",
+          "model_proposed": "comparable",
+          "code_ceiling": "not_comparable",
+          "clamped_to": "not_comparable",
+          "ceiling_reason": "scope ceiling=not_comparable for cheap-but-incomplete"
+        },
+        {
+          "vendor_name": "cheap-but-incomplete",
+          "dimension": "timeline",
+          "model_proposed": "comparable",
+          "code_ceiling": "partially",
+          "clamped_to": "partially",
+          "ceiling_reason": "timeline ceiling=partially for cheap-but-incomplete"
+        },
+        {
+          "vendor_name": "polished-fluff",
+          "dimension": "timeline",
+          "model_proposed": "comparable",
+          "code_ceiling": "partially",
+          "clamped_to": "partially",
+          "ceiling_reason": "timeline ceiling=partially for polished-fluff"
+        }
+      ]
+    }
+  }
+}

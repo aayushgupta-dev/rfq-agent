@@ -1,0 +1,507 @@
+{
+  "input": {
+    "vendor_name": "adversarial-fixture",
+    "source_id": "vendor_adversarial_fixture",
+    "rfq_line_items": [
+      {
+        "id": "strategy-creative",
+        "name": "Strategy & Creative Development",
+        "description": "Development of GlowBite launch strategy and creative foundation across both consumer and trade audiences. Scope includes brand narrative, target audience segmentation, shopper and parent insight synthesis, brand positioning, messaging architecture, campaign platform, creative route development, and launch communications framework for retail sell-in and consumer activation."
+      },
+      {
+        "id": "tvc-development",
+        "name": "TVC Development",
+        "description": "Creative development of television commercial assets derived from the approved campaign platform. Scope includes concept adaptation for film, scriptwriting, storyboard development, animatic recommendation if required, director shortlist and treatment briefing, and casting brief preparation. This line item excludes physical production and post-production execution."
+      },
+      {
+        "id": "tvc-production",
+        "name": "TVC Production",
+        "description": "Full production and post-production of GlowBite launch film assets following approved scripts and compliance clearance. Scope includes pre-production planning, child and adult talent casting, location sourcing, shoot execution, edit, motion graphics, supers, colour grade, audio mix, legal text integration, and digital cutdowns. All nutritional, efficacy, and implied benefit claims must be substantiated prior to shoot; no health or medical claims may appear without regulatory clearance sign-off."
+      },
+      {
+        "id": "social-organic",
+        "name": "Social Organic Content",
+        "description": "Development of GlowBite organic social presence for launch period across Instagram, TikTok, and YouTube Shorts. Scope includes channel role definition, content planning, short-form asset creation, copywriting, posting guidance, community management playbook, and influencer identification brief for nano/micro creators suitable for family and parenting contexts."
+      },
+      {
+        "id": "paid-media-planning",
+        "name": "Paid Media Planning",
+        "description": "Integrated paid media planning for the 12-week launch window spanning TV, digital, and OOH. Scope includes budget allocation by channel, audience strategy, market weighting, timing and phasing, media rationale, KPI framework, reach/frequency modelling, and TV GRP target planning. The agency must define assumptions clearly and separate strategy/planning fees from media investment."
+      },
+      {
+        "id": "paid-media-buying",
+        "name": "Paid Media Buying",
+        "description": "Execution of the approved paid media plan, including buying, trafficking, optimisation, reconciliation, and reporting. Agency will manage media spend on behalf of Luminos and must pass through all media owner invoices with full transparency. Agency must disclose all rebates, incentives, and commercial arrangements with media owners. Reporting must include CPL, CTR, viewability, and brand-safety incidents. Any digital placements involving audiences under 13 must be designed and trafficked in a COPPA-compliant manner."
+      },
+      {
+        "id": "kids-compliance",
+        "name": "Kids Advertising & Claims Compliance",
+        "description": "Independent or embedded compliance review of all campaign assets and targeting practices relating to children ages 4-12. Scope includes pre-production review, substantiation review for nutritional and product benefit claims, digital privacy controls for under-13 audiences, review against COPPA requirements in the US, CAP/BCAP Code considerations for any UK-facing media, and CARU-aligned guidance for child-directed creative. Written sign-off is mandatory before any asset proceeds to production or trafficking."
+      },
+      {
+        "id": "launch-management",
+        "name": "Launch Program Management",
+        "description": "Central project management office for the 18-month GlowBite launch program, coordinating Luminos stakeholders and appointed agencies across strategy, production, media, compliance, and reporting workstreams. Scope includes workback planning, governance, dependency tracking, risk management, decision logging, weekly and monthly reporting, and launch-readiness control through the first campaign phase."
+      }
+    ],
+    "raw_text_preview": "Agency Proposal — GlowBite RFQ Response\n\nSection A: Introduction\nWe are a full-service creative and media agency. Our work spans strategy, brand development, and integrated campaign delivery across consumer categories.\n\nSection B: Commercial Approach\nFees for strategic engagements of this nature are scoped individually. We do not publish rate cards. Investment levels are discussed after a discovery session. Our commercial model is designed to align with client outcomes and program complexity.\n\nS",
+    "fixture_type": "adversarial",
+    "raw_text_full": "Agency Proposal — GlowBite RFQ Response\n\nSection A: Introduction\nWe are a full-service creative and media agency. Our work spans strategy, brand development, and integrated campaign delivery across consumer categories.\n\nSection B: Commercial Approach\nFees for strategic engagements of this nature are scoped individually. We do not publish rate cards. Investment levels are discussed after a discovery session. Our commercial model is designed to align with client outcomes and program complexity.\n\nSection C: Timeline\nProgram timelines reflect the scope complexity and client readiness factors. We plan work collaboratively with clients. Duration is typically confirmed during onboarding. We have delivered comparable programs in periods ranging from six to eighteen months depending on approval cycles.\n\nSection D: Compliance\nWe work within all applicable regulatory and industry guidelines. Our internal compliance review covers all relevant advertising standards.\n\nSection E: Summary\nWe believe this engagement presents an excellent fit for our capabilities. We welcome a conversation to discuss fit and next steps."
+  },
+  "resolved_prompt": {
+    "id": "extraction",
+    "version": 1,
+    "system_message": "You are a **procurement extraction agent**. Your job is to read one vendor's proposal\nand extract structured facts into the schema described below.\n\nYou operate under a strict **evidence contract**: every extracted fact must be traceable\nto a verbatim quote from the vendor's response. You never invent, infer, or paraphrase.\nIf you cannot find a verbatim passage in the response that supports a field, that field\nis absent — not filled with your best guess.\n\n---\n\n## THE FOUR FLAG STATES\n\nEvery field in the output schema uses one of exactly four status values. Use nothing else.\n\n### present\nYou found a clear, unambiguous statement in the vendor response and you can quote **at\nleast 20 characters and 3 words** of verbatim context. Use this status only when you are\nconfident the vendor stated this, unambiguously, in their response.\n\n### missing\nThe field has no relevant content anywhere in the vendor response. Set `value` to null\nand `evidence` to an empty list `[]`. **Never invent a value.** If the vendor simply\ndid not address this topic, it is `missing`.\n\n### unclear\nThe vendor addressed this topic but the statement is ambiguous, vague, conditional, or\nbundled with other items so that you cannot produce a confident, specific value. Include\nthe verbatim passage as evidence. **Prefer `unclear` over `present` when uncertain.**\nA confident `present` on weak evidence is a worse outcome than an honest `unclear`.\nExamples: \"pricing is competitive and flexible depending on scope\", bundled totals with\nno per-item breakdown, timelines stated as a quarter rather than a week count.\n\n### conflicting\nThe vendor made two or more statements that genuinely contradict each other on the same\nfield. Use the `values[]` list — include one entry per conflicting statement, each with\nits own evidence snippet. Do not pick one and discard the other. Both sides must appear.\n\n**CRITICAL:** You output only one of the four states above. Do not output any other\nstatus value. The division of labor is clean: you assign one of these four states;\nseparate code runs after you return and makes its own decisions about evidence quality.\nKeep these concerns cleanly separated — your job ends at the four states.\n\n---\n\n## EVIDENCE INSTRUCTIONS\n\nFor every field with status `present`, `unclear`, or `conflicting`:\n\n1. **Quote verbatim.** Copy the passage character-for-character from the vendor response.\n   Do NOT paraphrase, summarize, or substitute synonyms. The quoted text must appear\n   word-for-word in the vendor's document.\n\n2. **Minimum length.** The snippet must be **at least 20 characters and at least 3 words**.\n   A snippet shorter than this provides insufficient context and will fail verification.\n   Quote long enough passages to be unambiguous.\n\n3. **Your evidence snippets MUST be copied character-for-character from the vendor text.**\n   Any rephrasing, synonyms, or paraphrasing — including changing word order, substituting\n   near-synonyms, or adding/omitting a word — will cause the evidence to fail automated\n   verification. Copy the passage exactly as it appears, including punctuation and spacing.\n\n4. **Set `source_id`** to the exact value provided in the context header under\n   `VENDOR SOURCE ID`. Do not invent or modify it.\n\n5. **Set `char_start=0` and `char_end=1`** as placeholder values. The system locates the\n   snippet in the source text and recomputes the real character offsets — your offsets\n   are never used.\n\nFor fields with status `missing`: set `evidence` to `[]` and `value` to `null`.\n\n---\n\n## RFQ LINE ITEM EXTRACTION\n\nThe RFQ line items are listed in the context below under `RFQ LINE ITEMS`. For each\nline item you must extract two fields:\n\n- **`pricing`** — what the vendor quoted for this specific service item (dollar amount,\n  rate, or explicit statement about price).\n- **`scope_coverage`** — what the vendor said they would deliver for this item.\n\nApply these rules:\n\n- If the vendor did not address a line item at all, set both `pricing` and\n  `scope_coverage` to `status: \"missing\"`.\n- If the vendor **bundled pricing** across multiple items (e.g. a single total covering\n  several services), set per-item `pricing` to `status: \"unclear\"` and quote the bundle\n  statement as evidence. **Never split a bundled price into per-item amounts** — that\n  would be fabrication. Also set the document-level `pricing_structure` field with the\n  bundle statement.\n- If the vendor stated a price for the item but the statement is vague or conditional\n  (e.g. \"TBD pending budget confirmation\"), use `status: \"unclear\"`.\n\n---\n\n## DOCUMENT-LEVEL FIELDS\n\nExtract these fields at the document level (covering the whole proposal):\n\n- **`scope_summary`** — a brief narrative describing what the vendor is offering overall.\n  If the vendor gave a clear summary statement, quote it. If their scope is only\n  inferable from line items, use `status: \"unclear\"`.\n\n- **`pricing_structure`** — if the vendor stated an overall pricing model, grand total,\n  or bundle statement, quote it here. If no such statement exists, `missing`.\n\n- **`total_price`** — if a specific grand total figure is separable from the proposal,\n  extract it as a decimal number. If the vendor never stated a single total, `missing`.\n\n- **`commercial_terms`** — payment structure, milestone billing, discounts, surcharges,\n  or commercial conditions. Quote verbatim if stated.\n\n- **`timeline`** — the vendor's overall delivery schedule or project timeline narrative.\n\n---\n\n## PER-CLAIM FIELDS\n\nThese fields are lists — each item in the list is one distinct claim with its own\nevidence snippet. Do not aggregate multiple claims into one entry.\n\n- **`compliance_points`** — regulatory compliance statements the vendor made.\n- **`assumptions`** — explicit assumptions the vendor stated their pricing or scope\n  depends on.\n- **`exclusions`** — items or costs the vendor explicitly excluded from their proposal.\n- **`risks`** — risks or caveats the vendor identified.\n\nIf none exist, return an empty list `[]`.\n\n---\n\n## HUMILITY INSTRUCTION\n\nWhen in doubt, prefer `missing` or `unclear` over `present`. A confident `present` on\nweak evidence is worse than an honest `unclear`. The buyer would rather see a flag\nthan a fabricated number.\n\nIf a value seems plausible but you cannot find it word-for-word in the vendor response,\nit is `missing` or `unclear` — not `present`.\n\n---\n\n## OUTPUT FORMAT\n\nRespond with a JSON object conforming exactly to the `ExtractionResult` schema. All\n`Field` values must follow the flag state rules above. Do not add fields not in the\nschema. Do not add explanatory prose outside the JSON object.\n\n---\n\n## FEW-SHOT EXAMPLES\n\n### Example 1 — present\n\nVendor text contains: `\"Total project cost: $250,000 including all deliverables\"`\n\n```json\n{\n  \"pricing_structure\": {\n    \"status\": \"present\",\n    \"value\": \"$250,000 including all deliverables\",\n    \"evidence\": [\n      {\n        \"snippet\": \"Total project cost: $250,000 including all deliverables\",\n        \"source_id\": \"vendor_acme_agency\",\n        \"char_start\": 0,\n        \"char_end\": 1\n      }\n    ]\n  }\n}\n```\n\n### Example 2 — missing\n\nVendor response contains no mention of TVC Production pricing or scope.\n\n```json\n{\n  \"line_items\": [\n    {\n      \"line_item_id\": \"tvc-production\",\n      \"line_item_name\": \"TVC Production\",\n      \"pricing\": {\n        \"status\": \"missing\",\n        \"value\": null,\n        \"evidence\": []\n      },\n      \"scope_coverage\": {\n        \"status\": \"missing\",\n        \"value\": null,\n        \"evidence\": []\n      }\n    }\n  ]\n}\n```\n\n### Example 3 — unclear\n\nVendor text contains: `\"pricing is competitive and flexible depending on scope\"`\n\n```json\n{\n  \"pricing\": {\n    \"status\": \"unclear\",\n    \"value\": \"competitive and flexible depending on scope\",\n    \"evidence\": [\n      {\n        \"snippet\": \"pricing is competitive and flexible depending on scope\",\n        \"source_id\": \"vendor_acme_agency\",\n        \"char_start\": 0,\n        \"char_end\": 1\n      }\n    ]\n  }\n}\n```\n\n### Example 4 — conflicting\n\nVendor states the timeline in two different places with contradictory values.\n\n```json\n{\n  \"timeline\": {\n    \"status\": \"conflicting\",\n    \"values\": [\n      {\n        \"value\": \"6 months from project kick-off\",\n        \"evidence\": [\n          {\n            \"snippet\": \"We anticipate completing the full program within 6 months from project kick-off\",\n            \"source_id\": \"vendor_acme_agency\",\n            \"char_start\": 0,\n            \"char_end\": 1\n          }\n        ]\n      },\n      {\n        \"value\": \"8 to 10 months depending on feedback cycles\",\n        \"evidence\": [\n          {\n            \"snippet\": \"Realistic delivery is 8 to 10 months depending on feedback cycles and client approvals\",\n            \"source_id\": \"vendor_acme_agency\",\n            \"char_start\": 0,\n            \"char_end\": 1\n          }\n        ]\n      }\n    ]\n  }\n}\n```\n\n---\n\n## INPUT FORMAT\n\nThe human turn provides:\n\n1. **Vendor response** — the raw vendor proposal text to extract from.\n2. **RFQ line items (JSON)** — a JSON array of objects with `id`, `name`, and `description`\n   for each line item. Use these as the scaffold for the `line_items` array in your output.\n   The `line_item_id` and `line_item_name` in each `LineItemExtraction` must match the `id`\n   and `name` from this list exactly.\n\nThe **source_id** for all evidence snippets is the vendor's identifier. It is embedded in\nthe vendor response context — use the exact `source_id` value when populating evidence.",
+    "human_message_template": "Vendor source ID (use this exact value for all evidence source_id fields): {source_id}\n\nVendor response:\n{vendor_text}\n\nRFQ line items (JSON):\n{rfq_line_items}"
+  },
+  "raw_model_output": {
+    "vendor_name": "adversarial-fixture",
+    "scope_summary": {
+      "status": "present",
+      "value": "We are a full-service creative and media agency. Our work spans strategy, brand development, and integrated campaign delivery across consumer categories.",
+      "evidence": [
+        {
+          "snippet": "We are a full-service creative and media agency. Our work spans strategy, brand development, and integrated campaign delivery across consumer categories.",
+          "char_start": 0,
+          "char_end": 1,
+          "source_id": "vendor_adversarial_fixture"
+        }
+      ],
+      "values": null
+    },
+    "line_items": [
+      {
+        "line_item_id": "strategy-creative",
+        "line_item_name": "Strategy & Creative Development",
+        "pricing": {
+          "status": "missing",
+          "value": null,
+          "evidence": [],
+          "values": null
+        },
+        "scope_coverage": {
+          "status": "missing",
+          "value": null,
+          "evidence": [],
+          "values": null
+        }
+      },
+      {
+        "line_item_id": "tvc-development",
+        "line_item_name": "TVC Development",
+        "pricing": {
+          "status": "missing",
+          "value": null,
+          "evidence": [],
+          "values": null
+        },
+        "scope_coverage": {
+          "status": "missing",
+          "value": null,
+          "evidence": [],
+          "values": null
+        }
+      },
+      {
+        "line_item_id": "tvc-production",
+        "line_item_name": "TVC Production",
+        "pricing": {
+          "status": "missing",
+          "value": null,
+          "evidence": [],
+          "values": null
+        },
+        "scope_coverage": {
+          "status": "missing",
+          "value": null,
+          "evidence": [],
+          "values": null
+        }
+      },
+      {
+        "line_item_id": "social-organic",
+        "line_item_name": "Social Organic Content",
+        "pricing": {
+          "status": "missing",
+          "value": null,
+          "evidence": [],
+          "values": null
+        },
+        "scope_coverage": {
+          "status": "missing",
+          "value": null,
+          "evidence": [],
+          "values": null
+        }
+      },
+      {
+        "line_item_id": "paid-media-planning",
+        "line_item_name": "Paid Media Planning",
+        "pricing": {
+          "status": "missing",
+          "value": null,
+          "evidence": [],
+          "values": null
+        },
+        "scope_coverage": {
+          "status": "missing",
+          "value": null,
+          "evidence": [],
+          "values": null
+        }
+      },
+      {
+        "line_item_id": "paid-media-buying",
+        "line_item_name": "Paid Media Buying",
+        "pricing": {
+          "status": "missing",
+          "value": null,
+          "evidence": [],
+          "values": null
+        },
+        "scope_coverage": {
+          "status": "missing",
+          "value": null,
+          "evidence": [],
+          "values": null
+        }
+      },
+      {
+        "line_item_id": "kids-compliance",
+        "line_item_name": "Kids Advertising & Claims Compliance",
+        "pricing": {
+          "status": "missing",
+          "value": null,
+          "evidence": [],
+          "values": null
+        },
+        "scope_coverage": {
+          "status": "missing",
+          "value": null,
+          "evidence": [],
+          "values": null
+        }
+      },
+      {
+        "line_item_id": "launch-management",
+        "line_item_name": "Launch Program Management",
+        "pricing": {
+          "status": "missing",
+          "value": null,
+          "evidence": [],
+          "values": null
+        },
+        "scope_coverage": {
+          "status": "missing",
+          "value": null,
+          "evidence": [],
+          "values": null
+        }
+      }
+    ],
+    "pricing_structure": {
+      "status": "unclear",
+      "value": "Fees for strategic engagements of this nature are scoped individually. We do not publish rate cards. Investment levels are discussed after a discovery session. Our commercial model is designed to align with client outcomes and program complexity.",
+      "evidence": [
+        {
+          "snippet": "Fees for strategic engagements of this nature are scoped individually. We do not publish rate cards. Investment levels are discussed after a discovery session. Our commercial model is designed to align with client outcomes and program complexity.",
+          "char_start": 0,
+          "char_end": 1,
+          "source_id": "vendor_adversarial_fixture"
+        }
+      ],
+      "values": null
+    },
+    "total_price": {
+      "status": "missing",
+      "value": null,
+      "evidence": [],
+      "values": null
+    },
+    "commercial_terms": {
+      "status": "present",
+      "value": "Fees for strategic engagements of this nature are scoped individually. We do not publish rate cards. Investment levels are discussed after a discovery session. Our commercial model is designed to align with client outcomes and program complexity.",
+      "evidence": [
+        {
+          "snippet": "Fees for strategic engagements of this nature are scoped individually. We do not publish rate cards. Investment levels are discussed after a discovery session. Our commercial model is designed to align with client outcomes and program complexity.",
+          "char_start": 0,
+          "char_end": 1,
+          "source_id": "vendor_adversarial_fixture"
+        }
+      ],
+      "values": null
+    },
+    "timeline": {
+      "status": "unclear",
+      "value": "Program timelines reflect the scope complexity and client readiness factors. We plan work collaboratively with clients. Duration is typically confirmed during onboarding. We have delivered comparable programs in periods ranging from six to eighteen months depending on approval cycles.",
+      "evidence": [
+        {
+          "snippet": "Program timelines reflect the scope complexity and client readiness factors. We plan work collaboratively with clients. Duration is typically confirmed during onboarding. We have delivered comparable programs in periods ranging from six to eighteen months depending on approval cycles.",
+          "char_start": 0,
+          "char_end": 1,
+          "source_id": "vendor_adversarial_fixture"
+        }
+      ],
+      "values": null
+    },
+    "compliance_points": [
+      {
+        "status": "present",
+        "value": "We work within all applicable regulatory and industry guidelines.",
+        "evidence": [
+          {
+            "snippet": "We work within all applicable regulatory and industry guidelines.",
+            "char_start": 0,
+            "char_end": 1,
+            "source_id": "vendor_adversarial_fixture"
+          }
+        ],
+        "values": null
+      },
+      {
+        "status": "present",
+        "value": "Our internal compliance review covers all relevant advertising standards.",
+        "evidence": [
+          {
+            "snippet": "Our internal compliance review covers all relevant advertising standards.",
+            "char_start": 0,
+            "char_end": 1,
+            "source_id": "vendor_adversarial_fixture"
+          }
+        ],
+        "values": null
+      }
+    ],
+    "assumptions": [],
+    "exclusions": [],
+    "risks": []
+  },
+  "grounding_step": {
+    "downgrade_report": {
+      "entries": []
+    },
+    "fields_downgraded": 0
+  },
+  "final_result": {
+    "vendor_name": "adversarial-fixture",
+    "scope_summary": {
+      "status": "present",
+      "value": "We are a full-service creative and media agency. Our work spans strategy, brand development, and integrated campaign delivery across consumer categories.",
+      "evidence": [
+        {
+          "snippet": "We are a full-service creative and media agency. Our work spans strategy, brand development, and integrated campaign delivery across consumer categories.",
+          "char_start": 65,
+          "char_end": 218,
+          "source_id": "vendor_adversarial_fixture"
+        }
+      ],
+      "values": null
+    },
+    "line_items": [
+      {
+        "line_item_id": "strategy-creative",
+        "line_item_name": "Strategy & Creative Development",
+        "pricing": {
+          "status": "missing",
+          "value": null,
+          "evidence": [],
+          "values": null
+        },
+        "scope_coverage": {
+          "status": "missing",
+          "value": null,
+          "evidence": [],
+          "values": null
+        }
+      },
+      {
+        "line_item_id": "tvc-development",
+        "line_item_name": "TVC Development",
+        "pricing": {
+          "status": "missing",
+          "value": null,
+          "evidence": [],
+          "values": null
+        },
+        "scope_coverage": {
+          "status": "missing",
+          "value": null,
+          "evidence": [],
+          "values": null
+        }
+      },
+      {
+        "line_item_id": "tvc-production",
+        "line_item_name": "TVC Production",
+        "pricing": {
+          "status": "missing",
+          "value": null,
+          "evidence": [],
+          "values": null
+        },
+        "scope_coverage": {
+          "status": "missing",
+          "value": null,
+          "evidence": [],
+          "values": null
+        }
+      },
+      {
+        "line_item_id": "social-organic",
+        "line_item_name": "Social Organic Content",
+        "pricing": {
+          "status": "missing",
+          "value": null,
+          "evidence": [],
+          "values": null
+        },
+        "scope_coverage": {
+          "status": "missing",
+          "value": null,
+          "evidence": [],
+          "values": null
+        }
+      },
+      {
+        "line_item_id": "paid-media-planning",
+        "line_item_name": "Paid Media Planning",
+        "pricing": {
+          "status": "missing",
+          "value": null,
+          "evidence": [],
+          "values": null
+        },
+        "scope_coverage": {
+          "status": "missing",
+          "value": null,
+          "evidence": [],
+          "values": null
+        }
+      },
+      {
+        "line_item_id": "paid-media-buying",
+        "line_item_name": "Paid Media Buying",
+        "pricing": {
+          "status": "missing",
+          "value": null,
+          "evidence": [],
+          "values": null
+        },
+        "scope_coverage": {
+          "status": "missing",
+          "value": null,
+          "evidence": [],
+          "values": null
+        }
+      },
+      {
+        "line_item_id": "kids-compliance",
+        "line_item_name": "Kids Advertising & Claims Compliance",
+        "pricing": {
+          "status": "missing",
+          "value": null,
+          "evidence": [],
+          "values": null
+        },
+        "scope_coverage": {
+          "status": "missing",
+          "value": null,
+          "evidence": [],
+          "values": null
+        }
+      },
+      {
+        "line_item_id": "launch-management",
+        "line_item_name": "Launch Program Management",
+        "pricing": {
+          "status": "missing",
+          "value": null,
+          "evidence": [],
+          "values": null
+        },
+        "scope_coverage": {
+          "status": "missing",
+          "value": null,
+          "evidence": [],
+          "values": null
+        }
+      }
+    ],
+    "pricing_structure": {
+      "status": "unclear",
+      "value": "Fees for strategic engagements of this nature are scoped individually. We do not publish rate cards. Investment levels are discussed after a discovery session. Our commercial model is designed to align with client outcomes and program complexity.",
+      "evidence": [
+        {
+          "snippet": "Fees for strategic engagements of this nature are scoped individually. We do not publish rate cards. Investment levels are discussed after a discovery session. Our commercial model is designed to align with client outcomes and program complexity.",
+          "char_start": 251,
+          "char_end": 497,
+          "source_id": "vendor_adversarial_fixture"
+        }
+      ],
+      "values": null
+    },
+    "total_price": {
+      "status": "missing",
+      "value": null,
+      "evidence": [],
+      "values": null
+    },
+    "commercial_terms": {
+      "status": "present",
+      "value": "Fees for strategic engagements of this nature are scoped individually. We do not publish rate cards. Investment levels are discussed after a discovery session. Our commercial model is designed to align with client outcomes and program complexity.",
+      "evidence": [
+        {
+          "snippet": "Fees for strategic engagements of this nature are scoped individually. We do not publish rate cards. Investment levels are discussed after a discovery session. Our commercial model is designed to align with client outcomes and program complexity.",
+          "char_start": 251,
+          "char_end": 497,
+          "source_id": "vendor_adversarial_fixture"
+        }
+      ],
+      "values": null
+    },
+    "timeline": {
+      "status": "unclear",
+      "value": "Program timelines reflect the scope complexity and client readiness factors. We plan work collaboratively with clients. Duration is typically confirmed during onboarding. We have delivered comparable programs in periods ranging from six to eighteen months depending on approval cycles.",
+      "evidence": [
+        {
+          "snippet": "Program timelines reflect the scope complexity and client readiness factors. We plan work collaboratively with clients. Duration is typically confirmed during onboarding. We have delivered comparable programs in periods ranging from six to eighteen months depending on approval cycles.",
+          "char_start": 519,
+          "char_end": 804,
+          "source_id": "vendor_adversarial_fixture"
+        }
+      ],
+      "values": null
+    },
+    "compliance_points": [
+      {
+        "status": "present",
+        "value": "We work within all applicable regulatory and industry guidelines.",
+        "evidence": [
+          {
+            "snippet": "We work within all applicable regulatory and industry guidelines.",
+            "char_start": 828,
+            "char_end": 893,
+            "source_id": "vendor_adversarial_fixture"
+          }
+        ],
+        "values": null
+      },
+      {
+        "status": "present",
+        "value": "Our internal compliance review covers all relevant advertising standards.",
+        "evidence": [
+          {
+            "snippet": "Our internal compliance review covers all relevant advertising standards.",
+            "char_start": 894,
+            "char_end": 967,
+            "source_id": "vendor_adversarial_fixture"
+          }
+        ],
+        "values": null
+      }
+    ],
+    "assumptions": [],
+    "exclusions": [],
+    "risks": []
+  }
+}
