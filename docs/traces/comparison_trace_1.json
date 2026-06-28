@@ -2,27 +2,27 @@
   "_fixture_mode": true,
   "input": {
     "vendor_names": [
-      "cheap-but-incomplete",
-      "polished-fluff",
-      "thorough-but-pricey"
+      "Northbridge Studio",
+      "Apex Strategy Group",
+      "Meridian & Partners"
     ],
     "rfq_title": "Request for Quotation (RFQ) - GlowBite 18-Month Go-to-Market Marketing Services Program",
     "extraction_summaries": [
       {
-        "vendor_name": "cheap-but-incomplete",
+        "vendor_name": "Northbridge Studio",
         "flag_counts": {
           "missing": 4,
           "unclear": 3
         }
       },
       {
-        "vendor_name": "polished-fluff",
+        "vendor_name": "Apex Strategy Group",
         "flag_counts": {
           "conflicting": 3
         }
       },
       {
-        "vendor_name": "thorough-but-pricey",
+        "vendor_name": "Meridian & Partners",
         "flag_counts": {
           "missing": 1,
           "unclear": 4,
@@ -42,17 +42,17 @@
         "dimension": "technical",
         "verdicts": [
           {
-            "vendor_name": "cheap-but-incomplete",
+            "vendor_name": "Northbridge Studio",
             "model_proposed": "comparable",
             "reason": "fixture: proposed comparable for all vendors on all dimensions"
           },
           {
-            "vendor_name": "polished-fluff",
+            "vendor_name": "Apex Strategy Group",
             "model_proposed": "comparable",
             "reason": "fixture: proposed comparable for all vendors on all dimensions"
           },
           {
-            "vendor_name": "thorough-but-pricey",
+            "vendor_name": "Meridian & Partners",
             "model_proposed": "comparable",
             "reason": "fixture: proposed comparable for all vendors on all dimensions"
           }
@@ -63,17 +63,17 @@
         "dimension": "commercial",
         "verdicts": [
           {
-            "vendor_name": "cheap-but-incomplete",
+            "vendor_name": "Northbridge Studio",
             "model_proposed": "comparable",
             "reason": "fixture: proposed comparable for all vendors on all dimensions"
           },
           {
-            "vendor_name": "polished-fluff",
+            "vendor_name": "Apex Strategy Group",
             "model_proposed": "comparable",
             "reason": "fixture: proposed comparable for all vendors on all dimensions"
           },
           {
-            "vendor_name": "thorough-but-pricey",
+            "vendor_name": "Meridian & Partners",
             "model_proposed": "comparable",
             "reason": "fixture: proposed comparable for all vendors on all dimensions"
           }
@@ -84,17 +84,17 @@
         "dimension": "scope",
         "verdicts": [
           {
-            "vendor_name": "cheap-but-incomplete",
+            "vendor_name": "Northbridge Studio",
             "model_proposed": "comparable",
             "reason": "fixture: proposed comparable for all vendors on all dimensions"
           },
           {
-            "vendor_name": "polished-fluff",
+            "vendor_name": "Apex Strategy Group",
             "model_proposed": "comparable",
             "reason": "fixture: proposed comparable for all vendors on all dimensions"
           },
           {
-            "vendor_name": "thorough-but-pricey",
+            "vendor_name": "Meridian & Partners",
             "model_proposed": "comparable",
             "reason": "fixture: proposed comparable for all vendors on all dimensions"
           }
@@ -105,17 +105,17 @@
         "dimension": "timeline",
         "verdicts": [
           {
-            "vendor_name": "cheap-but-incomplete",
+            "vendor_name": "Northbridge Studio",
             "model_proposed": "comparable",
             "reason": "fixture: proposed comparable for all vendors on all dimensions"
           },
           {
-            "vendor_name": "polished-fluff",
+            "vendor_name": "Apex Strategy Group",
             "model_proposed": "comparable",
             "reason": "fixture: proposed comparable for all vendors on all dimensions"
           },
           {
-            "vendor_name": "thorough-but-pricey",
+            "vendor_name": "Meridian & Partners",
             "model_proposed": "comparable",
             "reason": "fixture: proposed comparable for all vendors on all dimensions"
           }
@@ -126,17 +126,17 @@
         "dimension": "compliance",
         "verdicts": [
           {
-            "vendor_name": "cheap-but-incomplete",
+            "vendor_name": "Northbridge Studio",
             "model_proposed": "comparable",
             "reason": "fixture: proposed comparable for all vendors on all dimensions"
           },
           {
-            "vendor_name": "polished-fluff",
+            "vendor_name": "Apex Strategy Group",
             "model_proposed": "comparable",
             "reason": "fixture: proposed comparable for all vendors on all dimensions"
           },
           {
-            "vendor_name": "thorough-but-pricey",
+            "vendor_name": "Meridian & Partners",
             "model_proposed": "comparable",
             "reason": "fixture: proposed comparable for all vendors on all dimensions"
           }
@@ -147,17 +147,17 @@
         "dimension": "risk",
         "verdicts": [
           {
-            "vendor_name": "cheap-but-incomplete",
+            "vendor_name": "Northbridge Studio",
             "model_proposed": "comparable",
             "reason": "fixture: proposed comparable for all vendors on all dimensions"
           },
           {
-            "vendor_name": "polished-fluff",
+            "vendor_name": "Apex Strategy Group",
             "model_proposed": "comparable",
             "reason": "fixture: proposed comparable for all vendors on all dimensions"
           },
           {
-            "vendor_name": "thorough-but-pricey",
+            "vendor_name": "Meridian & Partners",
             "model_proposed": "comparable",
             "reason": "fixture: proposed comparable for all vendors on all dimensions"
           }
@@ -170,60 +170,60 @@
   "clamp_step": {
     "entries": [
       {
-        "vendor_name": "cheap-but-incomplete",
+        "vendor_name": "Northbridge Studio",
         "dimension": "technical",
         "model_proposed": "comparable",
         "code_ceiling": "not_comparable",
         "clamped_to": "not_comparable",
-        "ceiling_reason": "technical ceiling=not_comparable for cheap-but-incomplete"
+        "ceiling_reason": "technical ceiling=not_comparable for Northbridge Studio"
       },
       {
-        "vendor_name": "cheap-but-incomplete",
+        "vendor_name": "Northbridge Studio",
         "dimension": "commercial",
         "model_proposed": "comparable",
         "code_ceiling": "not_comparable",
         "clamped_to": "not_comparable",
-        "ceiling_reason": "commercial ceiling=not_comparable for cheap-but-incomplete"
+        "ceiling_reason": "commercial ceiling=not_comparable for Northbridge Studio"
       },
       {
-        "vendor_name": "polished-fluff",
+        "vendor_name": "Apex Strategy Group",
         "dimension": "commercial",
         "model_proposed": "comparable",
         "code_ceiling": "partially",
         "clamped_to": "partially",
-        "ceiling_reason": "commercial ceiling=partially for polished-fluff"
+        "ceiling_reason": "commercial ceiling=partially for Apex Strategy Group"
       },
       {
-        "vendor_name": "thorough-but-pricey",
+        "vendor_name": "Meridian & Partners",
         "dimension": "commercial",
         "model_proposed": "comparable",
         "code_ceiling": "not_comparable",
         "clamped_to": "not_comparable",
-        "ceiling_reason": "commercial ceiling=not_comparable for thorough-but-pricey"
+        "ceiling_reason": "commercial ceiling=not_comparable for Meridian & Partners"
       },
       {
-        "vendor_name": "cheap-but-incomplete",
+        "vendor_name": "Northbridge Studio",
         "dimension": "scope",
         "model_proposed": "comparable",
         "code_ceiling": "not_comparable",
         "clamped_to": "not_comparable",
-        "ceiling_reason": "scope ceiling=not_comparable for cheap-but-incomplete"
+        "ceiling_reason": "scope ceiling=not_comparable for Northbridge Studio"
       },
       {
-        "vendor_name": "cheap-but-incomplete",
+        "vendor_name": "Northbridge Studio",
         "dimension": "timeline",
         "model_proposed": "comparable",
         "code_ceiling": "partially",
         "clamped_to": "partially",
-        "ceiling_reason": "timeline ceiling=partially for cheap-but-incomplete"
+        "ceiling_reason": "timeline ceiling=partially for Northbridge Studio"
       },
       {
-        "vendor_name": "polished-fluff",
+        "vendor_name": "Apex Strategy Group",
         "dimension": "timeline",
         "model_proposed": "comparable",
         "code_ceiling": "partially",
         "clamped_to": "partially",
-        "ceiling_reason": "timeline ceiling=partially for polished-fluff"
+        "ceiling_reason": "timeline ceiling=partially for Apex Strategy Group"
       }
     ]
   },
@@ -233,28 +233,28 @@
   },
   "final_result": {
     "vendor_names": [
-      "cheap-but-incomplete",
-      "polished-fluff",
-      "thorough-but-pricey"
+      "Northbridge Studio",
+      "Apex Strategy Group",
+      "Meridian & Partners"
     ],
     "dimensions": [
       {
         "dimension": "technical",
         "verdicts": [
           {
-            "vendor_name": "cheap-but-incomplete",
+            "vendor_name": "Northbridge Studio",
             "verdict": "not_comparable",
             "reason": "fixture: proposed comparable for all vendors on all dimensions",
             "model_proposed": "comparable"
           },
           {
-            "vendor_name": "polished-fluff",
+            "vendor_name": "Apex Strategy Group",
             "verdict": "comparable",
             "reason": "fixture: proposed comparable for all vendors on all dimensions",
             "model_proposed": "comparable"
           },
           {
-            "vendor_name": "thorough-but-pricey",
+            "vendor_name": "Meridian & Partners",
             "verdict": "comparable",
             "reason": "fixture: proposed comparable for all vendors on all dimensions",
             "model_proposed": "comparable"
@@ -266,19 +266,19 @@
         "dimension": "commercial",
         "verdicts": [
           {
-            "vendor_name": "cheap-but-incomplete",
+            "vendor_name": "Northbridge Studio",
             "verdict": "not_comparable",
             "reason": "fixture: proposed comparable for all vendors on all dimensions",
             "model_proposed": "comparable"
           },
           {
-            "vendor_name": "polished-fluff",
+            "vendor_name": "Apex Strategy Group",
             "verdict": "partially",
             "reason": "fixture: proposed comparable for all vendors on all dimensions",
             "model_proposed": "comparable"
           },
           {
-            "vendor_name": "thorough-but-pricey",
+            "vendor_name": "Meridian & Partners",
             "verdict": "not_comparable",
             "reason": "fixture: proposed comparable for all vendors on all dimensions",
             "model_proposed": "comparable"
@@ -290,19 +290,19 @@
         "dimension": "scope",
         "verdicts": [
           {
-            "vendor_name": "cheap-but-incomplete",
+            "vendor_name": "Northbridge Studio",
             "verdict": "not_comparable",
             "reason": "fixture: proposed comparable for all vendors on all dimensions",
             "model_proposed": "comparable"
           },
           {
-            "vendor_name": "polished-fluff",
+            "vendor_name": "Apex Strategy Group",
             "verdict": "comparable",
             "reason": "fixture: proposed comparable for all vendors on all dimensions",
             "model_proposed": "comparable"
           },
           {
-            "vendor_name": "thorough-but-pricey",
+            "vendor_name": "Meridian & Partners",
             "verdict": "comparable",
             "reason": "fixture: proposed comparable for all vendors on all dimensions",
             "model_proposed": "comparable"
@@ -314,19 +314,19 @@
         "dimension": "timeline",
         "verdicts": [
           {
-            "vendor_name": "cheap-but-incomplete",
+            "vendor_name": "Northbridge Studio",
             "verdict": "partially",
             "reason": "fixture: proposed comparable for all vendors on all dimensions",
             "model_proposed": "comparable"
           },
           {
-            "vendor_name": "polished-fluff",
+            "vendor_name": "Apex Strategy Group",
             "verdict": "partially",
             "reason": "fixture: proposed comparable for all vendors on all dimensions",
             "model_proposed": "comparable"
           },
           {
-            "vendor_name": "thorough-but-pricey",
+            "vendor_name": "Meridian & Partners",
             "verdict": "comparable",
             "reason": "fixture: proposed comparable for all vendors on all dimensions",
             "model_proposed": "comparable"
@@ -338,19 +338,19 @@
         "dimension": "compliance",
         "verdicts": [
           {
-            "vendor_name": "cheap-but-incomplete",
+            "vendor_name": "Northbridge Studio",
             "verdict": "comparable",
             "reason": "fixture: proposed comparable for all vendors on all dimensions",
             "model_proposed": "comparable"
           },
           {
-            "vendor_name": "polished-fluff",
+            "vendor_name": "Apex Strategy Group",
             "verdict": "comparable",
             "reason": "fixture: proposed comparable for all vendors on all dimensions",
             "model_proposed": "comparable"
           },
           {
-            "vendor_name": "thorough-but-pricey",
+            "vendor_name": "Meridian & Partners",
             "verdict": "comparable",
             "reason": "fixture: proposed comparable for all vendors on all dimensions",
             "model_proposed": "comparable"
@@ -362,19 +362,19 @@
         "dimension": "risk",
         "verdicts": [
           {
-            "vendor_name": "cheap-but-incomplete",
+            "vendor_name": "Northbridge Studio",
             "verdict": "comparable",
             "reason": "fixture: proposed comparable for all vendors on all dimensions",
             "model_proposed": "comparable"
           },
           {
-            "vendor_name": "polished-fluff",
+            "vendor_name": "Apex Strategy Group",
             "verdict": "comparable",
             "reason": "fixture: proposed comparable for all vendors on all dimensions",
             "model_proposed": "comparable"
           },
           {
-            "vendor_name": "thorough-but-pricey",
+            "vendor_name": "Meridian & Partners",
             "verdict": "comparable",
             "reason": "fixture: proposed comparable for all vendors on all dimensions",
             "model_proposed": "comparable"
@@ -386,19 +386,19 @@
     "line_item_offers": [],
     "vendor_readiness": [
       {
-        "vendor_name": "cheap-but-incomplete",
+        "vendor_name": "Northbridge Studio",
         "comparable_count": 2,
         "total_dimensions": 6,
         "descriptor": "2 of 6 dimensions comparable; blocked on technical, commercial, scope, timeline"
       },
       {
-        "vendor_name": "polished-fluff",
+        "vendor_name": "Apex Strategy Group",
         "comparable_count": 4,
         "total_dimensions": 6,
         "descriptor": "4 of 6 dimensions comparable; blocked on commercial, timeline"
       },
       {
-        "vendor_name": "thorough-but-pricey",
+        "vendor_name": "Meridian & Partners",
         "comparable_count": 5,
         "total_dimensions": 6,
         "descriptor": "5 of 6 dimensions comparable; blocked on commercial"
@@ -409,60 +409,60 @@
     "clamp_report": {
       "entries": [
         {
-          "vendor_name": "cheap-but-incomplete",
+          "vendor_name": "Northbridge Studio",
           "dimension": "technical",
           "model_proposed": "comparable",
           "code_ceiling": "not_comparable",
           "clamped_to": "not_comparable",
-          "ceiling_reason": "technical ceiling=not_comparable for cheap-but-incomplete"
+          "ceiling_reason": "technical ceiling=not_comparable for Northbridge Studio"
         },
         {
-          "vendor_name": "cheap-but-incomplete",
+          "vendor_name": "Northbridge Studio",
           "dimension": "commercial",
           "model_proposed": "comparable",
           "code_ceiling": "not_comparable",
           "clamped_to": "not_comparable",
-          "ceiling_reason": "commercial ceiling=not_comparable for cheap-but-incomplete"
+          "ceiling_reason": "commercial ceiling=not_comparable for Northbridge Studio"
         },
         {
-          "vendor_name": "polished-fluff",
+          "vendor_name": "Apex Strategy Group",
           "dimension": "commercial",
           "model_proposed": "comparable",
           "code_ceiling": "partially",
           "clamped_to": "partially",
-          "ceiling_reason": "commercial ceiling=partially for polished-fluff"
+          "ceiling_reason": "commercial ceiling=partially for Apex Strategy Group"
         },
         {
-          "vendor_name": "thorough-but-pricey",
+          "vendor_name": "Meridian & Partners",
           "dimension": "commercial",
           "model_proposed": "comparable",
           "code_ceiling": "not_comparable",
           "clamped_to": "not_comparable",
-          "ceiling_reason": "commercial ceiling=not_comparable for thorough-but-pricey"
+          "ceiling_reason": "commercial ceiling=not_comparable for Meridian & Partners"
         },
         {
-          "vendor_name": "cheap-but-incomplete",
+          "vendor_name": "Northbridge Studio",
           "dimension": "scope",
           "model_proposed": "comparable",
           "code_ceiling": "not_comparable",
           "clamped_to": "not_comparable",
-          "ceiling_reason": "scope ceiling=not_comparable for cheap-but-incomplete"
+          "ceiling_reason": "scope ceiling=not_comparable for Northbridge Studio"
         },
         {
-          "vendor_name": "cheap-but-incomplete",
+          "vendor_name": "Northbridge Studio",
           "dimension": "timeline",
           "model_proposed": "comparable",
           "code_ceiling": "partially",
           "clamped_to": "partially",
-          "ceiling_reason": "timeline ceiling=partially for cheap-but-incomplete"
+          "ceiling_reason": "timeline ceiling=partially for Northbridge Studio"
         },
         {
-          "vendor_name": "polished-fluff",
+          "vendor_name": "Apex Strategy Group",
           "dimension": "timeline",
           "model_proposed": "comparable",
           "code_ceiling": "partially",
           "clamped_to": "partially",
-          "ceiling_reason": "timeline ceiling=partially for polished-fluff"
+          "ceiling_reason": "timeline ceiling=partially for Apex Strategy Group"
         }
       ]
     }
