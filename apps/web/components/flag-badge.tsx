@@ -14,7 +14,11 @@ const flagVariants: Record<FlagStatus, string> = {
 
 export function FlagBadge({ status }: { status: FlagStatus }) {
   return (
-    <Badge className={cn("px-2 py-1 text-xs font-semibold", flagVariants[status])}>
+    <Badge
+      data-testid="flag-badge"
+      data-status={status}
+      className={cn("px-2 py-1 text-xs font-semibold", flagVariants[status])}
+    >
       {status}
     </Badge>
   );

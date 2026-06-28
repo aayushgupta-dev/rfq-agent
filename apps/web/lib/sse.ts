@@ -20,13 +20,20 @@ export async function* streamSSE(
     const { done, value } = await reader.read();
     if (done) break;
     buf += decoder.decode(value, { stream: true });
-    // SSE lines: "data: <json>\n\n" — chunks may straddle read() calls (Pitfall 1)
-    const parts = buf.split("\n\n");
+    // SSE events are separated by a blank line. The server (sse-starlette) uses
+    // \r\n line endings, so the delimiter is \r\n\r\n — handle that AND plain \n\n.
+    // Chunks may straddle read() calls (Pitfall 1), so keep the trailing partial.
+    const parts = buf.split(/\r\n\r\n|\n\n/);
     buf = parts.pop() ?? "";
     for (const part of parts) {
-      if (part.startsWith("data: ")) {
-        yield JSON.parse(part.slice(6)) as EventEnvelope;
-      }
+      // An event may carry multiple data: lines (joined with \n per the SSE spec);
+      // ": ..." comment lines (keep-alive pings) are ignored.
+      const data = part
+        .split(/\r\n|\n/)
+        .filter((line) => line.startsWith("data:"))
+        .map((line) => line.slice(5).replace(/^ /, ""))
+        .join("\n");
+      if (data) yield JSON.parse(data) as EventEnvelope;
     }
   }
 }

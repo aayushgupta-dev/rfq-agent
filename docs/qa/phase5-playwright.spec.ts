@@ -21,7 +21,9 @@ import { BrowserContext, Page, test, expect } from "@playwright/test";
 const BASE_URL = process.env.PLAYWRIGHT_BASE_URL ?? "http://localhost:3000";
 
 test.describe.serial("Phase 5 — Buyer Journey E2E", () => {
-  test.setTimeout(90_000);
+  // Live GPT-5.4 calls (RFQ regen + per-vendor extraction + comparison) are slow
+  // and latency varies run to run, so timeouts are generous.
+  test.setTimeout(240_000);
 
   // Tests 1–6 build on each other's session state (load a vendor, then a second,
   // then compare). Playwright's per-test `page` fixture would give each test a fresh
@@ -39,8 +41,8 @@ test.describe.serial("Phase 5 — Buyer Journey E2E", () => {
     await context.close();
   });
 
-  // Live GPT-5.4 calls (extraction, comparison) exceed the 5s default expect timeout.
-  const LIVE = { timeout: 75_000 };
+  // Live GPT-5.4 calls (extraction, comparison) far exceed the 5s default expect timeout.
+  const LIVE = { timeout: 180_000 };
 
   test("RFQ Overview loads committed data", async () => {
     await page.goto(`${BASE_URL}/rfq`);
@@ -61,27 +63,40 @@ test.describe.serial("Phase 5 — Buyer Journey E2E", () => {
     // Load Thorough vendor — navigates to /extraction
     await page.locator('[data-testid="vendor-card-thorough"]').getByRole("button", { name: /load sample/i }).click();
     await page.waitForURL(`${BASE_URL}/extraction`, { timeout: 30_000 });
+    // Wait for the live extraction to COMPLETE so it caches in sessionStorage.
+    // Later /extraction visits then render from cache — faster and no repeat spend.
+    await expect(page.locator('[data-testid="gaps-panel"]')).toBeVisible(LIVE);
   });
 
   test("Extraction Review — gaps panel visible with evidence (D-07, D-08, UI-06)", async () => {
-    // Serial: Thorough vendor is in session state from test 2
+    // Thorough was extracted + cached in the previous test → renders from cache.
     await page.goto(`${BASE_URL}/extraction`);
-    // Gaps & Risks panel — waits for the live extraction stream to complete
     await expect(page.locator('[data-testid="gaps-panel"]')).toBeVisible(LIVE);
-    // At least one non-present flag badge
+    // At least one non-present flag badge (absence is first-class)
     await expect(page.locator('[data-testid="flag-badge"]:not([data-status="present"])').first()).toBeVisible();
-    // Evidence snippet with "Source:" label
-    await expect(page.locator("text=/Source:/i").first()).toBeVisible();
+    // Evidence snippet present (every shown fact carries a source span)
+    await expect(page.locator('[data-testid="evidence-snippet"]').first()).toBeVisible();
     // Extraction result section
     await expect(page.locator('[data-testid="extraction-result"]')).toBeVisible();
   });
 
-  test("Vendor Input — load second vendor (Cheap) for comparison", async () => {
+  test("Vendor Input — load second vendor (Cheap) + extract for comparison", async () => {
     await page.goto(`${BASE_URL}/input`);
     // Load Cheap — BuyerContext.setLoadedVendors must append (Plan 05-04)
     await page.locator('[data-testid="vendor-card-cheap"]').getByRole("button", { name: /load sample/i }).click();
-    // Navigates to extraction after load
     await page.waitForURL(`${BASE_URL}/extraction`, { timeout: 30_000 });
+    // Select the 2nd vendor tab (Cheap) to trigger its extraction.
+    await page.locator('[data-testid="vendor-tabs"] [role="tab"]').nth(1).click();
+    // Wait until BOTH vendors are extracted + cached (comparison needs ≥2).
+    await expect
+      .poll(
+        async () =>
+          page.evaluate(
+            () => Object.keys(JSON.parse(sessionStorage.getItem("extractions") || "{}")).length,
+          ),
+        { timeout: 120_000 },
+      )
+      .toBeGreaterThanOrEqual(2);
   });
 
   test("Comparison — comparability matrix renders + no-rank framing (D-11, D-13, D-14)", async () => {
@@ -89,10 +104,10 @@ test.describe.serial("Phase 5 — Buyer Journey E2E", () => {
     await page.goto(`${BASE_URL}/comparison`);
     // Comparability matrix table — waits for the live comparison stream to complete
     await expect(page.locator('[data-testid="comparability-matrix"]')).toBeVisible(LIVE);
-    // Data readiness label
-    await expect(page.getByText("Data readiness")).toBeVisible();
-    // No-rank framing text (D-13: comparability determined in code)
-    await expect(page.getByText("Comparability determined in code from evidence")).toBeVisible();
+    // Attention panel first (D-12: buyer attention points surfaced before any scoring)
+    await expect(page.getByText(/Needs Attention/i)).toBeVisible();
+    // No-rank framing text (D-13: comparability determined in code, not a model verdict)
+    await expect(page.getByText(/Comparability determined in code from evidence/i)).toBeVisible();
   });
 
   test("Prompt Trace — trace selector and downgrade diff visible (D-15)", async () => {
