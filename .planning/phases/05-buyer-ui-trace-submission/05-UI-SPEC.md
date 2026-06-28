@@ -1,10 +1,11 @@
 ---
 phase: 5
 slug: buyer-ui-trace-submission
-status: draft
+status: approved
 shadcn_initialized: true
 preset: "new-york / neutral base / CSS variables / lucide icons"
 created: 2026-06-28
+reviewed_at: 2026-06-28
 ---
 
 # Phase 5 — UI Design Contract
@@ -54,7 +55,7 @@ to the CSS classes listed; do not hardcode raw pixel values.
 
 - Stage rail (D-01) nav items: 44px minimum touch target height (`min-h-11`) — accessibility requirement, not a spacing token.
 - Evidence snippet pill (D-07): inner padding `px-2 py-1` (8px/4px) — asymmetric to keep quotes compact.
-- Flag badge (D-08): inner padding `px-1.5 py-0.5` (6px/2px) — deliberate density for inline use.
+- Flag badge (D-08): inner padding `px-2 py-1` (8px/4px, in-scale) — compact inline density, matching the evidence snippet pill.
 - Streaming progress bar (D-25): full-width, no horizontal padding.
 
 ---
@@ -66,7 +67,7 @@ System `font-sans` throughout. Four roles, two weights.
 | Role | Size | Tailwind | Weight | Weight name | Line Height | Usage |
 |------|------|----------|--------|-------------|-------------|-------|
 | Body | 14px | `text-sm` | 400 | regular | 1.5 (`leading-relaxed`) | Default prose, evidence snippets, field values |
-| Label | 12px | `text-xs` | 500 | medium | 1.4 (`leading-snug`) | Flag badges, stage rail items, table headers, metadata |
+| Label | 12px | `text-xs` | 600 | semibold | 1.4 (`leading-snug`) | Flag badges, stage rail items, table headers, metadata |
 | Heading | 20px | `text-xl` | 600 | semibold | 1.2 (`leading-tight`) | Screen section headings, panel titles |
 | Display | 28px | `text-3xl` | 600 | semibold | 1.1 (`leading-tight`) | Page-level screen titles (one per page) |
 
