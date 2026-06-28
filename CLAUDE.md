@@ -248,10 +248,18 @@ Everything runs locally; no cloud dependency for dev beyond the OpenAI API.
 - **Web (`apps/web`, Next.js):** `pnpm dev`.
 - **Env:** `OPENAI_API_KEY` (+ model IDs) for the AI service; the web app gets the AI service URL. Keep secrets in `.env` (gitignored); document every required var in the README.
 
-### Docker Compose (placeholder)
-Not built yet — run the two apps directly (above). A `infrastructure/docker-compose.yml` for
-one-command local setup (`docker compose up`) **will be added and expanded here as the compose infra
-lands**; don't pre-build it before a feature needs it (§2).
+### Docker Compose
+`infrastructure/docker-compose.yml` + `infrastructure/rfq.sh` give a one-command local stack
+(both apps). `./infrastructure/rfq.sh <cmd>` wraps compose: `up` / `down` / `redeploy` /
+`rebuild` (force `--no-cache`) / `logs` / `health` / `e2e`. Web on :3000, AI on :8000.
+
+- **Startup gates:** the backend entrypoint runs the full `pytest` suite then execs uvicorn
+  (tests fail → container exits, never serves); the web image gates on `next build`.
+- **Backend needs the key at runtime:** the `verify_access` boot gate (§5, D-16) aborts startup
+  without `gpt-5.4` / `gpt-5.4-mini` access. `OPENAI_API_KEY` (+ `MODEL_REASONING`/`MODEL_CHEAP`)
+  is supplied via `.env`/shell at runtime — never baked into an image layer.
+- **No volumes** — nothing in the request path persists to disk.
+- **`e2e`** is an opt-in compose profile (the Playwright buyer journey); not part of a normal `up`.
 
 ---
 
@@ -296,6 +304,8 @@ Provide the UAT steps + regression scenarios as the handoff after every change.
 - **`apps/web` → Vercel** (Next.js native).
 - **`services/ai` → Render or Railway** (long-running Python service; not Vercel).
 - The web app reaches the AI service via an env-configured base URL. AWS is out of scope for now.
+- **Local one-command stack:** `infrastructure/docker-compose.yml` + `infrastructure/rfq.sh` (§10).
+  This is for local dev/demo only — the cloud deploy above (Vercel + Render) is unchanged.
 
 ---
 
