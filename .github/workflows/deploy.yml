@@ -95,6 +95,13 @@ jobs:
       VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
     steps:
       - uses: actions/checkout@v4
+      # vercel build runs the repo's own build, which spawns pnpm (packageManager
+      # pnpm@10.x). GitHub's ubuntu runner has no pnpm by default, so install it here
+      # or `vercel build` fails with "spawn pnpm ENOENT".
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - uses: pnpm/action-setup@v4
       - name: Install Vercel CLI
         run: npm i -g vercel@latest
       - name: Pull Vercel project settings (production)
