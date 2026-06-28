@@ -10,10 +10,20 @@ const comparabilityVariants: Record<ComparabilityVerdict, string> = {
   not_comparable: "bg-red-100 text-red-800",
 };
 
+// "not_comparable" → "Not Comparable", "partially" → "Partially", "comparable" → "Comparable".
+function toTitleCase(verdict: string): string {
+  return verdict.replace(/[_-]+/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+}
+
 export function ComparabilityBadge({ verdict }: { verdict: ComparabilityVerdict }) {
   return (
-    <Badge className={cn("px-2 py-1 text-xs font-semibold", comparabilityVariants[verdict])}>
-      {verdict.replace("_", " ")}
+    <Badge
+      className={cn(
+        "px-2 py-1 text-xs font-semibold whitespace-nowrap",
+        comparabilityVariants[verdict],
+      )}
+    >
+      {toTitleCase(verdict)}
     </Badge>
   );
 }

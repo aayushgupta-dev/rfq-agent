@@ -12,7 +12,11 @@ import type {
   VendorReadiness,
 } from "@aerchain/shared-types";
 import { useBuyerContext } from "@/contexts/BuyerContext";
-import { streamCompare, fetchRfq } from "@/lib/api";
+import { streamCompare } from "@/lib/api";
+// ponytail: compare against the SAME committed RFQ the /rfq overview shows and the
+// extraction step grounded against — the static fixture, not /data/rfq (which
+// live-regenerates a fresh RFQ per call). Instant, deterministic, consistent.
+import rfqRaw from "../../../public/data/rfq.json";
 import { ComparabilityBadge } from "@/components/comparability-badge";
 import { FlagBadge } from "@/components/flag-badge";
 import { StreamProgress } from "@/components/stream-progress";
@@ -31,6 +35,16 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { Button } from "@/components/ui/button";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import { Markdown } from "@/components/markdown";
+
+// The committed procurement event — stable module-level reference (matches /rfq + extraction).
+const rfq = rfqRaw as unknown as RFQ;
 
 // D-11 comparison phase sequence for progress
 const COMPARISON_PHASES: Record<string, number> = {
@@ -39,6 +53,49 @@ const COMPARISON_PHASES: Record<string, number> = {
   compare: 70,
   clarify: 90,
 };
+
+// Human-readable streaming phases (the SSE emits raw keys align/comparability/compare/clarify).
+const COMPARISON_PHASE_LABELS: Record<string, string> = {
+  align: "Aligning each vendor's offer to the RFQ line items…",
+  comparability: "Checking which dimensions are even comparable…",
+  compare: "Comparing the vendors across every dimension…",
+  clarify: "Drafting the clarification questions to send back…",
+};
+
+function titleCase(s: string): string {
+  return s.replace(/[_-]+/g, " ").trim().replace(/\b\w/g, (c) => c.toUpperCase());
+}
+
+// Turn an internal field reference into buyer-readable text:
+//   "commercial_terms"                       → "Commercial Terms"
+//   "line_items[*].pricing"                  → "Per-line-item Pricing"
+//   "line_items[2].scope_coverage"           → "Scope Coverage (line item 2)"
+//   "pricing_structure / line_items[*].pricing" → both parts, joined by " / "
+function humanizeFieldRef(raw: string): string {
+  return raw
+    .split("/")
+    .map((part) => {
+      const seg = part.trim();
+      const m = seg.match(/^line_items\[(\*|\d+)\]\.(.+)$/);
+      if (m) {
+        return m[1] === "*"
+          ? `Per-line-item ${titleCase(m[2])}`
+          : `${titleCase(m[2])} (line item ${m[1]})`;
+      }
+      return titleCase(seg);
+    })
+    .join(" / ");
+}
+
+// Clarification questions are model-authored and sometimes embed raw schema paths
+// (e.g. "...for line_items[2].scope_coverage?"). Rewrite those inline so the buyer
+// never sees internal field paths — "scope coverage for line item 2".
+function humanizeQuestionText(text: string): string {
+  return text.replace(/line_items\[(\d+)\]\.([a-z_]+)/gi, (_m, idx, field) => {
+    const name = String(field).replace(/_/g, " ");
+    return `${name} for line item ${idx}`;
+  });
+}
 
 function AttentionPanel({
   attention_points,
@@ -56,20 +113,20 @@ function AttentionPanel({
       </CardHeader>
       <CardContent className="space-y-4">
         {attention_points && attention_points.length > 0 ? (
-          <ul className="space-y-2">
+          <ul className="space-y-3">
             {attention_points.map((ap, i) => (
-              <li key={i} className="border-b border-border pb-2 last:border-0">
-                <p className="text-sm font-medium">{ap.summary}</p>
-                {ap.dimension_or_field && (
-                  <p className="text-xs text-muted-foreground">
-                    Field: {ap.dimension_or_field}
-                  </p>
-                )}
-                {ap.vendors_affected && ap.vendors_affected.length > 0 && (
-                  <p className="text-xs text-muted-foreground">
-                    Vendors: {ap.vendors_affected.join(", ")}
-                  </p>
-                )}
+              <li key={i} className="border-b border-border pb-3 last:border-0 last:pb-0">
+                <p className="text-sm font-medium text-foreground">{ap.summary}</p>
+                <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-muted-foreground">
+                  {ap.dimension_or_field && (
+                    <span className="rounded bg-muted px-1.5 py-0.5 font-medium text-foreground">
+                      {humanizeFieldRef(ap.dimension_or_field)}
+                    </span>
+                  )}
+                  {ap.vendors_affected && ap.vendors_affected.length > 0 && (
+                    <span>{ap.vendors_affected.join(", ")}</span>
+                  )}
+                </div>
               </li>
             ))}
           </ul>
@@ -78,14 +135,14 @@ function AttentionPanel({
         )}
 
         {clarification_questions && clarification_questions.length > 0 && (
-          <div>
-            <p className="text-sm font-semibold mb-2">Clarification questions</p>
-            <ul className="space-y-2">
+          <div className="rounded-md border border-border bg-muted/30 p-4">
+            <p className="text-sm font-semibold mb-3">Clarification questions to send</p>
+            <ul className="space-y-3">
               {clarification_questions.map((cq, i) => (
-                <li key={i} className="border-b border-border pb-2 last:border-0">
-                  <p className="text-xs text-muted-foreground">{cq.vendor_name}</p>
-                  <p className="text-sm">{cq.question}</p>
-                  <p className="text-xs text-muted-foreground">{cq.why_needed}</p>
+                <li key={i} className="border-b border-border pb-3 last:border-0 last:pb-0">
+                  <p className="text-xs font-medium text-foreground">{cq.vendor_name}</p>
+                  <p className="text-sm mt-0.5">{humanizeQuestionText(cq.question)}</p>
+                  <p className="text-xs text-muted-foreground mt-1">{humanizeQuestionText(cq.why_needed)}</p>
                 </li>
               ))}
             </ul>
@@ -222,11 +279,11 @@ function LineItemTable({
           <table className="w-full text-sm border-collapse">
             <thead>
               <tr>
-                <th className="text-left py-2 px-3 font-semibold text-muted-foreground">
+                <th className="text-left py-2 px-3 font-semibold text-muted-foreground w-44 align-bottom">
                   Line Item
                 </th>
                 {vendorNames.map((name) => (
-                  <th key={name} className="text-center py-2 px-3 font-semibold">
+                  <th key={name} className="text-left py-2 px-3 font-semibold align-bottom">
                     {name}
                   </th>
                 ))}
@@ -234,17 +291,21 @@ function LineItemTable({
             </thead>
             <tbody>
               {lineItems.map((item) => (
-                <tr key={item} className="border-t border-border">
-                  <td className="py-2 px-3 font-medium">{item}</td>
+                <tr key={item} className="border-t border-border align-top">
+                  <td className="py-3 px-3 font-medium text-foreground">{item}</td>
                   {vendorNames.map((name) => {
                     const offer = offers.find(
                       (o) => o.line_item_name === item && o.vendor_name === name,
                     );
                     return (
-                      <td key={name} className="py-2 px-3 text-center">
+                      <td key={name} className="py-3 px-3 text-left">
                         {offer ? (
-                          <div className="flex flex-col items-center gap-1">
-                            <span>{offer.pricing_verbatim ?? "—"}</span>
+                          <div className="flex flex-col items-start gap-1.5">
+                            {offer.pricing_verbatim ? (
+                              <Markdown className="text-sm">{offer.pricing_verbatim}</Markdown>
+                            ) : (
+                              <span className="text-muted-foreground">—</span>
+                            )}
                             {/* pricing_status is a bare str on the server — FlagBadge handles unknown values (WR-03) */}
                             <FlagBadge status={offer.pricing_status} />
                           </div>
@@ -266,20 +327,16 @@ function LineItemTable({
 
 function DimensionNarratives({ dimensions }: { dimensions: DimensionComparison[] }) {
   return (
-    <div className="space-y-2">
+    <Accordion type="single" collapsible className="w-full">
       {dimensions.map((dim) => (
-        <Collapsible key={dim.dimension}>
-          <CollapsibleTrigger className="flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground">
-            Show {dim.dimension} detail
-          </CollapsibleTrigger>
-          <CollapsibleContent>
-            <p className="text-sm mt-1 pl-2 border-l-2 border-border text-muted-foreground">
-              {dim.narrative}
-            </p>
-          </CollapsibleContent>
-        </Collapsible>
+        <AccordionItem key={dim.dimension} value={dim.dimension}>
+          <AccordionTrigger className="text-foreground">{titleCase(dim.dimension)}</AccordionTrigger>
+          <AccordionContent>
+            <p className="text-sm leading-relaxed text-muted-foreground">{dim.narrative}</p>
+          </AccordionContent>
+        </AccordionItem>
       ))}
-    </div>
+    </Accordion>
   );
 }
 
@@ -337,20 +394,12 @@ export default function ComparisonPage() {
   // The fresh extraction list is snapshotted inside each run (effect + manual button)
   // so a run never closes over a stale render's list (CR-02).
 
-  const [rfq, setRfq] = useState<RFQ | null>(null);
-  const [rfqError, setRfqError] = useState(false);
   const [streaming, setStreaming] = useState(false);
   const [phase, setPhase] = useState("");
   const [progressValue, setProgressValue] = useState(0);
   const [error, setError] = useState<string | null>(null);
   // ponytail: AbortController ref — T-05-06-C mitigate
   const abortRef = useRef<AbortController | null>(null);
-
-  useEffect(() => {
-    fetchRfq()
-      .then((r) => { setRfq(r); setRfqError(false); })
-      .catch(() => setRfqError(true)); // WR-05: surface, don't strand silently
-  }, []);
 
   // Abort whatever run is in flight (most relevant to the manual button, whose
   // controller is held in abortRef) on unmount. The auto-start effect aborts its
@@ -379,7 +428,7 @@ export default function ComparisonPage() {
         if (isCancelled()) return;
         if (event.type === "status") {
           const { phase: p } = event.payload as { message: string; phase: string };
-          setPhase(p);
+          setPhase(COMPARISON_PHASE_LABELS[p] ?? p);
           const pct = COMPARISON_PHASES[p];
           if (pct !== undefined) setProgressValue(pct);
         }
@@ -477,15 +526,6 @@ export default function ComparisonPage() {
       {error && (
         <Alert variant="destructive">
           <AlertDescription>Comparison could not complete. {error}</AlertDescription>
-        </Alert>
-      )}
-
-      {/* WR-05: RFQ fetch failed — surface it instead of leaving the screen inert */}
-      {rfqError && !comparison && (
-        <Alert variant="destructive">
-          <AlertDescription>
-            Could not load the RFQ — check the AI service is running, then reload this page.
-          </AlertDescription>
         </Alert>
       )}
 

@@ -10,6 +10,18 @@ import {
 import { ScrollArea } from "@/components/ui/scroll-area";
 import type { TraceData, ClampEntry, DowngradeEntry } from "./page";
 
+// "not_comparable" → "Not Comparable", "technical" → "Technical". Used for the diff
+// tables so internal dimension keys / verdict enums never surface as raw snake_case.
+function titleCase(s: string): string {
+  return s.replace(/[_-]+/g, " ").trim().replace(/\b\w/g, (c) => c.toUpperCase());
+}
+
+// Reasons embed verdict enums (e.g. "technical ceiling=not_comparable for X").
+// Title-case the snake_case verdict tokens so no raw enum shows in the reason text.
+function humanizeReason(reason: string): string {
+  return reason.replace(/\b(not_comparable|partially|comparable)\b/g, (m) => titleCase(m));
+}
+
 // Pipeline stage: a numbered step in the trace timeline
 function Stage({
   number,
@@ -97,8 +109,8 @@ function DowngradeDiff({ entries }: { entries: DowngradeEntry[] }) {
           {entries.map((e, i) => (
             <tr key={i} className="bg-amber-50 border-b last:border-0">
               <td className="py-2 pr-3 font-mono">{e.field_name}</td>
-              <td className="py-2 pr-3">{String(e.model_value)}</td>
-              <td className="py-2">{e.final_status}</td>
+              <td className="py-2 pr-3">{titleCase(String(e.model_value))}</td>
+              <td className="py-2">{titleCase(e.final_status)}</td>
             </tr>
           ))}
         </tbody>
@@ -145,10 +157,10 @@ function ClampDiff({ entries }: { entries: ClampEntry[] }) {
                   className={`border-b last:border-0 ${wasChanged ? "bg-amber-50" : ""}`}
                 >
                   <td className="py-2 pr-3 font-mono">{e.vendor_name}</td>
-                  <td className="py-2 pr-3">{e.dimension}</td>
-                  <td className="py-2 pr-3">{e.model_proposed}</td>
-                  <td className="py-2 pr-3">{e.clamped_to}</td>
-                  <td className="py-2 text-muted-foreground">{e.ceiling_reason}</td>
+                  <td className="py-2 pr-3">{titleCase(e.dimension)}</td>
+                  <td className="py-2 pr-3">{titleCase(e.model_proposed)}</td>
+                  <td className="py-2 pr-3">{titleCase(e.clamped_to)}</td>
+                  <td className="py-2 text-muted-foreground">{humanizeReason(e.ceiling_reason)}</td>
                 </tr>
               );
             })}

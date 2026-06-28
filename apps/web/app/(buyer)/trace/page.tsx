@@ -1,6 +1,7 @@
 import fs from "fs/promises";
 import path from "path";
 import { TraceTabs } from "./trace-tabs";
+import { PromptPack } from "./prompt-pack";
 
 // ponytail: Server Component — reads public/traces/ at request time; no runtime state needed.
 // TraceTabs is "use client" only for tab switching interactivity.
@@ -167,32 +168,12 @@ export default async function TracePage() {
       {/* Section 1: Trace tabs */}
       <TraceTabs traces={traces} />
 
-      {/* Section 2: Prompt Pack list */}
-      <div className="rounded-lg border bg-card p-6 space-y-4">
+      {/* Section 2: Prompt Pack list — full prompt fetched from the AI service on expand */}
+      <div id="prompt-pack" className="rounded-lg border bg-card p-6 space-y-4 scroll-mt-6">
         <h2 className="text-xl font-semibold leading-tight text-foreground">
           Prompt Pack — 7 prompts
         </h2>
-        <ul className="divide-y divide-border">
-          {PROMPT_PACK.map((p) => (
-            <li key={p.id} className="py-3 flex flex-col gap-1">
-              <div className="flex items-center gap-3">
-                <span className="text-xs font-semibold text-foreground font-mono">
-                  {p.id}
-                </span>
-                <span className="text-xs text-muted-foreground">
-                  v{p.version}
-                </span>
-              </div>
-              <p className="text-sm text-foreground">{p.intent}</p>
-              <a
-                href={`/${p.docs_url}`}
-                className="text-xs text-muted-foreground hover:text-foreground underline underline-offset-2 w-fit"
-              >
-                {p.docs_url}
-              </a>
-            </li>
-          ))}
-        </ul>
+        <PromptPack prompts={PROMPT_PACK} />
       </div>
     </div>
   );

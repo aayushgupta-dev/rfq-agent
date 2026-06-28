@@ -51,6 +51,7 @@ import openpyxl
 import pptx
 import pypdf
 from fastapi import FastAPI, File, HTTPException, UploadFile
+from fastapi.concurrency import run_in_threadpool
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, model_validator
 from pydantic import Field as pydantic_Field
@@ -62,6 +63,7 @@ from agents.extraction import extraction_graph
 from agents.rfq_gen import generate_rfq, render_rfq_md
 from agents.vendor_gen import MESS_SPECS, generate_vendor_response
 from llm.factory import verify_access
+from prompts.registry import load as load_prompt
 from schemas.domain import RFQ, ExtractionResult, VendorResponse
 from schemas.events import EventEnvelope
 
@@ -190,14 +192,39 @@ async def health() -> dict:
     return {"status": "ok"}
 
 
+@app.get("/prompts/{prompt_id}")
+async def get_prompt(prompt_id: str) -> dict:
+    """Return a Prompt Pack entry (metadata + markdown body) by id.
+
+    The Prompt Trace screen fetches this on demand so the prompts have a single source
+    of truth — the versioned files in services/ai/prompts/ — instead of being copied into
+    the web app. registry.load() validates the id (^[a-z0-9-]+$, path-traversal safe) and
+    resolves the latest version.
+
+    # ponytail: file-backed via the registry today. Moving the Prompt Pack into a database
+    # is a deferred option — keep this endpoint as the single read seam if/when that lands.
+    """
+    try:
+        post = load_prompt(prompt_id)
+    except ValueError as exc:  # invalid id shape
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    except KeyError as exc:  # no such prompt
+        raise HTTPException(status_code=404, detail=f"No prompt '{prompt_id}'") from exc
+    return {"id": prompt_id, "metadata": post.metadata, "content": post.content}
+
+
 @app.get("/data/rfq")
 async def get_rfq() -> dict:
     """Live-regenerate the marketing-services RFQ via rfq-gen prompt (DATA-04).
 
     Makes a live OpenAI call — not served from the committed fixture.
     Returns: JSON-serializable RFQ dict.
+
+    generate_rfq() is a blocking (synchronous) LangChain call; run it in the threadpool
+    so it never blocks the event loop. Otherwise a single in-flight RFQ regen stalls the
+    /health probe (→ container marked unhealthy) and every other concurrent request.
     """
-    rfq = generate_rfq()
+    rfq = await run_in_threadpool(generate_rfq)
     return rfq.model_dump(mode="json")
 
 
@@ -219,9 +246,12 @@ async def post_vendor_gen(req: VendorGenRequest) -> dict:
         )
     rfq_text = req.rfq_text
     if rfq_text is None:
-        rfq = generate_rfq()
+        rfq = await run_in_threadpool(generate_rfq)
         rfq_text = render_rfq_md(rfq)
-    vendor = generate_vendor_response(rfq_text, req.persona, MESS_SPECS[req.persona])
+    # Blocking LangChain call — offload so it never blocks the event loop (see get_rfq).
+    vendor = await run_in_threadpool(
+        generate_vendor_response, rfq_text, req.persona, MESS_SPECS[req.persona]
+    )
     return vendor.model_dump(mode="json")
 
 
