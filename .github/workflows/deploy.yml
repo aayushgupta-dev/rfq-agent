@@ -12,6 +12,14 @@ concurrency:
 jobs:
   test:
     runs-on: ubuntu-latest
+    # tests import api.app, which builds the OpenAI client + reads the model-tier env
+    # vars at import time. The suite is hermetic (never calls OpenAI), so CI placeholders
+    # satisfy collection. Real values live only on Render — swap these for real secrets
+    # only if a test ever makes a live model call.
+    env:
+      OPENAI_API_KEY: sk-ci-placeholder
+      MODEL_REASONING: gpt-5.4
+      MODEL_CHEAP: gpt-5.4-mini
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
