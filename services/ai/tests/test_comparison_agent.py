@@ -526,7 +526,23 @@ def test_comparison_traces_committed() -> None:
     Review Fix 5: trace uses deterministic fixture draft (not a live run).
     D-11: JSON trace captures raw model verdicts → code-clamped verdicts (the downgrade diff).
     """
-    raise NotImplementedError("stub: PROMPT-03 / D-11 / Fix-5 — comparison trace committed with clamp_step")
+    traces_dir = pathlib.Path(__file__).parents[3] / "docs" / "traces"
+    json_traces = list(traces_dir.glob("comparison_trace_*.json"))
+    assert len(json_traces) >= 1, f"Expected >=1 comparison_trace_*.json in {traces_dir}, got 0"
+
+    required_keys = {"input", "resolved_prompt", "raw_model_output", "clamp_step", "final_result"}
+    for trace_path in json_traces:
+        trace = json.loads(trace_path.read_text())
+        assert required_keys <= set(trace.keys()), (
+            f"{trace_path.name} missing required keys: {required_keys - set(trace.keys())}"
+        )
+        assert len(trace["clamp_step"]["entries"]) >= 1, (
+            f"{trace_path.name}: comparison trace must show >=1 verdict downgrade "
+            "for D-03 rubric (Review Fix 5)"
+        )
+        assert trace.get("_fixture_mode", False) is True or "fixture" in str(trace).lower(), (
+            f"{trace_path.name}: trace must document its fixture-mode provenance"
+        )
 
 
 # ---------------------------------------------------------------------------

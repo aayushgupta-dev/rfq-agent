@@ -447,13 +447,14 @@ def test_traces_committed() -> None:
     traces_dir = pathlib.Path(__file__).parents[3] / "docs" / "traces"
     assert traces_dir.exists(), f"docs/traces/ directory must exist at {traces_dir}"
 
-    json_traces = sorted(traces_dir.glob("*.json"))
+    # ponytail: glob only extraction traces (trace_*.json) — comparison traces live separately
+    json_traces = sorted(traces_dir.glob("trace_*.json"))
     assert len(json_traces) >= 3, (
-        f"Expected >=3 trace JSON files in {traces_dir}, found {len(json_traces)}"
+        f"Expected >=3 trace_*.json files in {traces_dir}, found {len(json_traces)}"
     )
-    md_traces = sorted(traces_dir.glob("*.md"))
+    md_traces = sorted(traces_dir.glob("trace_*.md"))
     assert len(md_traces) >= 3, (
-        f"Expected >=3 trace Markdown files in {traces_dir}, found {len(md_traces)}"
+        f"Expected >=3 trace_*.md files in {traces_dir}, found {len(md_traces)}"
     )
 
     required_keys = {"input", "resolved_prompt", "raw_model_output", "grounding_step", "final_result"}
