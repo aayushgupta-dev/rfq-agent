@@ -185,9 +185,22 @@ FORMAT_LABELS: dict[str, str] = {
     "polished-fluff": "deck_bullets",
 }
 
-assert FIXTURE_FILENAMES.keys() == MESS_SPECS.keys() == FORMAT_LABELS.keys(), (
-    "persona dicts (FIXTURE_FILENAMES, MESS_SPECS, FORMAT_LABELS) must share identical keys"
-)
+# Real agency names per persona. The persona is an INTERNAL generation/mess-spec
+# label (D-10) — never a vendor name. vendor_name is what the buyer sees, so it
+# must be a plausible agency name, decoupled from the persona. Live regen passes
+# this into the prompt so the generated prose self-references the same name.
+VENDOR_NAMES: dict[str, str] = {
+    "thorough-but-pricey": "Meridian & Partners",
+    "cheap-but-incomplete": "Northbridge Studio",
+    "polished-fluff": "Apex Strategy Group",
+}
+
+assert (
+    FIXTURE_FILENAMES.keys()
+    == MESS_SPECS.keys()
+    == FORMAT_LABELS.keys()
+    == VENDOR_NAMES.keys()
+), "persona dicts (FIXTURE_FILENAMES, MESS_SPECS, FORMAT_LABELS, VENDOR_NAMES) must share identical keys"
 
 
 def generate_vendor_response(
@@ -228,13 +241,14 @@ def generate_vendor_response(
         {
             "rfq_text": rfq_text,
             "persona": persona,
+            "vendor_name": VENDOR_NAMES[persona],
             "mess_spec": mess_spec_json,
         }
     )
     raw_text: str = result.content
 
     return VendorResponse(
-        vendor_name=persona,
+        vendor_name=VENDOR_NAMES[persona],
         persona=persona,
         mess_spec=mess_spec,
         source_id=f"vendor_{FIXTURE_FILENAMES[persona].removesuffix('.json')}",
