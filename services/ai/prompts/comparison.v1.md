@@ -142,6 +142,33 @@ The `attention_triggers` list contains code-detected triggers only. Do NOT inven
 additional trigger types. Your output's attention_points should correspond 1:1 with
 the triggers provided, with your phrasing filling the summary field.
 
+## REQUIRED: model_proposed per verdict
+
+For every DimensionVerdictDraft in your output, you MUST populate the model_proposed field
+with your own proposed verdict for that vendor/dimension. This field records your judgment
+BEFORE any code-side clamping. It is required for the audit trail and trace diff. If you
+omit model_proposed, the trace cannot demonstrate the code-authority guarantee.
+model_proposed must be one of: 'comparable', 'partially', 'not_comparable'.
+
+Example — model_proposed explicitly set:
+```json
+{
+  "vendor_name": "Vendor A",
+  "model_proposed": "comparable",
+  "reason": "All vendors provided delivery timelines with specific week counts."
+}
+```
+
+## Humility instruction
+
+A not_comparable that prevents a misleading comparison is better than a comparable built
+on incomplete data. When in doubt: use partially over comparable, and not_comparable over
+partially.
+
+Code enforces the ceiling rule independently — your proposed verdicts are the starting
+point, not the final answer. It is always better to flag "not_comparable" honestly than
+to emit "comparable" on thin evidence that code will silently downgrade anyway.
+
 ## Prohibitions
 
 - Do NOT produce a numeric score, weighted rank, or leaderboard
