@@ -225,6 +225,7 @@ function ExtractionView({ extraction }: { extraction: ExtractionResult }) {
 export default function ExtractionPage() {
   const { loadedVendors, extractions, setExtraction, setDowngradeReport } = useBuyerContext();
   const [rfq, setRfq] = useState<RFQ | null>(null);
+  const [rfqError, setRfqError] = useState(false);
   const [selectedVendor, setSelectedVendor] = useState<string>("");
   const [streaming, setStreaming] = useState(false);
   const [phase, setPhase] = useState("");
@@ -236,8 +237,10 @@ export default function ExtractionPage() {
   // Load RFQ on mount; set initial vendor selection
   useEffect(() => {
     fetchRfq()
-      .then(setRfq)
-      .catch(() => {/* rfq load failure is non-fatal — SSE will 422 without it */});
+      .then((r) => { setRfq(r); setRfqError(false); })
+      // WR-05: without rfq the SSE never fires (guards on !rfq) → blank stuck screen.
+      // Surface the failure instead of swallowing it.
+      .catch(() => setRfqError(true));
   }, []);
 
   useEffect(() => {
@@ -326,6 +329,15 @@ export default function ExtractionPage() {
   return (
     <div className="p-6 space-y-6">
       <h1 className="text-3xl font-bold">Extraction Review</h1>
+
+      {/* WR-05: RFQ fetch failed — surface it; without it extraction can't stream */}
+      {rfqError && (
+        <Alert variant="destructive" data-testid="rfq-error">
+          <AlertDescription>
+            Could not load the RFQ — check the AI service is running, then reload this page.
+          </AlertDescription>
+        </Alert>
+      )}
 
       {/* D-10: vendor selector Tabs */}
       <Tabs
