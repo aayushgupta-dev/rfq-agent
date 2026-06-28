@@ -1,5 +1,5 @@
 "use client";
-import { createContext, useContext, useState, useEffect } from "react";
+import { createContext, useContext, useState, useEffect, type Dispatch, type SetStateAction } from "react";
 import type { ComparisonResult, ExtractionResult, VendorResponse } from "@aerchain/shared-types";
 
 interface BuyerState {
@@ -7,7 +7,10 @@ interface BuyerState {
   extractions: Record<string, ExtractionResult>;
   downgradeReports: Record<string, unknown>;
   comparison: ComparisonResult | null;
-  setLoadedVendors: (updater: VendorResponse[] | ((prev: VendorResponse[]) => VendorResponse[])) => void;
+  // IN-04: standard setState contract — callers decide append vs replace explicitly.
+  // (Previously a split append-array / replace-via-function setter whose array branch
+  // no real caller exercised; all callers use the functional form.)
+  setLoadedVendors: Dispatch<SetStateAction<VendorResponse[]>>;
   clearVendors: () => void;
   setExtraction: (name: string, result: ExtractionResult) => void;
   setDowngradeReport: (name: string, report: unknown) => void;
@@ -78,17 +81,6 @@ export function BuyerProvider({ children }: { children: React.ReactNode }) {
     } catch { /* quota errors are non-fatal */ }
   }, [comparison, hydrated]);
 
-  // APPEND-BY-DEFAULT: setLoadedVendors appends; use clearVendors() for replacement
-  function setLoadedVendors(
-    updater: VendorResponse[] | ((prev: VendorResponse[]) => VendorResponse[]),
-  ) {
-    if (typeof updater === "function") {
-      setLoadedVendorsState(updater);
-    } else {
-      setLoadedVendorsState((prev) => [...prev, ...updater]);
-    }
-  }
-
   function clearVendors() {
     setLoadedVendorsState([]);
   }
@@ -112,7 +104,7 @@ export function BuyerProvider({ children }: { children: React.ReactNode }) {
         extractions,
         downgradeReports,
         comparison,
-        setLoadedVendors,
+        setLoadedVendors: setLoadedVendorsState,
         clearVendors,
         setExtraction,
         setDowngradeReport,

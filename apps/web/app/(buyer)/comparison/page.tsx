@@ -6,6 +6,7 @@ import type {
   ClarificationQuestion,
   ComparisonResult,
   DimensionComparison,
+  ExtractionResult,
   LineItemOffer,
   RFQ,
   VendorReadiness,
@@ -244,7 +245,8 @@ function LineItemTable({
                         {offer ? (
                           <div className="flex flex-col items-center gap-1">
                             <span>{offer.pricing_verbatim ?? "—"}</span>
-                            <FlagBadge status={offer.pricing_status as "present" | "missing" | "unclear" | "conflicting" | "unsupported"} />
+                            {/* pricing_status is a bare str on the server — FlagBadge handles unknown values (WR-03) */}
+                            <FlagBadge status={offer.pricing_status} />
                           </div>
                         ) : (
                           <span className="text-muted-foreground">—</span>
@@ -332,9 +334,11 @@ function ComparisonView({
 export default function ComparisonPage() {
   const { extractions, comparison, setComparison } = useBuyerContext();
   const vendorNames = Object.keys(extractions);
-  const extractionList = vendorNames.map((n) => extractions[n]);
+  // The fresh extraction list is snapshotted inside each run (effect + manual button)
+  // so a run never closes over a stale render's list (CR-02).
 
   const [rfq, setRfq] = useState<RFQ | null>(null);
+  const [rfqError, setRfqError] = useState(false);
   const [streaming, setStreaming] = useState(false);
   const [phase, setPhase] = useState("");
   const [progressValue, setProgressValue] = useState(0);
@@ -344,56 +348,84 @@ export default function ComparisonPage() {
 
   useEffect(() => {
     fetchRfq()
-      .then(setRfq)
-      .catch(() => {/* non-fatal */});
+      .then((r) => { setRfq(r); setRfqError(false); })
+      .catch(() => setRfqError(true)); // WR-05: surface, don't strand silently
   }, []);
 
-  // Abort in-flight SSE on unmount (T-05-06-C)
+  // Abort whatever run is in flight (most relevant to the manual button, whose
+  // controller is held in abortRef) on unmount. The auto-start effect aborts its
+  // own controller via its cleanup; abort is idempotent so this never double-fires
+  // harmfully. (T-05-06-C / WR-01)
   useEffect(() => {
     return () => { abortRef.current?.abort(); };
   }, []);
 
-  // Auto-start comparison when ≥2 extractions available + rfq loaded + not yet cached
-  useEffect(() => {
-    if (comparison) return; // cached (D-02)
-    if (vendorNames.length < 2 || !rfq) return;
-
-    const controller = new AbortController();
-    abortRef.current = controller;
+  // Single source of truth for the comparison SSE consume loop (WR-02 — was
+  // duplicated + drifted across the auto-start effect and the manual button).
+  // The caller owns the AbortController and a `cancelled` guard so a torn-down
+  // run never writes state after its stream was aborted (CR-02/WR-01).
+  async function runComparison(
+    list: ExtractionResult[],
+    activeRfq: RFQ,
+    controller: AbortController,
+    isCancelled: () => boolean,
+  ) {
     setStreaming(true);
     setPhase("");
     setProgressValue(0);
     setError(null);
-
-    (async () => {
-      try {
-        for await (const event of streamCompare(extractionList, rfq, controller.signal)) {
-          if (event.type === "status") {
-            const { phase: p } = event.payload as { message: string; phase: string };
-            setPhase(p);
-            const pct = COMPARISON_PHASES[p];
-            if (pct !== undefined) setProgressValue(pct);
-          }
-          if (event.type === "result") {
-            // Comparison result is bare ComparisonResult — no normalization needed (asymmetric with extraction)
-            setComparison(event.payload as ComparisonResult);
-            setProgressValue(100);
-            setStreaming(false);
-          }
-          if (event.type === "error") {
-            setError((event.payload as { message: string }).message);
-            setStreaming(false);
-          }
-          if (event.type === "done") setStreaming(false);
+    try {
+      for await (const event of streamCompare(list, activeRfq, controller.signal)) {
+        if (isCancelled()) return;
+        if (event.type === "status") {
+          const { phase: p } = event.payload as { message: string; phase: string };
+          setPhase(p);
+          const pct = COMPARISON_PHASES[p];
+          if (pct !== undefined) setProgressValue(pct);
         }
-      } catch (e) {
-        if ((e as Error).name !== "AbortError") {
-          setError("Connection lost. Check the AI service is running.");
+        if (event.type === "result") {
+          // Comparison result is bare ComparisonResult — no normalization needed (asymmetric with extraction)
+          setComparison(event.payload as ComparisonResult);
+          setProgressValue(100);
           setStreaming(false);
+          break; // terminal — stop consuming (CR-02: don't flip to error on a late event)
+        }
+        if (event.type === "error") {
+          setError((event.payload as { message: string }).message);
+          setStreaming(false);
+          break;
+        }
+        if (event.type === "done") {
+          setStreaming(false);
+          break;
         }
       }
-    })();
-  }, [rfq]); // eslint-disable-line react-hooks/exhaustive-deps
+    } catch (e) {
+      if (!isCancelled() && (e as Error).name !== "AbortError") {
+        setError("Connection lost. Check the AI service is running.");
+        setStreaming(false);
+      }
+    }
+  }
+
+  // Auto-start comparison when ≥2 extractions available + rfq loaded + not yet cached.
+  // CR-02: depend on the actual inputs (rfq + available vendor count) and snapshot the
+  // fresh extraction list inside the effect, so the run never closes over a stale list.
+  // The effect OWNS its AbortController + `cancelled` guard (WR-01) and aborts on
+  // deps-change re-run AND unmount — replacing the previous separate []-deps abort effect.
+  useEffect(() => {
+    if (comparison) return; // cached (D-02)
+    const snapshot = Object.keys(extractions).map((n) => extractions[n]);
+    if (snapshot.length < 2 || !rfq) return;
+
+    const controller = new AbortController();
+    abortRef.current = controller;
+    let cancelled = false;
+    void runComparison(snapshot, rfq, controller, () => cancelled);
+
+    return () => { cancelled = true; controller.abort(); };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [rfq, vendorNames.length]); // re-evaluate when the available vendor count changes
 
   // Empty state: no extractions at all
   if (vendorNames.length === 0) {
@@ -448,6 +480,15 @@ export default function ComparisonPage() {
         </Alert>
       )}
 
+      {/* WR-05: RFQ fetch failed — surface it instead of leaving the screen inert */}
+      {rfqError && !comparison && (
+        <Alert variant="destructive">
+          <AlertDescription>
+            Could not load the RFQ — check the AI service is running, then reload this page.
+          </AlertDescription>
+        </Alert>
+      )}
+
       {!comparison && !streaming && !error && (
         <div className="flex items-center gap-4">
           <p className="text-sm text-muted-foreground">
@@ -455,41 +496,14 @@ export default function ComparisonPage() {
           </p>
           <Button
             onClick={() => {
-              // Manual trigger if auto-start was skipped (e.g. rfq loaded after render)
+              // Manual trigger if auto-start was skipped (e.g. rfq loaded after render).
+              // Snapshot the fresh list here (CR-02) and reuse the shared loop (WR-02).
               if (!rfq || streaming) return;
-              setError(null);
+              const snapshot = vendorNames.map((n) => extractions[n]);
+              if (snapshot.length < 2) return;
               const controller = new AbortController();
               abortRef.current = controller;
-              setStreaming(true);
-              setPhase("");
-              setProgressValue(0);
-              (async () => {
-                try {
-                  for await (const event of streamCompare(extractionList, rfq, controller.signal)) {
-                    if (event.type === "status") {
-                      const { phase: p } = event.payload as { message: string; phase: string };
-                      setPhase(p);
-                      const pct = COMPARISON_PHASES[p];
-                      if (pct !== undefined) setProgressValue(pct);
-                    }
-                    if (event.type === "result") {
-                      setComparison(event.payload as ComparisonResult);
-                      setProgressValue(100);
-                      setStreaming(false);
-                    }
-                    if (event.type === "error") {
-                      setError((event.payload as { message: string }).message);
-                      setStreaming(false);
-                    }
-                    if (event.type === "done") setStreaming(false);
-                  }
-                } catch (e) {
-                  if ((e as Error).name !== "AbortError") {
-                    setError("Connection lost.");
-                    setStreaming(false);
-                  }
-                }
-              })();
+              void runComparison(snapshot, rfq, controller, () => controller.signal.aborted);
             }}
           >
             Run Comparison

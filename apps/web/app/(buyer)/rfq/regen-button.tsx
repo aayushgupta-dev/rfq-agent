@@ -1,15 +1,10 @@
 "use client";
 import { useState } from "react";
-import type { RFQ } from "@aerchain/shared-types";
 import { Button } from "@/components/ui/button";
 import { fetchRfq } from "@/lib/api";
 
-interface RegenButtonProps {
-  initialRfq: RFQ;
-}
-
 // ponytail: only this component needs "use client"; page.tsx stays a Server Component
-export default function RegenButton({ initialRfq: _ }: RegenButtonProps) {
+export default function RegenButton() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 

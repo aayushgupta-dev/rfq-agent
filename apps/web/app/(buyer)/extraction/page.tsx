@@ -63,7 +63,12 @@ function collectFlaggedFields(extraction: ExtractionResult): FlaggedField[] {
 }
 
 function FieldRow({ label, field }: { label: string; field: FieldStr }) {
-  const evidence = field.status === "present" && field.evidence?.length ? field.evidence[0] : undefined;
+  // Evidence over assertion (§1/§8): surface the grounded span for any field that
+  // carries one — not only `present`. For `conflicting`, each value in field.values[]
+  // carries its OWN evidence (ConflictingValueStr), so render per-value with its source;
+  // never label a grounded conflicting value "No verified source".
+  const directEvidence = field.evidence?.length ? field.evidence[0] : undefined;
+  const isConflicting = field.status === "conflicting" && !!field.values?.length;
   return (
     <div className="grid grid-cols-[auto_1fr] gap-2 py-2 border-b border-border last:border-0">
       <div className="flex items-start gap-1.5 pt-0.5">
@@ -71,15 +76,22 @@ function FieldRow({ label, field }: { label: string; field: FieldStr }) {
         <FlagBadge status={field.status} />
       </div>
       <div>
-        <p className="text-sm">
-          {field.status === "conflicting" && field.values?.length
-            ? field.values.map((v, i) => v.value).filter(Boolean).join(" / ")
-            : (field.value ?? "—")}
-        </p>
-        <EvidenceSnippet
-          snippet={evidence?.snippet}
-          sourcePassage={evidence?.snippet}
-        />
+        {isConflicting ? (
+          field.values!.map((v, i) => {
+            const ev = v.evidence?.length ? v.evidence[0] : undefined;
+            return (
+              <div key={i} className="mb-1 last:mb-0">
+                <p className="text-sm">{v.value ?? "—"}</p>
+                <EvidenceSnippet snippet={ev?.snippet} />
+              </div>
+            );
+          })
+        ) : (
+          <>
+            <p className="text-sm">{field.value ?? "—"}</p>
+            <EvidenceSnippet snippet={directEvidence?.snippet} />
+          </>
+        )}
       </div>
     </div>
   );
@@ -210,6 +222,7 @@ function ExtractionView({ extraction }: { extraction: ExtractionResult }) {
 export default function ExtractionPage() {
   const { loadedVendors, extractions, setExtraction, setDowngradeReport } = useBuyerContext();
   const [rfq, setRfq] = useState<RFQ | null>(null);
+  const [rfqError, setRfqError] = useState(false);
   const [selectedVendor, setSelectedVendor] = useState<string>("");
   const [streaming, setStreaming] = useState(false);
   const [phase, setPhase] = useState("");
@@ -221,8 +234,10 @@ export default function ExtractionPage() {
   // Load RFQ on mount; set initial vendor selection
   useEffect(() => {
     fetchRfq()
-      .then(setRfq)
-      .catch(() => {/* rfq load failure is non-fatal — SSE will 422 without it */});
+      .then((r) => { setRfq(r); setRfqError(false); })
+      // WR-05: without rfq the SSE never fires (guards on !rfq) → blank stuck screen.
+      // Surface the failure instead of swallowing it.
+      .catch(() => setRfqError(true));
   }, []);
 
   useEffect(() => {
@@ -270,12 +285,14 @@ export default function ExtractionPage() {
             setDowngradeReport(selectedVendor, downgrade_report);
             setProgressValue(100);
             setStreaming(false);
+            break; // terminal — a late error must not flip the cached extraction to an error state (WR-04)
           }
           if (event.type === "error") {
             setError((event.payload as { message: string }).message);
             setStreaming(false);
+            break;
           }
-          if (event.type === "done") setStreaming(false);
+          if (event.type === "done") { setStreaming(false); break; }
         }
       } catch (e) {
         if (!cancelled && (e as Error).name !== "AbortError") {
@@ -309,6 +326,15 @@ export default function ExtractionPage() {
   return (
     <div className="p-6 space-y-6">
       <h1 className="text-3xl font-bold">Extraction Review</h1>
+
+      {/* WR-05: RFQ fetch failed — surface it; without it extraction can't stream */}
+      {rfqError && (
+        <Alert variant="destructive" data-testid="rfq-error">
+          <AlertDescription>
+            Could not load the RFQ — check the AI service is running, then reload this page.
+          </AlertDescription>
+        </Alert>
+      )}
 
       {/* D-10: vendor selector Tabs */}
       <Tabs

@@ -29,7 +29,7 @@ export default function RfqPage() {
           </div>
           <CardAction>
             {/* ponytail: RegenButton is a client island; regen is optional user-triggered call */}
-            <RegenButton initialRfq={rfq} />
+            <RegenButton />
           </CardAction>
         </CardHeader>
         <CardContent className="space-y-4">
