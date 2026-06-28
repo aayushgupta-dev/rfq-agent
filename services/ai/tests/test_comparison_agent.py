@@ -636,18 +636,37 @@ def test_comparison_traces_committed() -> None:
     assert len(json_traces) >= 1, f"Expected >=1 comparison_trace_*.json in {traces_dir}, got 0"
 
     required_keys = {"input", "resolved_prompt", "raw_model_output", "clamp_step", "final_result"}
+    fixture_traces = []
     for trace_path in json_traces:
         trace = json.loads(trace_path.read_text())
-        assert required_keys <= set(trace.keys()), (
-            f"{trace_path.name} missing required keys: {required_keys - set(trace.keys())}"
+        # Every comparison trace must declare its provenance (fixture vs live).
+        is_fixture = trace.get("_fixture_mode", False) is True
+        is_live = trace.get("_live_mode", False) is True
+        assert is_fixture or is_live, (
+            f"{trace_path.name}: trace must declare _fixture_mode or _live_mode provenance"
         )
-        assert len(trace["clamp_step"]["entries"]) >= 1, (
-            f"{trace_path.name}: comparison trace must show >=1 verdict downgrade "
-            "for D-03 rubric (Review Fix 5)"
-        )
-        assert trace.get("_fixture_mode", False) is True or "fixture" in str(trace).lower(), (
-            f"{trace_path.name}: trace must document its fixture-mode provenance"
-        )
+        if is_fixture:
+            fixture_traces.append(trace_path.name)
+            # Fixture traces deterministically demonstrate the clamp downgrade (D-11 / Review Fix 5).
+            assert required_keys <= set(trace.keys()), (
+                f"{trace_path.name} missing required keys: {required_keys - set(trace.keys())}"
+            )
+            assert len(trace["clamp_step"]["entries"]) >= 1, (
+                f"{trace_path.name}: fixture comparison trace must show >=1 verdict downgrade "
+                "for the D-03 rubric (Review Fix 5)"
+            )
+        else:
+            # Live traces capture real model output — an honest model may propose verdicts
+            # already within ceilings, so 0 downgrades is valid. The guarantee (no verdict
+            # exceeds its code ceiling) is asserted by docs/qa/comparison_e2e_live.py.
+            assert "clamp_step" in trace and "entries" in trace["clamp_step"], (
+                f"{trace_path.name}: live trace must still record a clamp_step"
+            )
+
+    # At least one fixture trace must exist so the clamp-downgrade story is always demonstrable.
+    assert fixture_traces, (
+        "Expected >=1 fixture-mode comparison trace (deterministic clamp-downgrade demonstration)"
+    )
 
 
 # ---------------------------------------------------------------------------
