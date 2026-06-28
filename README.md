@@ -91,6 +91,41 @@ pnpm dev
 Opens at `http://localhost:3000`. The web app communicates with the AI service at
 `NEXT_PUBLIC_AI_BASE_URL` (defaults to `http://localhost:8000`).
 
+## Run with Docker
+
+One command brings up the whole stack (backend FastAPI + frontend Next.js) via
+`infrastructure/docker-compose.yml`, driven by a single control script:
+
+```bash
+./infrastructure/rfq.sh up        # build (if needed) + start both services in the background
+./infrastructure/rfq.sh down      # stop and remove the stack
+./infrastructure/rfq.sh redeploy  # rebuild changed images + restart
+./infrastructure/rfq.sh rebuild   # THE force-rebuild key: --no-cache rebuild, then start
+./infrastructure/rfq.sh logs      # follow logs from all services
+./infrastructure/rfq.sh health    # curl the backend /health endpoint
+./infrastructure/rfq.sh e2e       # run the Playwright buyer-journey spec against the stack (opt-in)
+```
+
+Web is served on `http://localhost:3000`, the AI service on `http://localhost:8000`.
+
+**Environment:** `up` reads `OPENAI_API_KEY` (+ `MODEL_REASONING` / `MODEL_CHEAP`,
+defaulting to `gpt-5.4` / `gpt-5.4-mini`) from `.env` or the shell — the key is passed
+to the container only at runtime, never baked into an image layer.
+
+**Startup gates (a broken build never serves):**
+
+- The backend container **requires `OPENAI_API_KEY` at runtime** — the `verify_access`
+  boot gate aborts startup if the org/key lacks `gpt-5.4` / `gpt-5.4-mini` access.
+- The backend entrypoint runs the **full pytest suite first** and only execs uvicorn on
+  green — if tests fail, the container exits and never becomes healthy.
+- The web image gates on **`next build`** at image-build time — a build error fails the image.
+
+`e2e` is an opt-in profile (not part of a normal `up`); it needs both services up and a
+live key, since it drives live `gpt-5.4` RFQ/extraction/comparison calls.
+
+The non-Docker path above (**Run Locally** — `uv` + uvicorn for the AI service, `pnpm dev`
+for the web app) remains fully supported.
+
 ## Sample Flow
 
 1. Open `http://localhost:3000` — you land on the **RFQ Overview** screen.

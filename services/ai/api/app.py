@@ -8,6 +8,9 @@ Provides:
     for a graded prototype where access proof matters more than resilience. No bypass
     toggle (CLAUDE.md §2: no unrequested escape hatches).
 
+  - GET /health: hermetic liveness probe (the docker-compose healthcheck target).
+    Returns {"status": "ok"} with no model call.
+
   - GET /stream/demo: streams the trivial LangGraph demo graph as SSE events
     in {type, payload} format, observable via `curl -N` (PLAT-04).
 
@@ -175,6 +178,16 @@ async def wrap_raw_text(req: RawTextInput) -> dict:
         raw_text=req.raw_text,
     )
     return vendor.model_dump(mode="json")
+
+
+@app.get("/health")
+async def health() -> dict:
+    """Liveness probe — the docker-compose healthcheck target. Makes no model call.
+
+    Hermetic: returns a static body so it can run before/without OpenAI access
+    (the verify_access boot gate is a separate uvicorn-startup concern).
+    """
+    return {"status": "ok"}
 
 
 @app.get("/data/rfq")

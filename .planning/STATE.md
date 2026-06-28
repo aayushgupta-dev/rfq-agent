@@ -28,7 +28,7 @@ See: .planning/PROJECT.md (updated 2026-06-27)
 Phase: 05 (buyer-ui-trace-submission) — EXECUTED, verification human_needed (phase NOT closed)
 Plan: 9 of 9 executed (05-01..05-08 done; 05-09 E2E done, demo video pending)
 Status: Verified 4/5 must-haves (05-VERIFICATION.md). Deployed & E2E-green. Remaining before close: SHIP-04 demo video, code review, secure-phase, human UAT sign-off.
-Last activity: 2026-06-28 — deployed to Render + Vercel; Playwright E2E 7/7; phase verification run (human_needed)
+Last activity: 2026-06-28 — Completed quick task 260628-teg: dockerize the rfq-agent monorepo (compose + rfq.sh + GET /health); stack verified healthy
 
 Live: web https://rfq-agent-web.vercel.app · AI https://rfq-agent-ai.onrender.com
 
@@ -106,6 +106,13 @@ None yet.
 - [Phase 02 review, RESOLVED in 03-04] IN-04 walker coverage: ExtractionResult uses only list[Field]/list[BaseModel]/nested-model shapes (no dict[str, Field]); test_walker_covers_all_fields asserts the walker visits every Field[T]. No grounded field is silently bypassed.
 - [Phase 03 UAT, carry-forward] **Prompt-quality peer review** — UAT can only mechanically confirm a prompt's structure (flag states present, evidence floor stated), not its actual *design quality*, which is 30% of the grade. Carry a human/peer review of prompt design (clarity of contract, few-shot quality, humility framing that holds) into every phase that ships a prompt: Phase 4 comparison prompt, Phase 5 UI/UX prompts. Applies to extraction.v1.md retroactively too.
 - [Phase 03 UAT, carry-forward] **Trace / demo readability** — the captured pipeline traces (docs/traces/*.md) and any future comparison traces must be *compelling to an Aerchain reviewer*, not just structurally valid (D-14 keys). Review trace/demo artifact readability as a deliverable-quality gate in Phase 4 (comparison traces) and Phase 5 (demo + write-up).
+
+### Quick Tasks Completed
+
+| # | Description | Date | Commit | Directory |
+|---|-------------|------|--------|-----------|
+| 260628-teg | Dockerize the rfq-agent monorepo (compose + rfq.sh control script + GET /health) | 2026-06-28 | 75d9c9d | [260628-teg-dockerize-monorepo](./quick/260628-teg-dockerize-monorepo/) |
+| fast | Sync served sample fixtures (public/data) with real vendor names — stale persona slugs in vendor_name | 2026-06-28 | 1943ce4 | — |
 
 ## Deferred Items
 
