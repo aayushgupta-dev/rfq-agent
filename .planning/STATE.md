@@ -2,15 +2,15 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: executing
-stopped_at: Completed 03-04-PLAN.md
-last_updated: "2026-06-27T18:18:52.658Z"
+status: ready_to_plan
+stopped_at: Phase 03 complete (4/4) — ready to discuss Phase 4
+last_updated: 2026-06-28T04:56:06.952Z
 last_activity: 2026-06-27
 progress:
   total_phases: 5
   completed_phases: 2
   total_plans: 13
-  completed_plans: 13
+  completed_plans: 14
   percent: 40
 ---
 
@@ -21,14 +21,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-06-27)
 
 **Core value:** Evidence over assertion, absence made first-class — every shown fact carries a source snippet; missing/unclear/conflicting/unsupported are explicit states; the AI never fabricates a number or claim.
-**Current focus:** Phase 03 — extraction-agent
+**Current focus:** Phase 4 — comparison agent
 
 ## Current Position
 
-Phase: 03 (extraction-agent) — EXECUTING
-Plan: 4 of 4 (03-04 complete)
-Status: 03-04 complete — phase 03 fully planned & executed
-Last activity: 2026-06-27
+Phase: 4
+Plan: Not started
+Status: Ready to plan
+Last activity: 2026-06-28
 
 Progress: [██████████] 100%
 
@@ -36,7 +36,7 @@ Progress: [██████████] 100%
 
 **Velocity:**
 
-- Total plans completed: 9
+- Total plans completed: 13
 - Average duration: — min
 - Total execution time: 0.0 hours
 
@@ -46,6 +46,7 @@ Progress: [██████████] 100%
 |-------|-------|-------|----------|
 | 01 | 4 | - | - |
 | 02 | 5 | - | - |
+| 03 | 4 | - | - |
 
 **Recent Trend:**
 
@@ -89,6 +90,8 @@ None yet.
 - [Phase 02 review, deferred] IN-04 — grounding walker `_walk_and_ground` (gate.py) does not traverse dict-valued Field containers. Harmless today (no schema uses `dict[str, Field]`), but the grounding gate is the reliability keystone: when Phase 3 finalizes ExtractionResult, confirm the walker covers every field shape so no grounded field is silently bypassed. (Doc-comment left in code.)
 - [Phase 02 review, info] [RESOLVED in 03-04] Fuzzy-match threshold edge case: a fabricated snippet sharing a long suffix with real source text can score >90. Calibration evidence captured via the trace set — gpt-5.4 quotes verbatim so all snippets hit exact-match (no fuzzy fallback needed); FUZZY_THRESHOLD=90 left untouched (B-R3). Downgrade path coverage lives in test_grounding_gate.py.
 - [Phase 02 review, RESOLVED in 03-04] IN-04 walker coverage: ExtractionResult uses only list[Field]/list[BaseModel]/nested-model shapes (no dict[str, Field]); test_walker_covers_all_fields asserts the walker visits every Field[T]. No grounded field is silently bypassed.
+- [Phase 03 UAT, carry-forward] **Prompt-quality peer review** — UAT can only mechanically confirm a prompt's structure (flag states present, evidence floor stated), not its actual *design quality*, which is 30% of the grade. Carry a human/peer review of prompt design (clarity of contract, few-shot quality, humility framing that holds) into every phase that ships a prompt: Phase 4 comparison prompt, Phase 5 UI/UX prompts. Applies to extraction.v1.md retroactively too.
+- [Phase 03 UAT, carry-forward] **Trace / demo readability** — the captured pipeline traces (docs/traces/*.md) and any future comparison traces must be *compelling to an Aerchain reviewer*, not just structurally valid (D-14 keys). Review trace/demo artifact readability as a deliverable-quality gate in Phase 4 (comparison traces) and Phase 5 (demo + write-up).
 
 ## Deferred Items
 
