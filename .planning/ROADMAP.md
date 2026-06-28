@@ -145,13 +145,13 @@ Plans:
 
 **Wave 1** *(parallel)*
 
-- [ ] 05-02-PLAN.md — Wave 1A: Backend additions (5 Python deps, CORS middleware, POST /extract/file-text, POST /input/raw-text)
-- [ ] 05-03-PLAN.md — Wave 1B: UI shell (shadcn components, app redirect, buyer layout, BuyerContext, lib/sse.ts, lib/session.ts, lib/api.ts, stage rail, display components)
+- [x] 05-02-PLAN.md — Wave 1A: Backend additions (5 Python deps, CORS middleware, POST /extract/file-text, POST /input/raw-text)
+- [x] 05-03-PLAN.md — Wave 1B: UI shell (shadcn components, app redirect, buyer layout, BuyerContext, lib/sse.ts, lib/session.ts, lib/api.ts, stage rail, display components)
 
 **Wave 2** *(parallel, blocked on Wave 1)*
 
 - [ ] 05-04-PLAN.md — Wave 2A: RFQ Overview + Vendor Input screens + trace Route Handler
-- [ ] 05-05-PLAN.md — Wave 2B: ui-ux-gen prompt authored + run once + PROMPT-02 docs (6 remaining prompts) + PROMPT-04 failure example
+- [x] 05-05-PLAN.md — Wave 2B: ui-ux-gen prompt authored + run once + PROMPT-02 docs (6 remaining prompts) + PROMPT-04 failure example
 
 **Wave 3** *(parallel, blocked on Wave 2)*
 
@@ -177,4 +177,4 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 | 2. Grounding Gate & Messy Data | 4/4 | Complete   | 2026-06-27 |
 | 3. Extraction Agent | 4/4 | Complete   | 2026-06-27 |
 | 4. Comparison Agent | 4/4 | Complete   | 2026-06-28 |
-| 5. Buyer UI, Trace & Submission | 1/9 | In Progress|  |
+| 5. Buyer UI, Trace & Submission | 4/9 | In Progress|  |
