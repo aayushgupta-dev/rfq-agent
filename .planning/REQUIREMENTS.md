@@ -33,8 +33,8 @@
 
 ### Vendor Input
 
-- [ ] **INPUT-01**: buyer can provide a vendor response by pasting text, Markdown, or JSON.
-- [ ] **INPUT-02**: buyer can upload a vendor file (PDF, Word, Excel, PPT); text is extracted best-effort (no production OCR, per §11).
+- [x] **INPUT-01**: buyer can provide a vendor response by pasting text, Markdown, or JSON.
+- [x] **INPUT-02**: buyer can upload a vendor file (PDF, Word, Excel, PPT); text is extracted best-effort (no production OCR, per §11).
 - [ ] **INPUT-03**: buyer can load a pre-generated sample vendor in one click for an instant demo flow.
 - [ ] **INPUT-04**: AI output is generated dynamically from whatever input is provided — never hardcoded to a fixed response.
 
@@ -127,8 +127,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 | COMPARE-03 | Phase 4 | Complete |
 | COMPARE-04 | Phase 4 | Complete |
 | COMPARE-05 | Phase 4 | Complete |
-| INPUT-01 | Phase 5 | Pending |
-| INPUT-02 | Phase 5 | Pending |
+| INPUT-01 | Phase 5 | Complete |
+| INPUT-02 | Phase 5 | Complete |
 | INPUT-03 | Phase 5 | Pending |
 | INPUT-04 | Phase 5 | Pending |
 | UI-01 | Phase 5 | Pending |

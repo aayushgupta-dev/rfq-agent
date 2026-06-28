@@ -141,7 +141,7 @@ Plans:
 Plans:
 **Wave 0**
 
-- [ ] 05-01-PLAN.md — Wave 0: RED test stubs (test_file_extract.py, test_input_wrap.py) + Playwright E2E spec scaffold
+- [x] 05-01-PLAN.md — Wave 0: RED test stubs (test_file_extract.py, test_input_wrap.py) + Playwright E2E spec scaffold
 
 **Wave 1** *(parallel)*
 
@@ -177,4 +177,4 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 | 2. Grounding Gate & Messy Data | 4/4 | Complete   | 2026-06-27 |
 | 3. Extraction Agent | 4/4 | Complete   | 2026-06-27 |
 | 4. Comparison Agent | 4/4 | Complete   | 2026-06-28 |
-| 5. Buyer UI, Trace & Submission | 0/9 | Not started | - |
+| 5. Buyer UI, Trace & Submission | 1/9 | In Progress|  |
