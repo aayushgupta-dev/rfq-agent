@@ -117,7 +117,7 @@ Plans:
 
 **Wave 3** *(blocked on Wave 2 completion)*
 
-- [ ] 04-03-PLAN.md — Wave 3: Comparison agent (StateGraph + verdict clamp + flag collector) + POST /compare/vendors SSE route
+- [x] 04-03-PLAN.md — Wave 3: Comparison agent (StateGraph + verdict clamp + flag collector) + POST /compare/vendors SSE route
 
 **Wave 4** *(blocked on Wave 3 completion)*
 
@@ -149,5 +149,5 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 | 1. Foundation | 5/5 | Complete   | 2026-06-27 |
 | 2. Grounding Gate & Messy Data | 4/4 | Complete   | 2026-06-27 |
 | 3. Extraction Agent | 4/4 | Complete   | 2026-06-27 |
-| 4. Comparison Agent | 2/4 | In Progress|  |
+| 4. Comparison Agent | 3/4 | In Progress|  |
 | 5. Buyer UI, Trace & Submission | 0/TBD | Not started | - |
