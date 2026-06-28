@@ -1,0 +1,354 @@
+"use client";
+import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
+import type { ExtractionResult, FieldStr, FlagStatus, RFQ } from "@aerchain/shared-types";
+import { useBuyerContext } from "@/contexts/BuyerContext";
+import { streamExtract, normalizeExtractionPayload, fetchRfq } from "@/lib/api";
+import { EvidenceSnippet } from "@/components/evidence-snippet";
+import { FlagBadge } from "@/components/flag-badge";
+import { StreamProgress } from "@/components/stream-progress";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+
+// D-09 category layout — maps to ExtractionResult field paths
+const CATEGORIES: { label: string; key: keyof ExtractionResult }[] = [
+  { label: "Scope", key: "scope_summary" },
+  { label: "Pricing", key: "pricing_structure" },
+  { label: "Pricing", key: "total_price" },
+  { label: "Commercial Terms", key: "commercial_terms" },
+  { label: "Timeline", key: "timeline" },
+  { label: "Compliance", key: "compliance_points" },
+  { label: "Assumptions", key: "assumptions" },
+  { label: "Exclusions", key: "exclusions" },
+  { label: "Risks", key: "risks" },
+];
+
+// D-08 severity order for Gaps & Risks panel
+const SEVERITY: FlagStatus[] = ["missing", "conflicting", "unclear", "unsupported"];
+
+interface FlaggedField {
+  label: string;
+  status: FlagStatus;
+}
+
+function collectFlaggedFields(extraction: ExtractionResult): FlaggedField[] {
+  const items: FlaggedField[] = [];
+
+  function checkField(label: string, field: FieldStr | undefined) {
+    if (field && field.status !== "present") {
+      items.push({ label, status: field.status });
+    }
+  }
+
+  checkField("Scope summary", extraction.scope_summary);
+  checkField("Pricing structure", extraction.pricing_structure);
+  checkField("Total price", extraction.total_price);
+  checkField("Commercial terms", extraction.commercial_terms);
+  checkField("Timeline", extraction.timeline);
+
+  extraction.compliance_points?.forEach((f, i) => checkField(`Compliance point ${i + 1}`, f));
+  extraction.assumptions?.forEach((f, i) => checkField(`Assumption ${i + 1}`, f));
+  extraction.exclusions?.forEach((f, i) => checkField(`Exclusion ${i + 1}`, f));
+  extraction.risks?.forEach((f, i) => checkField(`Risk ${i + 1}`, f));
+  extraction.line_items?.forEach((li) => {
+    checkField(`${li.line_item_name} — pricing`, li.pricing);
+    checkField(`${li.line_item_name} — scope coverage`, li.scope_coverage);
+  });
+
+  // Sort by severity: missing → conflicting → unclear → unsupported
+  items.sort((a, b) => SEVERITY.indexOf(a.status) - SEVERITY.indexOf(b.status));
+  return items;
+}
+
+function FieldRow({ label, field }: { label: string; field: FieldStr }) {
+  const evidence = field.status === "present" && field.evidence?.length ? field.evidence[0] : undefined;
+  return (
+    <div className="grid grid-cols-[auto_1fr] gap-2 py-2 border-b border-border last:border-0">
+      <div className="flex items-start gap-1.5 pt-0.5">
+        <span className="text-xs font-semibold text-muted-foreground">{label}</span>
+        <FlagBadge status={field.status} />
+      </div>
+      <div>
+        <p className="text-sm">
+          {field.status === "conflicting" && field.values?.length
+            ? field.values.map((v, i) => v.value).filter(Boolean).join(" / ")
+            : (field.value ?? "—")}
+        </p>
+        <EvidenceSnippet
+          snippet={evidence?.snippet}
+          sourcePassage={evidence?.snippet}
+        />
+      </div>
+    </div>
+  );
+}
+
+function CategoryCard({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="text-xl font-semibold">{title}</CardTitle>
+      </CardHeader>
+      <CardContent>{children}</CardContent>
+    </Card>
+  );
+}
+
+function ExtractionView({ extraction }: { extraction: ExtractionResult }) {
+  const flagged = collectFlaggedFields(extraction);
+
+  return (
+    <div className="space-y-4">
+      {/* D-08 Gaps & Risks panel — always visible, buyer-first */}
+      <Card data-testid="gaps-panel">
+        <CardHeader>
+          <CardTitle className="text-xl font-semibold">
+            Gaps &amp; Risks — {flagged.length} issue(s)
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          {flagged.length === 0 ? (
+            <p className="text-sm text-muted-foreground">All fields present — no gaps detected.</p>
+          ) : (
+            <ul className="space-y-1">
+              {flagged.map((f, i) => (
+                <li key={i} className="flex items-center gap-2 text-sm">
+                  <span>{f.label}</span>
+                  <FlagBadge status={f.status} />
+                </li>
+              ))}
+            </ul>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* D-09 Category sections */}
+      <div data-testid="extraction-result" className="space-y-4">
+        {/* Scope */}
+        <CategoryCard title="Scope">
+          <FieldRow label="Scope summary" field={extraction.scope_summary} />
+          {extraction.line_items?.map((li) => (
+            <div key={li.line_item_id} className="mt-2">
+              <p className="text-xs font-semibold text-muted-foreground mb-1">{li.line_item_name}</p>
+              <FieldRow label="Scope coverage" field={li.scope_coverage} />
+            </div>
+          ))}
+        </CategoryCard>
+
+        {/* Pricing */}
+        <CategoryCard title="Pricing">
+          <FieldRow label="Pricing structure" field={extraction.pricing_structure} />
+          <FieldRow label="Total price" field={extraction.total_price} />
+          {extraction.line_items?.map((li) => (
+            <div key={li.line_item_id} className="mt-2">
+              <p className="text-xs font-semibold text-muted-foreground mb-1">{li.line_item_name}</p>
+              <FieldRow label="Pricing" field={li.pricing} />
+            </div>
+          ))}
+        </CategoryCard>
+
+        {/* Commercial Terms */}
+        <CategoryCard title="Commercial Terms">
+          <FieldRow label="Commercial terms" field={extraction.commercial_terms} />
+        </CategoryCard>
+
+        {/* Timeline */}
+        <CategoryCard title="Timeline">
+          <FieldRow label="Timeline" field={extraction.timeline} />
+        </CategoryCard>
+
+        {/* Compliance */}
+        <CategoryCard title="Compliance">
+          {extraction.compliance_points?.length ? (
+            extraction.compliance_points.map((f, i) => (
+              <FieldRow key={i} label={`Point ${i + 1}`} field={f} />
+            ))
+          ) : (
+            <p className="text-sm text-muted-foreground">No compliance data extracted.</p>
+          )}
+        </CategoryCard>
+
+        {/* Assumptions */}
+        <CategoryCard title="Assumptions">
+          {extraction.assumptions?.length ? (
+            extraction.assumptions.map((f, i) => (
+              <FieldRow key={i} label={`Assumption ${i + 1}`} field={f} />
+            ))
+          ) : (
+            <p className="text-sm text-muted-foreground">No assumptions extracted.</p>
+          )}
+        </CategoryCard>
+
+        {/* Exclusions */}
+        <CategoryCard title="Exclusions">
+          {extraction.exclusions?.length ? (
+            extraction.exclusions.map((f, i) => (
+              <FieldRow key={i} label={`Exclusion ${i + 1}`} field={f} />
+            ))
+          ) : (
+            <p className="text-sm text-muted-foreground">No exclusions extracted.</p>
+          )}
+        </CategoryCard>
+
+        {/* Risks */}
+        <CategoryCard title="Risks">
+          {extraction.risks?.length ? (
+            extraction.risks.map((f, i) => (
+              <FieldRow key={i} label={`Risk ${i + 1}`} field={f} />
+            ))
+          ) : (
+            <p className="text-sm text-muted-foreground">No risks extracted.</p>
+          )}
+        </CategoryCard>
+      </div>
+    </div>
+  );
+}
+
+export default function ExtractionPage() {
+  const { loadedVendors, extractions, setExtraction, setDowngradeReport } = useBuyerContext();
+  const [rfq, setRfq] = useState<RFQ | null>(null);
+  const [selectedVendor, setSelectedVendor] = useState<string>("");
+  const [streaming, setStreaming] = useState(false);
+  const [phase, setPhase] = useState("");
+  const [progressValue, setProgressValue] = useState(0);
+  const [error, setError] = useState<string | null>(null);
+  // ponytail: AbortController ref — T-05-06-C mitigate (SSE stream that never closes)
+  const abortRef = useRef<AbortController | null>(null);
+
+  // Load RFQ on mount; set initial vendor selection
+  useEffect(() => {
+    fetchRfq()
+      .then(setRfq)
+      .catch(() => {/* rfq load failure is non-fatal — SSE will 422 without it */});
+  }, []);
+
+  useEffect(() => {
+    if (!selectedVendor && loadedVendors.length > 0) {
+      setSelectedVendor(loadedVendors[0].vendor_name);
+    }
+  }, [loadedVendors, selectedVendor]);
+
+  // Abort any in-flight SSE on unmount (T-05-06-C)
+  useEffect(() => {
+    return () => { abortRef.current?.abort(); };
+  }, []);
+
+  // Session cache check + SSE trigger
+  useEffect(() => {
+    if (!selectedVendor || !rfq) return;
+    if (extractions[selectedVendor]) return; // cached — render instantly (D-02)
+
+    const vendor = loadedVendors.find((v) => v.vendor_name === selectedVendor);
+    if (!vendor) return;
+
+    const controller = new AbortController();
+    abortRef.current = controller;
+    setStreaming(true);
+    setPhase("");
+    setProgressValue(0);
+    setError(null);
+
+    (async () => {
+      try {
+        for await (const event of streamExtract(vendor, rfq, controller.signal)) {
+          if (event.type === "status") {
+            const { phase: p } = event.payload as { message: string; phase: string };
+            setPhase(p);
+            // D-25: drive progress from known phase sequence, not a +20% counter
+            if (p === "model") setProgressValue(40);
+            if (p === "grounding") setProgressValue(80);
+          }
+          if (event.type === "result") {
+            const { result, downgrade_report } = normalizeExtractionPayload(
+              event.payload as Record<string, unknown>,
+            );
+            setExtraction(selectedVendor, result);
+            setDowngradeReport(selectedVendor, downgrade_report);
+            setProgressValue(100);
+            setStreaming(false);
+          }
+          if (event.type === "error") {
+            setError((event.payload as { message: string }).message);
+            setStreaming(false);
+          }
+          if (event.type === "done") setStreaming(false);
+        }
+      } catch (e) {
+        if ((e as Error).name !== "AbortError") {
+          setError("Connection lost. Check the AI service is running.");
+          setStreaming(false);
+        }
+      }
+    })();
+  }, [selectedVendor, rfq]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const extraction = selectedVendor ? extractions[selectedVendor] : undefined;
+
+  // No vendors loaded
+  if (loadedVendors.length === 0) {
+    return (
+      <div className="p-6 space-y-4">
+        <h1 className="text-3xl font-bold">Extraction Review</h1>
+        <Alert>
+          <AlertDescription>
+            Select or load a vendor on the{" "}
+            <Link href="/input" className="underline font-medium">Input screen</Link>{" "}
+            to begin extraction.
+          </AlertDescription>
+        </Alert>
+      </div>
+    );
+  }
+
+  return (
+    <div className="p-6 space-y-6">
+      <h1 className="text-3xl font-bold">Extraction Review</h1>
+
+      {/* D-10: vendor selector Tabs */}
+      <Tabs
+        data-testid="vendor-tabs"
+        value={selectedVendor}
+        onValueChange={(v) => {
+          setError(null);
+          setSelectedVendor(v);
+        }}
+      >
+        <TabsList>
+          {loadedVendors.map((v) => (
+            <TabsTrigger key={v.vendor_name} value={v.vendor_name}>
+              {v.vendor_name}
+            </TabsTrigger>
+          ))}
+        </TabsList>
+
+        {loadedVendors.map((v) => (
+          <TabsContent key={v.vendor_name} value={v.vendor_name}>
+            {streaming && v.vendor_name === selectedVendor && (
+              <div className="space-y-4">
+                <StreamProgress phase={phase} value={progressValue} />
+                {[...Array(4)].map((_, i) => (
+                  <Skeleton key={i} className="h-6 w-full my-2" />
+                ))}
+              </div>
+            )}
+
+            {error && v.vendor_name === selectedVendor && (
+              <Alert variant="destructive" data-testid="extraction-error">
+                <AlertDescription>
+                  Extraction could not complete. {error} — Try reloading or check the AI service is running.
+                </AlertDescription>
+              </Alert>
+            )}
+
+            {extraction && v.vendor_name === selectedVendor && !streaming && (
+              <ExtractionView extraction={extraction} />
+            )}
+          </TabsContent>
+        ))}
+      </Tabs>
+    </div>
+  );
+}
