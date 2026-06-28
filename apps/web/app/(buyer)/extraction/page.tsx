@@ -285,12 +285,14 @@ export default function ExtractionPage() {
             setDowngradeReport(selectedVendor, downgrade_report);
             setProgressValue(100);
             setStreaming(false);
+            break; // terminal — a late error must not flip the cached extraction to an error state (WR-04)
           }
           if (event.type === "error") {
             setError((event.payload as { message: string }).message);
             setStreaming(false);
+            break;
           }
-          if (event.type === "done") setStreaming(false);
+          if (event.type === "done") { setStreaming(false); break; }
         }
       } catch (e) {
         if (!cancelled && (e as Error).name !== "AbortError") {
