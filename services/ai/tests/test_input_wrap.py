@@ -19,7 +19,6 @@ from schemas.domain import VendorResponse
 client = TestClient(app, raise_server_exceptions=True)
 
 
-@pytest.mark.xfail(strict=True, reason="Wave 1 — route not yet implemented")
 def test_raw_text_wrap_returns_valid_vendor_response() -> None:
     """POST /input/raw-text → 200, body validates as VendorResponse.
 
