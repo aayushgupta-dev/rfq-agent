@@ -1,0 +1,65 @@
+# Bid Desk local stack. One command: ../infrastructure/rfq.sh up (from repo root:
+# ./infrastructure/rfq.sh up). Backend pytest-gates its own startup; web image
+# gates on `next build`. No volumes — nothing in the request path persists to disk.
+name: rfq-agent
+
+services:
+  rfq-agent-ai:
+    build:
+      context: ..
+      dockerfile: services/ai/Dockerfile
+    image: rfq-agent/ai
+    container_name: rfq-agent-ai
+    ports:
+      - "8000:8000"
+    environment:
+      # Passed only via .env/shell at runtime — never baked into an image layer
+      # (T-DKR-01). Backend REQUIRES the key at boot: verify_access aborts uvicorn
+      # without gpt-5.4 / gpt-5.4-mini access (D-16).
+      OPENAI_API_KEY: ${OPENAI_API_KEY:?set OPENAI_API_KEY in .env or the shell}
+      MODEL_REASONING: ${MODEL_REASONING:-gpt-5.4}
+      MODEL_CHEAP: ${MODEL_CHEAP:-gpt-5.4-mini}
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      # Generous: pytest + verify_access run before the server is ready.
+      start_period: 90s
+
+  rfq-agent-web:
+    build:
+      context: ..
+      dockerfile: apps/web/Dockerfile
+    image: rfq-agent/web
+    container_name: rfq-agent-web
+    ports:
+      - "3000:3000"
+    environment:
+      # Browser-side fetch target (lib/api.ts). The browser reaches the backend on
+      # the host-published port, so localhost:8000 is correct for the local stack.
+      NEXT_PUBLIC_AI_BASE_URL: ${NEXT_PUBLIC_AI_BASE_URL:-http://localhost:8000}
+    depends_on:
+      rfq-agent-ai:
+        condition: service_healthy
+
+  # Opt-in only (profile e2e); NOT part of a normal `up`. Runs the Phase 5 Playwright
+  # buyer-journey spec against the running stack. Needs both services up AND a live
+  # key (the spec drives live gpt-5.4 RFQ/extraction/comparison calls).
+  e2e:
+    profiles: ["e2e"]
+    image: mcr.microsoft.com/playwright:v1.61.1-noble
+    working_dir: /repo
+    environment:
+      PLAYWRIGHT_BASE_URL: http://rfq-agent-web:3000
+    volumes:
+      - ..:/repo
+    # ponytail: bind-mount the repo + run the existing spec in place — no separate
+    # test image to build/maintain for a once-in-a-while opt-in check.
+    entrypoint:
+      - sh
+      - -c
+      - corepack enable && pnpm install --frozen-lockfile && pnpm exec playwright test docs/qa/phase5-playwright.spec.ts
+    depends_on:
+      rfq-agent-web:
+        condition: service_started
