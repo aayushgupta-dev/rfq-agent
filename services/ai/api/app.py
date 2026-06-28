@@ -63,6 +63,7 @@ from agents.extraction import extraction_graph
 from agents.rfq_gen import generate_rfq, render_rfq_md
 from agents.vendor_gen import MESS_SPECS, generate_vendor_response
 from llm.factory import verify_access
+from prompts.registry import load as load_prompt
 from schemas.domain import RFQ, ExtractionResult, VendorResponse
 from schemas.events import EventEnvelope
 
@@ -189,6 +190,27 @@ async def health() -> dict:
     (the verify_access boot gate is a separate uvicorn-startup concern).
     """
     return {"status": "ok"}
+
+
+@app.get("/prompts/{prompt_id}")
+async def get_prompt(prompt_id: str) -> dict:
+    """Return a Prompt Pack entry (metadata + markdown body) by id.
+
+    The Prompt Trace screen fetches this on demand so the prompts have a single source
+    of truth — the versioned files in services/ai/prompts/ — instead of being copied into
+    the web app. registry.load() validates the id (^[a-z0-9-]+$, path-traversal safe) and
+    resolves the latest version.
+
+    # ponytail: file-backed via the registry today. Moving the Prompt Pack into a database
+    # is a deferred option — keep this endpoint as the single read seam if/when that lands.
+    """
+    try:
+        post = load_prompt(prompt_id)
+    except ValueError as exc:  # invalid id shape
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    except KeyError as exc:  # no such prompt
+        raise HTTPException(status_code=404, detail=f"No prompt '{prompt_id}'") from exc
+    return {"id": prompt_id, "metadata": post.metadata, "content": post.content}
 
 
 @app.get("/data/rfq")
