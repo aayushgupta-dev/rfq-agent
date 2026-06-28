@@ -25,7 +25,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 1: Foundation** - Schemas, pydantic→TS contract, env LLM client, SSE proof, Prompt Pack skeleton (completed 2026-06-27)
 - [x] **Phase 2: Grounding Gate & Messy Data** - Code-enforced grounding (LLM-free, unit-tested) + RFQ/vendor generation with mess specs (completed 2026-06-27)
 - [x] **Phase 3: Extraction Agent** - Grounding-gated extraction with evidence, four flag types, safe structured output, SSE streaming, first trace (completed 2026-06-27)
-- [ ] **Phase 4: Comparison Agent** - Comparability-before-ranking over `ExtractionResult[]` with clarification questions
+- [x] **Phase 4: Comparison Agent** - Comparability-before-ranking over `ExtractionResult[]` with clarification questions (completed 2026-06-28)
 - [ ] **Phase 5: Buyer UI, Trace & Submission** - Five buyer screens, in-app prompt trace, deploy, and the full submission package
 
 ## Phase Details
@@ -121,7 +121,7 @@ Plans:
 
 **Wave 4** *(blocked on Wave 3 completion)*
 
-- [ ] 04-04-PLAN.md — Wave 4: Full comparison + clarification prompts authored + comparison trace captured + human checkpoint
+- [x] 04-04-PLAN.md — Wave 4: Full comparison + clarification prompts authored + comparison trace captured + human checkpoint
 
 ### Phase 5: Buyer UI, Trace & Submission
 
@@ -149,5 +149,5 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 | 1. Foundation | 5/5 | Complete   | 2026-06-27 |
 | 2. Grounding Gate & Messy Data | 4/4 | Complete   | 2026-06-27 |
 | 3. Extraction Agent | 4/4 | Complete   | 2026-06-27 |
-| 4. Comparison Agent | 3/4 | In Progress|  |
+| 4. Comparison Agent | 4/4 | Complete   | 2026-06-28 |
 | 5. Buyer UI, Trace & Submission | 0/TBD | Not started | - |
