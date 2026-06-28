@@ -51,6 +51,7 @@ import openpyxl
 import pptx
 import pypdf
 from fastapi import FastAPI, File, HTTPException, UploadFile
+from fastapi.concurrency import run_in_threadpool
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, model_validator
 from pydantic import Field as pydantic_Field
@@ -196,8 +197,12 @@ async def get_rfq() -> dict:
 
     Makes a live OpenAI call — not served from the committed fixture.
     Returns: JSON-serializable RFQ dict.
+
+    generate_rfq() is a blocking (synchronous) LangChain call; run it in the threadpool
+    so it never blocks the event loop. Otherwise a single in-flight RFQ regen stalls the
+    /health probe (→ container marked unhealthy) and every other concurrent request.
     """
-    rfq = generate_rfq()
+    rfq = await run_in_threadpool(generate_rfq)
     return rfq.model_dump(mode="json")
 
 
@@ -219,9 +224,12 @@ async def post_vendor_gen(req: VendorGenRequest) -> dict:
         )
     rfq_text = req.rfq_text
     if rfq_text is None:
-        rfq = generate_rfq()
+        rfq = await run_in_threadpool(generate_rfq)
         rfq_text = render_rfq_md(rfq)
-    vendor = generate_vendor_response(rfq_text, req.persona, MESS_SPECS[req.persona])
+    # Blocking LangChain call — offload so it never blocks the event loop (see get_rfq).
+    vendor = await run_in_threadpool(
+        generate_vendor_response, rfq_text, req.persona, MESS_SPECS[req.persona]
+    )
     return vendor.model_dump(mode="json")
 
 
