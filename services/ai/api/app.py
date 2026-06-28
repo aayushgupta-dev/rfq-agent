@@ -33,11 +33,12 @@ from pydantic import BaseModel, Field as pydantic_Field, model_validator
 from sse_starlette import EventSourceResponse
 
 from agents._demo import demo_graph
+from agents.comparison import comparison_graph
 from agents.extraction import extraction_graph
 from agents.rfq_gen import generate_rfq, render_rfq_md
 from agents.vendor_gen import MESS_SPECS, generate_vendor_response
 from llm.factory import verify_access
-from schemas.domain import RFQ, VendorResponse
+from schemas.domain import RFQ, ExtractionResult, VendorResponse
 from schemas.events import EventEnvelope
 
 
@@ -157,6 +158,61 @@ async def stream_demo() -> EventSourceResponse:
         async for chunk in demo_graph.astream({}, stream_mode="custom"):
             yield {"data": EventEnvelope(**chunk).model_dump_json()}
         # Final "done" event appended by the route after the graph completes.
+        yield {"data": EventEnvelope(type="done", payload={}).model_dump_json()}
+
+    return EventSourceResponse(_generate())
+
+
+class ComparisonRequest(BaseModel):
+    """Request body for POST /compare/vendors (COMPARE-01..05).
+
+    Accepts a list of ExtractionResult objects + the original RFQ. The comparison
+    agent never reads raw vendor text — only validated ExtractionResult[] (COMPARE-01).
+
+    Vendor count is limited to _MAX_VENDORS (prototype limit — single-call context
+    window constraint; RESEARCH Pitfall 7 / Review Fix LOW).
+
+    Note: no char cap needed since ExtractionResult has no raw_text; vendor count guard only.
+
+    Security: clamp runs server-side before result event (D-03 / Review Fix 9);
+    exactly one result event (Review Fix 9).
+    """
+
+    extractions: list[ExtractionResult]
+    rfq: RFQ
+
+    _MAX_VENDORS: int = 5
+    # ponytail: _MAX_VENDORS=5 is a prototype limit — single-call context window constraint
+    # (RESEARCH Pitfall 7 / Review Fix LOW). Increase if multi-vendor truncation is observed.
+
+    @model_validator(mode="after")
+    def _check_vendor_count(self) -> "ComparisonRequest":
+        if len(self.extractions) > self._MAX_VENDORS:
+            raise ValueError(
+                f"Too many vendors: {len(self.extractions)} > {self._MAX_VENDORS} (prototype limit). "
+                f"Submit at most {self._MAX_VENDORS} vendors per comparison request."
+            )
+        return self
+
+
+@app.post("/compare/vendors")
+async def compare_vendors(req: ComparisonRequest) -> EventSourceResponse:
+    """Stream vendor comparison as SSE events (COMPARE-01..05).
+
+    Accepts list[ExtractionResult] + RFQ. Runs the 4-node comparison graph:
+    align → comparability → compare → clarify.
+
+    Clamp runs server-side before the result event (D-03 / Review Fix 9).
+    Exactly one result event is emitted — after clamp + clarification (Review Fix 9).
+    All structured-output failure shapes emit safe error events.
+    """
+
+    async def _generate() -> AsyncGenerator[dict, None]:
+        async for chunk in comparison_graph.astream(
+            {"extractions": req.extractions, "rfq": req.rfq},
+            stream_mode="custom",
+        ):
+            yield {"data": EventEnvelope(**chunk).model_dump_json()}
         yield {"data": EventEnvelope(type="done", payload={}).model_dump_json()}
 
     return EventSourceResponse(_generate())
