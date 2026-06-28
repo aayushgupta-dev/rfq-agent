@@ -42,6 +42,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Markdown } from "@/components/markdown";
+import { PageHeader } from "@/components/page-header";
 
 // The committed procurement event — stable module-level reference (matches /rfq + extraction).
 const rfq = rfqRaw as unknown as RFQ;
@@ -470,6 +471,8 @@ export default function ComparisonPage() {
     const controller = new AbortController();
     abortRef.current = controller;
     let cancelled = false;
+    // runComparison kicks off the SSE compare stream (external-system sync) and sets pending UI.
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- intentional async-stream kickoff
     void runComparison(snapshot, rfq, controller, () => cancelled);
 
     return () => { cancelled = true; controller.abort(); };
@@ -479,8 +482,11 @@ export default function ComparisonPage() {
   // Empty state: no extractions at all
   if (vendorNames.length === 0) {
     return (
-      <div className="p-6 space-y-4">
-        <h1 className="text-3xl font-bold">Vendor Comparison</h1>
+      <div className="space-y-4">
+        <PageHeader
+          eyebrow="Step 04 · Comparability before ranking"
+          title="Vendor Comparison"
+        />
         <Alert>
           <AlertDescription>
             Run extraction on at least one vendor before comparing.{" "}
@@ -496,8 +502,11 @@ export default function ComparisonPage() {
   // Empty state: not enough vendors for comparison (server enforces _MIN_VENDORS=2)
   if (vendorNames.length === 1) {
     return (
-      <div className="p-6 space-y-4">
-        <h1 className="text-3xl font-bold">Vendor Comparison</h1>
+      <div className="space-y-4">
+        <PageHeader
+          eyebrow="Step 04 · Comparability before ranking"
+          title="Vendor Comparison"
+        />
         <Alert variant="default">
           <AlertDescription>
             Load at least 2 vendors to compare. Go to Vendor Input to load another vendor.{" "}
@@ -511,8 +520,12 @@ export default function ComparisonPage() {
   }
 
   return (
-    <div className="p-6 space-y-6">
-      <h1 className="text-3xl font-bold">Vendor Comparison</h1>
+    <div className="space-y-6">
+      <PageHeader
+        eyebrow="Step 04 · Comparability before ranking"
+        title="Vendor Comparison"
+        description="Who is even comparable, surfaced first — then where vendors differ and what still needs clarification. Grounded in extracted evidence, never a misleading apples-to-oranges score."
+      />
 
       {streaming && (
         <div className="space-y-4">

@@ -28,7 +28,9 @@ export default function BuyerLayout({ children }: { children: React.ReactNode })
         </div>
         <StageRail />
         <main className="flex-1 min-w-0 overflow-y-auto">
-          <div className="max-w-5xl mx-auto p-8">{children}</div>
+          {/* thin brand accent at the top of the workspace */}
+          <div className="h-1 bg-cta" aria-hidden />
+          <div className="max-w-6xl mx-auto p-6 md:p-8 lg:p-10">{children}</div>
         </main>
       </div>
     </BuyerProvider>

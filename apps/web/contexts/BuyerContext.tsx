@@ -41,8 +41,10 @@ export function BuyerProvider({ children }: { children: React.ReactNode }) {
   const [comparison, setComparisonState] = useState<ComparisonResult | null>(null);
   const [hydrated, setHydrated] = useState(false);
 
-  // Rehydrate from sessionStorage once, after mount (post-hydration)
+  // Rehydrate from sessionStorage once, after mount (post-hydration).
   useEffect(() => {
+    // SSR-safe: reading sessionStorage in the initializer caused a hydration mismatch (see note above).
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- intentional post-mount rehydrate
     setLoadedVendorsState(hydrateFromSession<VendorResponse[]>("loadedVendors", []));
     setExtractionsState(hydrateFromSession<Record<string, ExtractionResult>>("extractions", {}));
     setDowngradeReportsState(hydrateFromSession<Record<string, unknown>>("downgradeReports", {}));
