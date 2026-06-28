@@ -82,17 +82,14 @@ function FieldRow({ label, field }: { label: string; field: FieldStr }) {
             return (
               <div key={i} className="mb-1 last:mb-0">
                 <p className="text-sm">{v.value ?? "—"}</p>
-                <EvidenceSnippet snippet={ev?.snippet} sourcePassage={ev?.snippet} />
+                <EvidenceSnippet snippet={ev?.snippet} />
               </div>
             );
           })
         ) : (
           <>
             <p className="text-sm">{field.value ?? "—"}</p>
-            <EvidenceSnippet
-              snippet={directEvidence?.snippet}
-              sourcePassage={directEvidence?.snippet}
-            />
+            <EvidenceSnippet snippet={directEvidence?.snippet} />
           </>
         )}
       </div>
