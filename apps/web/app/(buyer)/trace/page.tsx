@@ -45,30 +45,30 @@ export interface TraceData {
   final_result: unknown;
 }
 
+// IN-05: single source of truth for both canonical order and display label — keyed on
+// the filename stem (no .json). Insertion order defines the canonical trace order; any
+// file not listed sorts after these and falls back to an underscored-to-spaces label.
+const TRACE_LABELS: Record<string, string> = {
+  comparison_trace_1: "Comparison 1",
+  comparison_trace_2: "Comparison 2",
+  trace_vendor_thorough: "Vendor: Thorough",
+  trace_vendor_cheap: "Vendor: Cheap",
+  trace_vendor_fluff: "Vendor: Fluff",
+  trace_adversarial_fixture: "Adversarial",
+};
+
 function displayName(filename: string): string {
   const base = filename.replace(/\.json$/, "");
-  if (base === "comparison_trace_1") return "Comparison 1";
-  if (base === "comparison_trace_2") return "Comparison 2";
-  if (base === "trace_adversarial_fixture") return "Adversarial";
-  if (base === "trace_vendor_thorough") return "Vendor: Thorough";
-  if (base === "trace_vendor_cheap") return "Vendor: Cheap";
-  if (base === "trace_vendor_fluff") return "Vendor: Fluff";
-  return base.replace(/_/g, " ");
+  return TRACE_LABELS[base] ?? base.replace(/_/g, " ");
 }
 
 async function loadTraces(): Promise<TraceData[]> {
   const dir = path.join(process.cwd(), "public", "traces");
   const files = await fs.readdir(dir);
   const jsonFiles = files.filter((f) => f.endsWith(".json"));
-  // Canonical order: comparison traces first (most narrative-rich for demo), then extraction
-  const order = [
-    "comparison_trace_1.json",
-    "comparison_trace_2.json",
-    "trace_vendor_thorough.json",
-    "trace_vendor_cheap.json",
-    "trace_vendor_fluff.json",
-    "trace_adversarial_fixture.json",
-  ];
+  // Canonical order derived from TRACE_LABELS insertion order (comparison traces first —
+  // most narrative-rich for demo — then extraction). No separate hand-synced literal list.
+  const order = Object.keys(TRACE_LABELS).map((stem) => `${stem}.json`);
   const sorted = [
     ...order.filter((n) => jsonFiles.includes(n)),
     ...jsonFiles.filter((n) => !order.includes(n)),
