@@ -5,7 +5,13 @@ set -euo pipefail
 
 # Resolve the compose file relative to this script so it works from any cwd.
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 COMPOSE=(docker compose -f "$SCRIPT_DIR/docker-compose.yml" -p rfq-agent)
+# Compose anchors its project dir at the compose-file location (infrastructure/),
+# so it would look for infrastructure/.env and miss the real root .env. Point it
+# at the root .env for ${VAR} interpolation. (Doesn't affect build contexts, which
+# stay relative to the compose file.) Shell env still works when no .env exists.
+[ -f "$REPO_ROOT/.env" ] && COMPOSE+=(--env-file "$REPO_ROOT/.env")
 
 usage() {
   cat <<'EOF'
