@@ -1,6 +1,6 @@
 {
   "input": {
-    "vendor_name": "thorough-but-pricey",
+    "vendor_name": "Meridian & Partners",
     "source_id": "vendor_vendor_thorough",
     "rfq_line_items": [
       {
@@ -53,7 +53,7 @@
     "human_message_template": "Vendor source ID (use this exact value for all evidence source_id fields): {source_id}\n\nVendor response:\n{vendor_text}\n\nRFQ line items (JSON):\n{rfq_line_items}"
   },
   "raw_model_output": {
-    "vendor_name": "thorough-but-pricey",
+    "vendor_name": "Meridian & Partners",
     "scope_summary": {
       "status": "present",
       "value": "Meridian & Partners is pleased to present a full-service response spanning strategic development, integrated creative, TVC production, organic social, media management, children’s advertising and claims compliance, and launch programme management.",
@@ -742,7 +742,7 @@
     "fields_downgraded": 0
   },
   "final_result": {
-    "vendor_name": "thorough-but-pricey",
+    "vendor_name": "Meridian & Partners",
     "scope_summary": {
       "status": "present",
       "value": "Meridian & Partners is pleased to present a full-service response spanning strategic development, integrated creative, TVC production, organic social, media management, children’s advertising and claims compliance, and launch programme management.",

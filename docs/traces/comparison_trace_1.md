@@ -6,15 +6,15 @@
 ## 1. Input
 
 - **RFQ:** Request for Quotation (RFQ) - GlowBite 18-Month Go-to-Market Marketing Services Program
-- **Vendors:** cheap-but-incomplete, polished-fluff, thorough-but-pricey
+- **Vendors:** Northbridge Studio, Apex Strategy Group, Meridian & Partners
 
 ### Flag counts per vendor
 
 | Vendor | missing | unclear | conflicting | unsupported |
 |--------|---------|---------|-------------|-------------|
-| cheap-but-incomplete | 4 | 3 | 0 | 0 |
-| polished-fluff | 0 | 0 | 3 | 0 |
-| thorough-but-pricey | 1 | 4 | 1 | 0 |
+| Northbridge Studio | 4 | 3 | 0 | 0 |
+| Apex Strategy Group | 0 | 0 | 3 | 0 |
+| Meridian & Partners | 1 | 4 | 1 | 0 |
 
 ## 2. Resolved Prompt
 
@@ -41,13 +41,13 @@ You ONLY phrase comparisons and narrative text. You do NOT:
 
 | Vendor | Dimension | Model Proposed | Code Ceiling | Clamped To | Ceiling Reason |
 |--------|-----------|----------------|--------------|------------|----------------|
-| cheap-but-incomplete | technical | comparable | not_comparable | **not_comparable** | technical ceiling=not_comparable for cheap-but-incomplete |
-| cheap-but-incomplete | commercial | comparable | not_comparable | **not_comparable** | commercial ceiling=not_comparable for cheap-but-incomplete |
-| polished-fluff | commercial | comparable | partially | **partially** | commercial ceiling=partially for polished-fluff |
-| thorough-but-pricey | commercial | comparable | not_comparable | **not_comparable** | commercial ceiling=not_comparable for thorough-but-pricey |
-| cheap-but-incomplete | scope | comparable | not_comparable | **not_comparable** | scope ceiling=not_comparable for cheap-but-incomplete |
-| cheap-but-incomplete | timeline | comparable | partially | **partially** | timeline ceiling=partially for cheap-but-incomplete |
-| polished-fluff | timeline | comparable | partially | **partially** | timeline ceiling=partially for polished-fluff |
+| Northbridge Studio | technical | comparable | not_comparable | **not_comparable** | technical ceiling=not_comparable for Northbridge Studio |
+| Northbridge Studio | commercial | comparable | not_comparable | **not_comparable** | commercial ceiling=not_comparable for Northbridge Studio |
+| Apex Strategy Group | commercial | comparable | partially | **partially** | commercial ceiling=partially for Apex Strategy Group |
+| Meridian & Partners | commercial | comparable | not_comparable | **not_comparable** | commercial ceiling=not_comparable for Meridian & Partners |
+| Northbridge Studio | scope | comparable | not_comparable | **not_comparable** | scope ceiling=not_comparable for Northbridge Studio |
+| Northbridge Studio | timeline | comparable | partially | **partially** | timeline ceiling=partially for Northbridge Studio |
+| Apex Strategy Group | timeline | comparable | partially | **partially** | timeline ceiling=partially for Apex Strategy Group |
 
 ## 4. Clarification Questions
 
@@ -57,9 +57,9 @@ _fixture mode — no live clarification call made. In production, the clarify no
 
 | Vendor | Comparable Dimensions | Descriptor |
 |--------|-----------------------|------------|
-| cheap-but-incomplete | 2/6 | 2 of 6 dimensions comparable; blocked on technical, commercial, scope, timeline |
-| polished-fluff | 4/6 | 4 of 6 dimensions comparable; blocked on commercial, timeline |
-| thorough-but-pricey | 5/6 | 5 of 6 dimensions comparable; blocked on commercial |
+| Northbridge Studio | 2/6 | 2 of 6 dimensions comparable; blocked on technical, commercial, scope, timeline |
+| Apex Strategy Group | 4/6 | 4 of 6 dimensions comparable; blocked on commercial, timeline |
+| Meridian & Partners | 5/6 | 5 of 6 dimensions comparable; blocked on commercial |
 
 ## 6. Fixture Mode Note
 

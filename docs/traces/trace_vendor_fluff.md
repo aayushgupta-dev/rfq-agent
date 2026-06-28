@@ -1,8 +1,8 @@
-# Extraction Trace — polished-fluff
+# Extraction Trace — Apex Strategy Group
 
 ## Input
 
-- **Vendor:** polished-fluff
+- **Vendor:** Apex Strategy Group
 - **Source ID:** vendor_vendor_fluff
 - **RFQ line items:** 8
 

@@ -1,8 +1,8 @@
-# Extraction Trace — cheap-but-incomplete
+# Extraction Trace — Northbridge Studio
 
 ## Input
 
-- **Vendor:** cheap-but-incomplete
+- **Vendor:** Northbridge Studio
 - **Source ID:** vendor_vendor_cheap
 - **RFQ line items:** 8
 

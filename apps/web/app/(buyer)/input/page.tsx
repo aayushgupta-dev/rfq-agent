@@ -22,7 +22,6 @@ const MAX_UPLOAD_BYTES = 20_000_000;
 
 interface SampleCard {
   id: "thorough" | "cheap" | "fluff";
-  label: string;
   vendor: VendorResponse;
   description: string;
 }
@@ -30,19 +29,16 @@ interface SampleCard {
 const SAMPLES: SampleCard[] = [
   {
     id: "thorough",
-    label: "Thorough But Pricey",
     vendor: thorough as unknown as VendorResponse,
     description: "Comprehensive scope with bundled pricing that refuses to split line items — comparability blocker.",
   },
   {
     id: "cheap",
-    label: "Cheap But Incomplete",
     vendor: cheap as unknown as VendorResponse,
     description: "Aggressive pricing with missing timelines, skipped compliance sections, and vague deliverables.",
   },
   {
     id: "fluff",
-    label: "Polished Fluff",
     vendor: fluff as unknown as VendorResponse,
     description: "Beautifully written — no concrete numbers, conflicting claims, and unsupported assurances throughout.",
   },
@@ -179,7 +175,7 @@ export default function InputPage() {
           {SAMPLES.map((sample) => (
             <Card key={sample.id} data-testid={`vendor-card-${sample.id}`}>
               <CardHeader>
-                <CardTitle className="text-xl font-semibold leading-tight">{sample.label}</CardTitle>
+                <CardTitle className="text-xl font-semibold leading-tight">{sample.vendor.vendor_name}</CardTitle>
                 <CardDescription className="text-xs font-semibold text-muted-foreground leading-snug">
                   {sample.vendor.persona}
                 </CardDescription>

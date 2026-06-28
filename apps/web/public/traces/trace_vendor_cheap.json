@@ -1,6 +1,6 @@
 {
   "input": {
-    "vendor_name": "cheap-but-incomplete",
+    "vendor_name": "Northbridge Studio",
     "source_id": "vendor_vendor_cheap",
     "rfq_line_items": [
       {
@@ -53,7 +53,7 @@
     "human_message_template": "Vendor source ID (use this exact value for all evidence source_id fields): {source_id}\n\nVendor response:\n{vendor_text}\n\nRFQ line items (JSON):\n{rfq_line_items}"
   },
   "raw_model_output": {
-    "vendor_name": "cheap-but-incomplete",
+    "vendor_name": "Northbridge Studio",
     "scope_summary": {
       "status": "present",
       "value": "We’ve set out below our proposed approach, pricing and key assumptions for the line items we’re bidding on.",
@@ -606,7 +606,7 @@
     "fields_downgraded": 0
   },
   "final_result": {
-    "vendor_name": "cheap-but-incomplete",
+    "vendor_name": "Northbridge Studio",
     "scope_summary": {
       "status": "present",
       "value": "We’ve set out below our proposed approach, pricing and key assumptions for the line items we’re bidding on.",

@@ -1,6 +1,6 @@
 {
   "input": {
-    "vendor_name": "polished-fluff",
+    "vendor_name": "Apex Strategy Group",
     "source_id": "vendor_vendor_fluff",
     "rfq_line_items": [
       {
@@ -53,7 +53,7 @@
     "human_message_template": "Vendor source ID (use this exact value for all evidence source_id fields): {source_id}\n\nVendor response:\n{vendor_text}\n\nRFQ line items (JSON):\n{rfq_line_items}"
   },
   "raw_model_output": {
-    "vendor_name": "polished-fluff",
+    "vendor_name": "Apex Strategy Group",
     "scope_summary": {
       "status": "present",
       "value": "Apex Strategy Group proposes an integrated launch partnership spanning **Strategy & Creative Development**, **TVC Development**, **TVC Production**, **Social Organic Content**, **Paid Media Planning**, **Paid Media Buying**, **Kids Advertising & Claims Compliance**, and **Launch Program Management**.",
@@ -586,7 +586,7 @@
     "fields_downgraded": 0
   },
   "final_result": {
-    "vendor_name": "polished-fluff",
+    "vendor_name": "Apex Strategy Group",
     "scope_summary": {
       "status": "present",
       "value": "Apex Strategy Group proposes an integrated launch partnership spanning **Strategy & Creative Development**, **TVC Development**, **TVC Production**, **Social Organic Content**, **Paid Media Planning**, **Paid Media Buying**, **Kids Advertising & Claims Compliance**, and **Launch Program Management**.",

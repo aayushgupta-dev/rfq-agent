@@ -1,8 +1,8 @@
-# Extraction Trace — thorough-but-pricey
+# Extraction Trace — Meridian & Partners
 
 ## Input
 
-- **Vendor:** thorough-but-pricey
+- **Vendor:** Meridian & Partners
 - **Source ID:** vendor_vendor_thorough
 - **RFQ line items:** 8
 

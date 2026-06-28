@@ -30,6 +30,8 @@ Do NOT add structure that the persona would not naturally use.
 
 **Vendor persona:** `{persona}`
 
+**Vendor agency name:** `{vendor_name}` — write the proposal as this agency. Use this exact name in the letterhead, signature, and any self-reference. Do not invent a different name.
+
 **Mess spec (deliberate flaws to inject):**
 ```
 {mess_spec}
@@ -115,9 +117,9 @@ extraction agent's job is to detect these, and that job fails if the flaws are c
 ## Anti-Hallucination Guardrail
 
 Do not invent specific client names, award wins, proprietary tool names, or competitor
-brand names that are not established in the RFQ text. Use plausible fictional agency names
-consistent with the persona (e.g. "Meridian & Partners" for thorough-but-pricey,
-"Spark Creative Co." for cheap-but-incomplete, "Apex Strategy Group" for polished-fluff).
+brand names that are not established in the RFQ text. Use the agency name pinned above
+(`{vendor_name}`) for all self-references, letterhead, and signature — do not invent a
+different agency name.
 
 ---
 
