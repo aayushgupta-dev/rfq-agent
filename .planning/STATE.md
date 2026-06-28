@@ -28,7 +28,7 @@ See: .planning/PROJECT.md (updated 2026-06-27)
 Phase: 05 (buyer-ui-trace-submission) — EXECUTED, verification human_needed (phase NOT closed)
 Plan: 9 of 9 executed (05-01..05-08 done; 05-09 E2E done, demo video pending)
 Status: Verified 4/5 must-haves (05-VERIFICATION.md). Deployed & E2E-green. Remaining before close: SHIP-04 demo video, code review, secure-phase, human UAT sign-off.
-Last activity: 2026-06-28 — Completed quick task 260628-teg: dockerize the rfq-agent monorepo (compose + rfq.sh + GET /health); stack verified healthy
+Last activity: 2026-06-29 — Completed quick task 260629-04m: gated CI/CD via GitHub Actions (test → Render backend → Vercel frontend, gated on backend live + /health)
 
 Live: web https://rfq-agent-web.vercel.app · AI https://rfq-agent-ai.onrender.com
 
@@ -113,6 +113,7 @@ None yet.
 |---|-------------|------|--------|-----------|
 | 260628-teg | Dockerize the rfq-agent monorepo (compose + rfq.sh control script + GET /health) | 2026-06-28 | 75d9c9d | [260628-teg-dockerize-monorepo](./quick/260628-teg-dockerize-monorepo/) |
 | fast | Sync served sample fixtures (public/data) with real vendor names — stale persona slugs in vendor_name | 2026-06-28 | 1943ce4 | — |
+| 260629-04m | Gated CI/CD via GitHub Actions (test → Render backend → Vercel frontend, gated on backend health) | 2026-06-29 | 44f3122 | [260629-04m-gated-cicd-deploy](./quick/260629-04m-gated-cicd-deploy/) |
 
 ## Deferred Items
 
