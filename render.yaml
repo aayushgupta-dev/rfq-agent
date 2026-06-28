@@ -8,6 +8,8 @@
 services:
   - type: web
     name: rfq-agent-ai
+    # CI owns deploys (see .github/workflows/deploy.yml); disable Render's git auto-deploy
+    autoDeploy: false
     runtime: python
     plan: free
     rootDir: services/ai
