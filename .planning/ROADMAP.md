@@ -150,7 +150,7 @@ Plans:
 
 **Wave 2** *(parallel, blocked on Wave 1)*
 
-- [ ] 05-04-PLAN.md — Wave 2A: RFQ Overview + Vendor Input screens + trace Route Handler
+- [x] 05-04-PLAN.md — Wave 2A: RFQ Overview + Vendor Input screens + trace Route Handler
 - [x] 05-05-PLAN.md — Wave 2B: ui-ux-gen prompt authored + run once + PROMPT-02 docs (6 remaining prompts) + PROMPT-04 failure example
 
 **Wave 3** *(parallel, blocked on Wave 2)*
@@ -177,4 +177,4 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 | 2. Grounding Gate & Messy Data | 4/4 | Complete   | 2026-06-27 |
 | 3. Extraction Agent | 4/4 | Complete   | 2026-06-27 |
 | 4. Comparison Agent | 4/4 | Complete   | 2026-06-28 |
-| 5. Buyer UI, Trace & Submission | 4/9 | In Progress|  |
+| 5. Buyer UI, Trace & Submission | 5/9 | In Progress|  |

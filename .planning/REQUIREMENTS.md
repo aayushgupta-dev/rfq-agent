@@ -35,8 +35,8 @@
 
 - [x] **INPUT-01**: buyer can provide a vendor response by pasting text, Markdown, or JSON.
 - [x] **INPUT-02**: buyer can upload a vendor file (PDF, Word, Excel, PPT); text is extracted best-effort (no production OCR, per §11).
-- [ ] **INPUT-03**: buyer can load a pre-generated sample vendor in one click for an instant demo flow.
-- [ ] **INPUT-04**: AI output is generated dynamically from whatever input is provided — never hardcoded to a fixed response.
+- [x] **INPUT-03**: buyer can load a pre-generated sample vendor in one click for an instant demo flow.
+- [x] **INPUT-04**: AI output is generated dynamically from whatever input is provided — never hardcoded to a fixed response.
 
 ### Extraction (20%)
 
@@ -56,12 +56,12 @@
 
 ### Buyer UI (10%)
 
-- [ ] **UI-01**: RFQ Overview screen — scope, timelines, item requests, commercial expectations, questionnaire, compliance; makes clear what vendors must respond to.
-- [ ] **UI-02**: Vendor Upload/Input screen — paste / upload / load-sample, processed dynamically.
+- [x] **UI-01**: RFQ Overview screen — scope, timelines, item requests, commercial expectations, questionnaire, compliance; makes clear what vendors must respond to.
+- [x] **UI-02**: Vendor Upload/Input screen — paste / upload / load-sample, processed dynamically.
 - [ ] **UI-03**: Extraction Review screen — per-vendor extracted fields with highlighted important fields, missing/unclear/conflicting data, risks, and visible evidence snippets.
 - [ ] **UI-04**: Vendor Comparison screen — side-by-side across the 6 dimensions; shows who is comparable, where they differ, and what needs further review.
 - [ ] **UI-05**: Prompt Trace / Prompt Pack screen — the prompts used plus ≥1 full trace.
-- [ ] **UI-06**: buyer-first information hierarchy — risks / gaps / comparability / clarifications surfaced first; full extraction and raw evidence on drill-down.
+- [x] **UI-06**: buyer-first information hierarchy — risks / gaps / comparability / clarifications surfaced first; full extraction and raw evidence on drill-down.
 
 ### Deploy & Submission (5%)
 
@@ -129,14 +129,14 @@ Which phases cover which requirements. Updated during roadmap creation.
 | COMPARE-05 | Phase 4 | Complete |
 | INPUT-01 | Phase 5 | Complete |
 | INPUT-02 | Phase 5 | Complete |
-| INPUT-03 | Phase 5 | Pending |
-| INPUT-04 | Phase 5 | Pending |
-| UI-01 | Phase 5 | Pending |
-| UI-02 | Phase 5 | Pending |
+| INPUT-03 | Phase 5 | Complete |
+| INPUT-04 | Phase 5 | Complete |
+| UI-01 | Phase 5 | Complete |
+| UI-02 | Phase 5 | Complete |
 | UI-03 | Phase 5 | Pending |
 | UI-04 | Phase 5 | Pending |
 | UI-05 | Phase 5 | Pending |
-| UI-06 | Phase 5 | Pending |
+| UI-06 | Phase 5 | Complete |
 | PROMPT-02 | Phase 5 | Pending |
 | SHIP-01 | Phase 5 | Pending |
 | SHIP-02 | Phase 5 | Pending |
