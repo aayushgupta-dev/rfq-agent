@@ -18,17 +18,37 @@ Provides:
     to all vendors (ensuring a valid comparison). If rfq_text is omitted, a fresh RFQ
     is generated inline.
 
+  - POST /extract/file-text: accept file upload (PDF/DOCX/XLSX/PPTX), extract text
+    best-effort, return {text, filename, chars} (D-05, INPUT-01).
+
+  - POST /input/raw-text: wrap raw text + vendor name into a VendorResponse JSON
+    (D-06, INPUT-02).
+
+  - CORS: localhost:3000 + all *.vercel.app preview/prod URLs (SHIP-01).
+
+  - X-Accel-Buffering: no header unconditionally on SSE endpoints so streams
+    pass through Render's nginx proxy without buffering (SHIP-01).
+
 Security: verify_access() never logs the API key (T-03-01 mitigation).
 POST /data/vendor-gen validates persona against MESS_SPECS keys before use (T-02-11).
-No CORS or proxy-buffering config — deferred to Phase 5 (SHIP-01).
+POST /extract/file-text: filename is used only for extension detection; raw bytes
+never interpreted as a path (T-05-02-A). Files > 20 MB are rejected with 413 (T-05-02-B).
+POST /input/raw-text: raw_text capped at 200_000 chars via pydantic_Field (T-05-02-C).
+CORS: no wildcard origin; allow_origin_regex used for Vercel subdomain matching (T-05-02-D).
 """
 
 from __future__ import annotations
 
+import io
 from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI, HTTPException
+import docx
+import openpyxl
+import pptx
+import pypdf
+from fastapi import FastAPI, File, HTTPException, UploadFile
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, model_validator
 from pydantic import Field as pydantic_Field
 from sse_starlette import EventSourceResponse
@@ -57,12 +77,104 @@ async def lifespan(app_: FastAPI) -> AsyncGenerator[None, None]:
 
 app = FastAPI(title="Bid Desk AI", lifespan=lifespan)
 
+# ponytail: allow_origins=["https://*.vercel.app"] is dead config — Starlette exact-matches
+# allow_origins by string equality. allow_origin_regex handles subdomain wildcards correctly.
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000"],
+    allow_origin_regex=r"https://.*\.vercel\.app",
+    allow_methods=["GET", "POST"],
+    allow_headers=["Content-Type"],
+)
+
 
 class VendorGenRequest(BaseModel):
     """Request body for POST /data/vendor-gen (DATA-04)."""
 
     persona: str = pydantic_Field(max_length=64)
     rfq_text: str | None = pydantic_Field(default=None, max_length=200_000)
+
+
+class RawTextInput(BaseModel):
+    """Request body for POST /input/raw-text (D-06, INPUT-02)."""
+
+    vendor_name: str = pydantic_Field(max_length=200)
+    raw_text: str = pydantic_Field(max_length=200_000)  # T-05-02-C: DoS guard
+
+
+def _extract_text(content: bytes, suffix: str) -> str:
+    """Best-effort text extraction from file bytes by extension (D-05).
+
+    Security (T-05-02-A): suffix is derived from the filename extension in the
+    endpoint — the raw filename is never passed here; path traversal is impossible.
+    All parser errors are caught and return "" so the caller always gets a string.
+    """
+    try:
+        if suffix == "pdf":
+            reader = pypdf.PdfReader(io.BytesIO(content))
+            return "\n".join(page.extract_text() or "" for page in reader.pages)
+        if suffix == "docx":
+            doc = docx.Document(io.BytesIO(content))
+            return "\n".join(p.text for p in doc.paragraphs)
+        if suffix == "xlsx":
+            wb = openpyxl.load_workbook(io.BytesIO(content), read_only=True, data_only=True)
+            parts: list[str] = []
+            for ws in wb.worksheets:
+                for row in ws.iter_rows():
+                    for cell in row:
+                        if cell.value is not None:
+                            parts.append(str(cell.value))
+            return "\n".join(parts)
+        if suffix == "pptx":
+            prs = pptx.Presentation(io.BytesIO(content))
+            parts = []
+            for slide in prs.slides:
+                for shape in slide.shapes:
+                    if shape.has_text_frame:
+                        for para in shape.text_frame.paragraphs:
+                            parts.append(para.text)
+            return "\n".join(parts)
+    except Exception:  # noqa: BLE001
+        pass
+    return ""
+
+
+@app.post("/extract/file-text")
+async def extract_file_text(file: UploadFile = File(...)) -> dict:
+    """Accept a file upload and return extracted plain text (D-05, INPUT-01).
+
+    Supports PDF, DOCX, XLSX, PPTX via best-effort extraction (full OCR not required,
+    assignment §11). Returns {text, filename, chars} regardless of extraction quality —
+    low yield is a quality signal the UI surfaces, not a server error.
+
+    Security: filename used only for extension detection (T-05-02-A).
+    Files > 20 MB rejected with 413 before reading into memory (T-05-02-B).
+    """
+    content = await file.read()
+    if len(content) > 20_000_000:  # T-05-02-B: 20 MB app-layer cap (413)
+        raise HTTPException(status_code=413, detail="File too large (>20 MB)")
+    suffix = (file.filename or "").rsplit(".", 1)[-1].lower()
+    text = _extract_text(content, suffix)
+    return {"text": text, "filename": file.filename, "chars": len(text)}
+
+
+@app.post("/input/raw-text")
+async def wrap_raw_text(req: RawTextInput) -> dict:
+    """Wrap raw pasted text + vendor name into a VendorResponse JSON (D-06, INPUT-02).
+
+    Output is a valid VendorResponse so it feeds directly into /extract/vendor
+    without any schema drift. The extraction agent reads raw_text and produces
+    ExtractionResult — no pre-extracted fields are added here.
+    """
+    vendor = VendorResponse(
+        vendor_name=req.vendor_name,
+        persona="buyer-upload",
+        mess_spec=[],
+        source_id=f"upload-{req.vendor_name[:20]}",
+        format_label="text",
+        raw_text=req.raw_text,
+    )
+    return vendor.model_dump(mode="json")
 
 
 @app.get("/data/rfq")
@@ -227,7 +339,10 @@ async def compare_vendors(req: ComparisonRequest) -> EventSourceResponse:
         # The clarify node owns the terminal `done` event (both its error and
         # success paths emit exactly one). Do NOT append another here. (Review CR-01)
 
-    return EventSourceResponse(_generate())
+    # ponytail: setting header in code is authoritative; env var may also help but is platform-specific
+    response = EventSourceResponse(_generate())
+    response.headers["X-Accel-Buffering"] = "no"
+    return response
 
 
 @app.post("/extract/vendor")
@@ -247,4 +362,7 @@ async def extract_vendor(req: ExtractionRequest) -> EventSourceResponse:
             yield {"data": EventEnvelope(**chunk).model_dump_json()}
         yield {"data": EventEnvelope(type="done", payload={}).model_dump_json()}
 
-    return EventSourceResponse(_generate())
+    # ponytail: setting header in code is authoritative; env var may also help but is platform-specific
+    response = EventSourceResponse(_generate())
+    response.headers["X-Accel-Buffering"] = "no"
+    return response

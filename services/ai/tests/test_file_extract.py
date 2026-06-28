@@ -21,7 +21,6 @@ client = TestClient(app, raise_server_exceptions=True)
 class TestFileExtractRoute:
     """POST /extract/file-text — file-to-text dispatcher (PDF/DOCX/XLSX/PPTX)."""
 
-    @pytest.mark.xfail(strict=True, reason="Wave 1 — route not yet implemented")
     def test_pdf_returns_text_and_chars(self) -> None:
         """POST /extract/file-text with minimal PDF bytes → 200, {text: str, chars: int}."""
         r = client.post(
@@ -34,7 +33,6 @@ class TestFileExtractRoute:
         assert isinstance(body.get("chars"), int)
         assert "filename" in body
 
-    @pytest.mark.xfail(strict=True, reason="Wave 1 — route not yet implemented")
     def test_docx_returns_text(self) -> None:
         """POST /extract/file-text with DOCX bytes → 200, response has 'text' key."""
         # Minimal DOCX magic bytes (ZIP header) — best-effort extraction
@@ -46,7 +44,6 @@ class TestFileExtractRoute:
         body = r.json()
         assert "text" in body
 
-    @pytest.mark.xfail(strict=True, reason="Wave 1 — route not yet implemented")
     def test_xlsx_returns_text(self) -> None:
         """POST /extract/file-text with XLSX bytes → 200, response has 'text' key."""
         r = client.post(
@@ -57,7 +54,6 @@ class TestFileExtractRoute:
         body = r.json()
         assert "text" in body
 
-    @pytest.mark.xfail(strict=True, reason="Wave 1 — route not yet implemented")
     def test_pptx_returns_text(self) -> None:
         """POST /extract/file-text with PPTX bytes → 200, response has 'text' key."""
         r = client.post(
@@ -68,7 +64,6 @@ class TestFileExtractRoute:
         body = r.json()
         assert "text" in body
 
-    @pytest.mark.xfail(strict=True, reason="Wave 1 — route not yet implemented")
     def test_weak_extraction_not_an_error(self) -> None:
         """Tiny file with poor content → 200, not 422/500. chars < 200 is allowed.
 
