@@ -10,6 +10,7 @@ import { streamExtract, normalizeExtractionPayload } from "@/lib/api";
 // instant, deterministic, and correct — vendors are never compared to a different RFQ.
 import rfqRaw from "../../../public/data/rfq.json";
 import { EvidenceSnippet } from "@/components/evidence-snippet";
+import { Markdown } from "@/components/markdown";
 import { FlagBadge } from "@/components/flag-badge";
 import { StreamProgress } from "@/components/stream-progress";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -95,15 +96,15 @@ function FieldRow({ label, field }: { label: string; field: FieldStr }) {
             const ev = v.evidence?.length ? v.evidence[0] : undefined;
             return (
               <div key={i} className="mb-1 last:mb-0">
-                <p className="text-sm">{v.value ?? "—"}</p>
-                <EvidenceSnippet snippet={ev?.snippet} />
+                {v.value ? <Markdown className="text-sm">{v.value}</Markdown> : <p className="text-sm">—</p>}
+                <EvidenceSnippet snippet={ev?.snippet} value={v.value ?? undefined} />
               </div>
             );
           })
         ) : (
           <>
-            <p className="text-sm">{field.value ?? "—"}</p>
-            <EvidenceSnippet snippet={directEvidence?.snippet} />
+            {field.value ? <Markdown className="text-sm">{field.value}</Markdown> : <p className="text-sm">—</p>}
+            <EvidenceSnippet snippet={directEvidence?.snippet} value={field.value ?? undefined} />
           </>
         )}
       </div>
