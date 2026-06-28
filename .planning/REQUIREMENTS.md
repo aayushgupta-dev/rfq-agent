@@ -48,11 +48,11 @@
 
 ### Comparison (15%)
 
-- [ ] **COMPARE-01**: comparison agent compares vendors across technical, commercial, scope, timeline, compliance, and risk — consuming only code-validated `ExtractionResult[]`, never raw vendor text.
-- [ ] **COMPARE-02**: a comparability gate emits `comparable | partially | not_comparable` per dimension/line-item with reasons, *before* any scoring; the agent never aggregates over a field a vendor is missing.
-- [ ] **COMPARE-03**: comparison surfaces buyer attention points and generates clarification questions for missing/unclear/conflicting information.
-- [ ] **COMPARE-04**: light alignment of vendor offers to the 8 RFQ line items — surfaces differences and keeps originals visible; no heavy normalization (§21 differentiator; §24 normalization stays out).
-- [ ] **COMPARE-05**: a qualitative comparability/readiness signal per dimension (not a numeric leaderboard or weighted score) (§21 differentiator).
+- [x] **COMPARE-01**: comparison agent compares vendors across technical, commercial, scope, timeline, compliance, and risk — consuming only code-validated `ExtractionResult[]`, never raw vendor text.
+- [x] **COMPARE-02**: a comparability gate emits `comparable | partially | not_comparable` per dimension/line-item with reasons, *before* any scoring; the agent never aggregates over a field a vendor is missing.
+- [x] **COMPARE-03**: comparison surfaces buyer attention points and generates clarification questions for missing/unclear/conflicting information.
+- [x] **COMPARE-04**: light alignment of vendor offers to the 8 RFQ line items — surfaces differences and keeps originals visible; no heavy normalization (§21 differentiator; §24 normalization stays out).
+- [x] **COMPARE-05**: a qualitative comparability/readiness signal per dimension (not a numeric leaderboard or weighted score) (§21 differentiator).
 
 ### Buyer UI (10%)
 
@@ -122,11 +122,11 @@ Which phases cover which requirements. Updated during roadmap creation.
 | EXTRACT-03 | Phase 3 | Complete |
 | EXTRACT-05 | Phase 3 | Complete |
 | PROMPT-03 | Phase 3 | Complete |
-| COMPARE-01 | Phase 4 | Pending |
-| COMPARE-02 | Phase 4 | Pending |
-| COMPARE-03 | Phase 4 | Pending |
-| COMPARE-04 | Phase 4 | Pending |
-| COMPARE-05 | Phase 4 | Pending |
+| COMPARE-01 | Phase 4 | Complete |
+| COMPARE-02 | Phase 4 | Complete |
+| COMPARE-03 | Phase 4 | Complete |
+| COMPARE-04 | Phase 4 | Complete |
+| COMPARE-05 | Phase 4 | Complete |
 | INPUT-01 | Phase 5 | Pending |
 | INPUT-02 | Phase 5 | Pending |
 | INPUT-03 | Phase 5 | Pending |

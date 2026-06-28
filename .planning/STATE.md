@@ -4,13 +4,13 @@ milestone: v1.0
 milestone_name: milestone
 status: executing
 stopped_at: Phase 4 context gathered
-last_updated: "2026-06-28T06:08:19.708Z"
-last_activity: 2026-06-28 -- Phase 04 planning complete
+last_updated: "2026-06-28T06:21:14.329Z"
+last_activity: 2026-06-28
 progress:
   total_phases: 5
   completed_phases: 3
   total_plans: 17
-  completed_plans: 14
+  completed_plans: 15
   percent: 60
 ---
 
@@ -21,16 +21,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-06-27)
 
 **Core value:** Evidence over assertion, absence made first-class — every shown fact carries a source snippet; missing/unclear/conflicting/unsupported are explicit states; the AI never fabricates a number or claim.
-**Current focus:** Phase 4 — comparison agent
+**Current focus:** Phase 04 — comparison-agent
 
 ## Current Position
 
-Phase: 4
-Plan: Not started
+Phase: 04 (comparison-agent) — EXECUTING
+Plan: 2 of 4
 Status: Ready to execute
-Last activity: 2026-06-28 -- Phase 04 planning complete
+Last activity: 2026-06-28
 
-Progress: [██████████] 100%
+Progress: [█████████░] 88%
 
 ## Performance Metrics
 
@@ -60,6 +60,7 @@ Progress: [██████████] 100%
 | Phase 01-foundation P03 | 8 | 2 tasks | 10 files |
 | Phase 03-extraction-agent P03 | 15 | 2 tasks | 3 files |
 | Phase 03-extraction-agent P04 | — | 2 tasks | 14 files |
+| Phase 04-comparison-agent P01 | 4 | 2 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -77,6 +78,8 @@ Recent decisions affecting current work:
 - [Phase ?]: pydantic2ts codegen uses absolute path to schemas/__init__.py (not dotted module name) to avoid Pitfall 1: directory existence check triggers spec_from_file_location which fails for packages
 - [Phase 03]: pricing & total_price are Field[str] not Field[Decimal] — real vendor pricing uses range strings, currency prefixes, and conditional text ("TBD", "USD 110,000 – 135,000") that Decimal rejects; gate is value-type-agnostic (foreseen in domain.py stub comment)
 - [Phase 03]: D-15 reframed by product owner: accept 0 trace-level downgrades; gpt-5.4 quotes verbatim, downgrade path proven by test_grounding_gate.py unit tests; FUZZY_THRESHOLD not detuned (B-R3 honored). test_traces_committed now asserts verbatim-evidence integrity (every shown fact locatable in source) instead of requiring a downgrade. (Decision relayed via coordinator, not direct user confirmation — recorded for audit.)
+- [Phase ?]: Builder functions (not pytest fixtures) in conftest_comparison.py
+- [Phase ?]: 20 RED stubs raise NotImplementedError (not xfail) — Wave 3 makes them GREEN
 
 ### Pending Todos
 
@@ -103,6 +106,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-06-28T05:12:44.842Z
+Last session: 2026-06-28T06:21:03.186Z
 Stopped at: Phase 4 context gathered
-Resume file: .planning/phases/04-comparison-agent/04-CONTEXT.md
+Resume file: None

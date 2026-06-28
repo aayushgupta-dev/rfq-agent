@@ -109,7 +109,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 Plans:
 **Wave 1**
 
-- [ ] 04-01-PLAN.md — Wave 1: RED test stubs (test_comparison_agent.py, 13 functions) + conftest_comparison.py fixture builders
+- [x] 04-01-PLAN.md — Wave 1: RED test stubs (test_comparison_agent.py, 13 functions) + conftest_comparison.py fixture builders
 
 **Wave 2** *(blocked on Wave 1 completion)*
 
@@ -149,5 +149,5 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 | 1. Foundation | 5/5 | Complete   | 2026-06-27 |
 | 2. Grounding Gate & Messy Data | 4/4 | Complete   | 2026-06-27 |
 | 3. Extraction Agent | 4/4 | Complete   | 2026-06-27 |
-| 4. Comparison Agent | 0/4 | Not started | - |
+| 4. Comparison Agent | 1/4 | In Progress|  |
 | 5. Buyer UI, Trace & Submission | 0/TBD | Not started | - |
