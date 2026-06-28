@@ -18,10 +18,20 @@ findings:
   warning: 4
   info: 2
   total: 8
-status: issues_found
+status: resolved
+resolved: 2026-06-28
 ---
 
 # Phase 4: Code Review Report
+
+> **Resolution (2026-06-28):** All 8 findings fixed (CR-01, CR-02, WR-01..04, IN-01, IN-02).
+> While adding IN-02's route-level test, it surfaced a **critical latent bug**: the comparison
+> graph used `StateGraph(dict)`, so LangGraph dropped the `extractions`/`rfq` input channels
+> after the align node (which returns `{}`) — the production `astream`/route path KeyError-ed on
+> every request. No test caught it because `run_comparison` bypasses the graph. Fixed by adding a
+> typed `ComparisonState` schema so all channels persist. Suite: 138 passed / 1 xfailed.
+> Remaining `ruff E501` (line-length) warnings are pre-existing style debt across the phase files,
+> left unchurned.
 
 **Reviewed:** 2026-06-28T06:58:03Z
 **Depth:** standard
