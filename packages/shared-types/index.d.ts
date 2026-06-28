@@ -6,6 +6,26 @@
 */
 
 /**
+ * Comparison-level verdict — NOT a field-level FlagStatus (D-02).
+ *
+ * Lives in domain.py, never in envelope.py. Three states cover the badge matrix:
+ * comparable (all contributing fields present + grounded),
+ * partially (unclear/conflicting on any contributing field),
+ * not_comparable (missing/unsupported on any contributing field).
+ *
+ * Resolves WR-01 carry-forward: not_comparable is comparison-level, not a FlagStatus member.
+ */
+export type ComparabilityVerdict = "comparable" | "partially" | "not_comparable";
+/**
+ * Typed enum for the 6 comparison dimensions (Review Fix 1).
+ *
+ * # ponytail: typed enum prevents the free-str dimension key join that would let a
+ * # mis-cased model-returned dimension name (e.g. 'Commercial') bypass the clamp.
+ * # Wave 3 _apply_verdict_clamp coerces to this StrEnum, defaults unknown to
+ * # not_comparable (fail-closed). (Review Fix 1, D-03)
+ */
+export type ComparisonDimension = "technical" | "commercial" | "scope" | "timeline" | "compliance" | "risk";
+/**
  * 5-state absence/confidence flag for every extracted field (D-07).
  *
  * Never collapses to blank — absence is first-class.
@@ -13,49 +33,180 @@
 export type FlagStatus = "present" | "missing" | "unclear" | "conflicting" | "unsupported";
 
 /**
- * Side-by-side vendor comparison output (stub — full fields in Phase 4).
+ * One buyer attention point (D-08): code-triggered, model-phrased.
  *
- * # ponytail: P4 placeholder — real fields (technical / commercial / scope /
- * # timeline / compliance / risk dimensions, comparability signal, buyer
- * # attention points, clarification questions) land in Phase 4 (comparison agent).
+ * Code detects the trigger condition; model only writes the buyer-facing summary.
+ * trigger_type is one of: 'comparability_blocker' | 'missing_pricing' |
+ * 'cross_vendor_conflict' | 'compliance_gap' | 'clarification_generation_failed'
+ * (Review Fix 8 added clarification_generation_failed).
  */
-export interface ComparisonResult {
-  vendor_count?: FieldInt;
-  comparable?: FieldStr;
-}
-export interface FieldInt {
-  status: FlagStatus;
-  value?: number | null;
-  evidence?: Evidence[];
-  values?: ConflictingValueInt[] | null;
+export interface AttentionPoint {
+  trigger_type: string;
+  summary: string;
+  vendors_affected?: string[];
+  dimension_or_field?: string | null;
 }
 /**
- * Source grounding for a single extracted fact (D-04).
+ * One verdict downgrade record — mirrors DowngradeEntry from grounding/report.py.
  *
- * Offsets are validated in code, never trusted from the model (CLAUDE.md §8).
- * Enforced: char_start >= 0 and char_end > char_start. Snippet-vs-source-text
- * matching (that the span actually exists in the vendor document) is a Phase 3
- * agent-level concern requiring the source text — not enforced here.
+ * Captures the verdict before and after code clamping so the D-11 trace diff
+ * shows exactly where the model was overruled.
  */
-export interface Evidence {
-  snippet: string;
-  char_start: number;
-  char_end: number;
-  source_id: string;
+export interface ClampEntry {
+  vendor_name: string;
+  dimension: string;
+  model_proposed: string;
+  code_ceiling: string;
+  clamped_to: string;
+  ceiling_reason: string;
 }
-export interface ConflictingValueInt {
-  value?: number | null;
-  evidence?: Evidence[];
+/**
+ * Full collection of clamp entries for one comparison run.
+ *
+ * # ponytail: mirrors DowngradeReport from grounding/report.py — same
+ * # code-authority-over-model pattern at the comparison level (D-03/D-11).
+ * Rides the ComparisonResult payload; feeds the Phase 5 in-app trace viewer.
+ */
+export interface ClampReport {
+  entries?: ClampEntry[];
 }
-export interface FieldStr {
-  status: FlagStatus;
-  value?: string | null;
-  evidence?: Evidence[];
-  values?: ConflictingValueStr[] | null;
+/**
+ * One clarification question per flagged field (D-09/D-10).
+ *
+ * model-phrased, code-seeded. Generic questions ("please clarify pricing") are
+ * rejected by the clarification.v1.md prompt — each question must name vendor,
+ * line item, and exact ambiguity.
+ */
+export interface ClarificationQuestion {
+  vendor_name: string;
+  field_path: string;
+  flag_status: string;
+  question: string;
+  why_needed: string;
 }
-export interface ConflictingValueStr {
-  value?: string | null;
-  evidence?: Evidence[];
+/**
+ * Model-emitted clarification output wrapper (Review Fix 12).
+ *
+ * Moved to domain.py so it is in the contract/drift-check scope (pydantic2ts picks
+ * it up). Code validates question count + identity against _collect_flagged_fields
+ * before accepting. The model receives only the code-collected flagged field list —
+ * it cannot add questions for fields not in that list.
+ */
+export interface ClarificationSet {
+  questions?: ClarificationQuestion[];
+}
+/**
+ * Model-emitted draft. THE MODEL'S STRUCTURED OUTPUT TARGET (Review Fix 1+2 BLOCKER).
+ *
+ * The model proposes per-dimension verdicts and phrasing ONLY. Code constructs
+ * ComparisonResult from this draft — the offer table, vendor_readiness,
+ * attention_points, clarification_questions, and clamp_report are ALL CODE-BUILT,
+ * never model-authored. Wave 3 uses .with_structured_output(ComparisonDraft,
+ * method='json_schema', include_raw=True). (CLAUDE.md §2 / D-03 / Review Fix 1+2)
+ */
+export interface ComparisonDraft {
+  dimensions: DimensionComparisonDraft[];
+  narrative_summary?: string | null;
+}
+/**
+ * Model-emitted one-row draft for one dimension (Review Fix 1+2).
+ *
+ * dimension is str here — model emits a string value; Wave 3 _apply_verdict_clamp
+ * coerces to ComparisonDimension(StrEnum) and fails closed on unrecognized values.
+ */
+export interface DimensionComparisonDraft {
+  dimension: string;
+  verdicts: DimensionVerdictDraft[];
+  narrative: string;
+}
+/**
+ * Model-emitted draft verdict for one vendor on one dimension.
+ *
+ * Carries model_proposed (required — D-11 trace diff) and buyer-facing reason text.
+ * Code constructs DimensionVerdict from this after clamping.
+ * Per Review Fix 1+2: model proposes; code guards.
+ */
+export interface DimensionVerdictDraft {
+  vendor_name: string;
+  model_proposed: ComparabilityVerdict;
+  reason: string;
+}
+/**
+ * Full comparison output — code-constructed from ComparisonDraft + code-built surfaces.
+ *
+ * This is NEVER the model's structured output target — use ComparisonDraft for that.
+ * Replaces the Phase 4 stub (D-01..D-07 / Review Fix 1+2).
+ *
+ * vendor_names: input order preserved, never sorted (D-07).
+ * dimensions: 6 entries, one per dimension; code-clamped (Review Fix 1).
+ * line_item_offers: code-built from ExtractionResult (Review Fix 6).
+ * vendor_readiness: N entries, input order preserved, never sorted (D-07).
+ * attention_points: code-triggered shells, model-phrased text (Review Fix 7).
+ * clarification_questions: validated against _collect_flagged_fields (Review Fix 8).
+ * clamp_report: rides the result payload for D-11 trace + Phase 5 trace viewer.
+ */
+export interface ComparisonResult {
+  vendor_names: string[];
+  dimensions: DimensionComparison[];
+  line_item_offers?: LineItemOffer[];
+  vendor_readiness?: VendorReadiness[];
+  attention_points?: AttentionPoint[];
+  clarification_questions?: ClarificationQuestion[];
+  clamp_report: ClampReport;
+}
+/**
+ * CODE-CONSTRUCTED one row of the badge matrix (D-01/D-06).
+ *
+ * dimension is ComparisonDimension (typed StrEnum), enforced at construction time
+ * by Wave 3 code that coerces from the model-emitted string.
+ */
+export interface DimensionComparison {
+  dimension: ComparisonDimension;
+  verdicts: DimensionVerdict[];
+  narrative: string;
+}
+/**
+ * CODE-CONSTRUCTED per-vendor verdict cell in the badge matrix (D-01).
+ *
+ * model_proposed is kept alongside the clamped verdict for the D-11 trace diff —
+ * the "code disproves the model" proof at the comparison level.
+ */
+export interface DimensionVerdict {
+  vendor_name: string;
+  verdict: ComparabilityVerdict;
+  reason: string;
+  model_proposed: ComparabilityVerdict;
+}
+/**
+ * One cell of the 8×vendor offer table (D-06).
+ *
+ * Code-built from ExtractionResult.line_items[*] verbatim values.
+ * Never model-authored. (Review Fix 6 / D-05)
+ */
+export interface LineItemOffer {
+  line_item_id: string;
+  line_item_name: string;
+  vendor_name: string;
+  pricing_verbatim?: string | null;
+  pricing_status: string;
+  scope_verbatim?: string | null;
+  scope_status: string;
+  non_equivalence_flag?: string | null;
+}
+/**
+ * Code-built per-vendor qualitative readiness summary (D-07).
+ *
+ * Never model-authored. comparable_count and total_dimensions are framed as a
+ * data-readiness indicator — equal weights, never sorted (§24 leaderboard guardrail).
+ *
+ * # ponytail: no sort key, no rank field — D-07 guardrail. Vendors are never ordered
+ * # by this count. The list[VendorReadiness] on ComparisonResult preserves input order.
+ */
+export interface VendorReadiness {
+  vendor_name: string;
+  comparable_count: number;
+  total_dimensions: number;
+  descriptor: string;
 }
 /**
  * Payload for the 'error' SSE event (D-10).
@@ -82,6 +233,20 @@ export interface EventEnvelope {
   payload: unknown;
 }
 /**
+ * Source grounding for a single extracted fact (D-04).
+ *
+ * Offsets are validated in code, never trusted from the model (CLAUDE.md §8).
+ * Enforced: char_start >= 0 and char_end > char_start. Snippet-vs-source-text
+ * matching (that the span actually exists in the vendor document) is a Phase 3
+ * agent-level concern requiring the source text — not enforced here.
+ */
+export interface Evidence {
+  snippet: string;
+  char_start: number;
+  char_end: number;
+  source_id: string;
+}
+/**
  * Structured extraction for one vendor response (Phase 3 — D-01..D-05).
  *
  * vendor_name is plain str (D-05): provenance metadata from VendorResponse, not an
@@ -92,22 +257,26 @@ export interface EventEnvelope {
  */
 export interface ExtractionResult {
   vendor_name: string;
-  scope_summary: FieldStr1;
+  scope_summary: FieldStr;
   line_items?: LineItemExtraction[];
-  pricing_structure: FieldStr1;
-  total_price: FieldStr1;
-  commercial_terms: FieldStr1;
-  timeline: FieldStr1;
-  compliance_points?: FieldStr1[];
-  assumptions?: FieldStr1[];
-  exclusions?: FieldStr1[];
-  risks?: FieldStr1[];
+  pricing_structure: FieldStr;
+  total_price: FieldStr;
+  commercial_terms: FieldStr;
+  timeline: FieldStr;
+  compliance_points?: FieldStr[];
+  assumptions?: FieldStr[];
+  exclusions?: FieldStr[];
+  risks?: FieldStr[];
 }
-export interface FieldStr1 {
+export interface FieldStr {
   status: FlagStatus;
   value?: string | null;
   evidence?: Evidence[];
   values?: ConflictingValueStr[] | null;
+}
+export interface ConflictingValueStr {
+  value?: string | null;
+  evidence?: Evidence[];
 }
 /**
  * Per-RFQ-line-item extraction — pricing and scope coverage for one service item (D-01).
@@ -119,8 +288,20 @@ export interface FieldStr1 {
 export interface LineItemExtraction {
   line_item_id: string;
   line_item_name: string;
-  pricing: FieldStr1;
-  scope_coverage: FieldStr1;
+  pricing: FieldStr;
+  scope_coverage: FieldStr;
+}
+/**
+ * Code-collected flagged field entry passed to the clarification prompt (D-09).
+ *
+ * Never model-generated — always produced by _collect_flagged_fields(). The model
+ * receives this list as structured input and phrases one question per item.
+ */
+export interface FlaggedField {
+  vendor_name: string;
+  field_path: string;
+  flag_status: string;
+  field_context?: string | null;
 }
 /**
  * Marketing-services Request for Quotation.

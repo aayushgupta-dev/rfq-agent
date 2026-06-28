@@ -35,9 +35,17 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
+import typing
+
 from conftest_comparison import missing_extraction, partial_extraction, present_extraction
 from openai import LengthFinishReasonError
-from schemas.domain import ComparisonResult
+from schemas.domain import (
+    ClarificationSet,
+    ComparabilityVerdict,
+    ComparisonDimension,
+    ComparisonDraft,
+    ComparisonResult,
+)
 from schemas.envelope import FlagStatus
 from schemas.events import EVENT_TYPES
 
@@ -53,10 +61,37 @@ WAVE_0_COMPLETE = True
 def test_schema_shape() -> None:
     """ComparisonResult has required fields; no dict[str, Model] shapes; no score/rank field;
     vendor_names is list[str]; ComparisonDraft is a separate schema.
-
-    Wave 2 fleshes out ComparisonResult; Wave 3 makes this GREEN.
     """
-    raise NotImplementedError("stub: COMPARE-01 — ComparisonResult schema shape")
+    fields = ComparisonResult.model_fields
+    for required in ("vendor_names", "dimensions", "line_item_offers", "vendor_readiness",
+                     "attention_points", "clarification_questions", "clamp_report"):
+        assert required in fields, f"ComparisonResult missing field: {required}"
+    for forbidden in ("score", "rank", "vendor_count", "comparable"):
+        assert forbidden not in fields, f"ComparisonResult must not have field: {forbidden}"
+
+    # ComparabilityVerdict lives in domain, not envelope (D-02 / WR-01)
+    assert isinstance(ComparabilityVerdict.comparable, str)
+    assert "domain" in ComparabilityVerdict.__module__, (
+        "ComparabilityVerdict must live in schemas.domain, not envelope.py (D-02)"
+    )
+
+    # Draft/result split: ComparisonDraft is the model target — no clamp_report (Review Fix 1+2)
+    draft_fields = ComparisonDraft.model_fields
+    assert "dimensions" in draft_fields, "ComparisonDraft must have 'dimensions'"
+    assert "clamp_report" not in draft_fields, (
+        "ComparisonDraft must NOT have clamp_report — model target only (Review Fix 1+2)"
+    )
+
+    # ClarificationSet lives in domain.py (Review Fix 12)
+    assert "questions" in ClarificationSet.model_fields
+    assert "domain" in ClarificationSet.__module__, (
+        "ClarificationSet must live in schemas.domain (Review Fix 12)"
+    )
+
+    # ComparisonDimension is a typed StrEnum in domain.py (Review Fix 1)
+    assert "domain" in ComparisonDimension.__module__, (
+        "ComparisonDimension must live in schemas.domain (Review Fix 1)"
+    )
 
 
 # ---------------------------------------------------------------------------
@@ -68,8 +103,15 @@ def test_no_dict_shapes() -> None:
     """ComparisonResult sub-models use list[BaseModel], not dict[str, BaseModel].
 
     Mirrors P3 D-04 constraint — dict[str, Field] shapes break the grounding walker.
+    pydantic2ts generates Record<string, ...> for dict shapes, breaking TS type safety.
     """
-    raise NotImplementedError("stub: COMPARE-01/PLAT-02 — no dict[str, BaseModel] shapes")
+    for name, field_info in ComparisonResult.model_fields.items():
+        annotation = field_info.annotation
+        origin = typing.get_origin(annotation)
+        assert origin is not dict, (
+            f"ComparisonResult.{name} must use list[Model] not dict[str, Model] "
+            "— pydantic2ts compat (PLAT-02)"
+        )
 
 
 # ---------------------------------------------------------------------------
