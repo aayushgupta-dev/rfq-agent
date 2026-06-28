@@ -720,16 +720,18 @@ The comparison trace must capture the verdict-clamp diff — this is the literal
 
 ---
 
-## Open Questions
+## Open Questions (RESOLVED)
 
 1. **Should `ClampReport` be a field inside `ComparisonResult` or a sibling key in the result payload?**
    - What we know: extraction.py uses a sibling key pattern (`downgrade_report` spread alongside `ExtractionResult.model_dump()`) with an assertion guard for collision.
    - What's unclear: for comparison, the clamp report is more semantically part of the comparison result than the grounding report is part of the extraction result. Including it as a field simplifies serialization.
    - Recommendation: include as a field on `ComparisonResult`. Simpler. The Phase 5 trace viewer gets it for free.
+   - **RESOLVED (plan 04-02 Task 1):** `clamp_report: ClampReport` is a field ON `ComparisonResult`.
 
 2. **Should `ComparisonRequest` have payload size validation like `ExtractionRequest`?**
    - What we know: `ExtractionRequest` validates `raw_text` ≤ 200K chars and total ≤ 500K. `ExtractionResult` contains no raw text — it is already structured.
    - Recommendation: add a simpler guard (e.g. max 5 vendors, `extractions` list length checked) but no character count needed since `ExtractionResult` is already bounded.
+   - **RESOLVED (plan 04-03 Task 2):** vendor-count guard only (`_MAX_VENDORS = 5`); no character-count validation.
 
 ---
 
