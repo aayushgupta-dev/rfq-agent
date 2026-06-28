@@ -4,6 +4,16 @@ A prompt-driven AI prototype that turns messy, inconsistent vendor proposals int
 grounded, evidence-backed, side-by-side comparison. Built for the Aerchain / Agillos
 *Generative AI Expert / Applied AI Engineer* assignment.
 
+## Live Demo
+
+- **App (buyer UI):** https://rfq-agent-web.vercel.app
+- **AI service (API):** https://rfq-agent-ai.onrender.com
+
+> The AI service runs on Render's free tier and **spins down after inactivity** — the first
+> request can take ~50s to cold-start. Open the app, hit the RFQ screen once, and give it a
+> moment to warm before running an extraction or comparison. Every screen runs live GPT‑5.4
+> calls (RFQ generation, extraction, comparison), so allow a few seconds per step.
+
 ## What It Does
 
 A procurement buyer uploads or pastes vendor responses to an RFQ for marketing services.
