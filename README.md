@@ -127,22 +127,56 @@ curl -N http://localhost:8000/stream/demo
 
 Events arrive as `data: {"type": ..., "payload": ...}` — confirms SSE is live and unbuffered.
 
+**End-to-end buyer journey (Playwright):** the product UAT drives a real browser through all
+five screens against the running app (local or deployed), asserting the rubric behaviours —
+evidence snippets present, absence flags surfaced, comparability before ranking, no fabrication.
+
+```bash
+# Local (both servers running):
+npx playwright test docs/qa/phase5-playwright.spec.ts --reporter=list
+# Against the deployed stack:
+PLAYWRIGHT_BASE_URL=https://rfq-agent-web.vercel.app \
+  npx playwright test docs/qa/phase5-playwright.spec.ts --reporter=list
+```
+
+Full checklist and results: [docs/qa/phase5-UAT.md](docs/qa/phase5-UAT.md).
+
 ## Deployment
 
-- **Web → Vercel:** `vercel --prod` from repo root (or connect the GitHub repo in the Vercel dashboard).
-  Set `NEXT_PUBLIC_AI_BASE_URL` to your Render service URL in Vercel's environment variables.
+The app is **live** (see [Live Demo](#live-demo)): the buyer UI on **Vercel** and the AI
+service on **Render**. Both auto-redeploy on every push to `main`.
 
-- **AI service → Render:** Create a new "Web Service" pointing to `services/ai/`. Set the start command
-  to `uv run uvicorn api.app:app --host 0.0.0.0 --port $PORT`. Set `OPENAI_API_KEY`,
-  `MODEL_REASONING`, and `MODEL_CHEAP` as environment variables in the Render dashboard.
+- **AI service → Render** via the committed `render.yaml` Blueprint (root `services/ai`,
+  `uv` build, uvicorn start; `OPENAI_API_KEY` set server-only). Deploy backend first.
+- **Web → Vercel:** import the repo, set the framework preset to **Next.js** (not the
+  multi-service "Services" preset — FastAPI stays on Render), root directory `apps/web`,
+  and set `NEXT_PUBLIC_AI_BASE_URL` to the Render URL.
+- **CORS** allows `http://localhost:3000` plus `https://*.vercel.app` (regex) — no change
+  needed for Vercel domains.
+- **Warm the free-tier Render instance before a demo** (`curl https://<render-url>/data/rfq`)
+  to avoid the ~50s cold start.
 
-- **CORS:** The AI service allows `http://localhost:3000` and all `*.vercel.app` origins.
-  When deployed, no CORS changes are needed.
+📖 **Full step-by-step guide, gotchas, and verification:**
+[docs/architecture/deployment.md](docs/architecture/deployment.md).
 
-- **Warm the Render instance before a demo:** `curl https://<your-render-url>/data/rfq`
-  This avoids the cold-start delay at the top of the demo recording.
+## Documentation & Deliverables
 
-See [05-CONTEXT.md D-18](docs/architecture/system-diagram.md) for the full deployment sequence.
+The `docs/` folder is the submission package, mapped to the assignment deliverables:
+
+| Deliverable (assignment §9 / §20) | Where |
+|---|---|
+| Working prototype | This repo — live at [rfq-agent-web.vercel.app](https://rfq-agent-web.vercel.app) |
+| Generated sample data (1 RFQ + 3 messy vendors) | `apps/web/public/data/` (rfq + vendor_thorough/cheap/fluff; each vendor carries a `mess_spec` documenting its intentional messiness) |
+| Prompt Pack (versioned prompt source) | `services/ai/prompts/` · per-prompt docs in `docs/prompts/` |
+| UI/UX generation output | `services/ai/prompts/ui-ux-gen.v1.md` · captured run in `docs/traces/ui-ux-gen-run.md` |
+| Extraction & comparison outputs (evidence + clarifications) | Live on the Extraction/Comparison screens · captured traces in `docs/traces/` |
+| ≥1 full prompt trace | `docs/traces/` and the in-app **Prompt Trace** screen |
+| Write-up (problem, prompt architecture, product thinking, limitations) | `docs/write-up.md` |
+| Architecture | `docs/architecture/system-diagram.md`, `ai-pipeline-diagram.md`, `deployment.md` |
+| Functional UAT (end-to-end buyer flow) | `docs/qa/phase5-UAT.md` + `docs/qa/phase5-playwright.spec.ts` + `docs/qa/uat-evidence/` |
+| Deployment guide | `docs/architecture/deployment.md` |
+| Demo video (≤5 min) | `docs/demo/` (script: `demo-script.md`) |
+| README (setup, run, env, sample flow, assumptions) | this file |
 
 ## Assumptions
 
