@@ -63,7 +63,12 @@ function collectFlaggedFields(extraction: ExtractionResult): FlaggedField[] {
 }
 
 function FieldRow({ label, field }: { label: string; field: FieldStr }) {
-  const evidence = field.status === "present" && field.evidence?.length ? field.evidence[0] : undefined;
+  // Evidence over assertion (§1/§8): surface the grounded span for any field that
+  // carries one — not only `present`. For `conflicting`, each value in field.values[]
+  // carries its OWN evidence (ConflictingValueStr), so render per-value with its source;
+  // never label a grounded conflicting value "No verified source".
+  const directEvidence = field.evidence?.length ? field.evidence[0] : undefined;
+  const isConflicting = field.status === "conflicting" && !!field.values?.length;
   return (
     <div className="grid grid-cols-[auto_1fr] gap-2 py-2 border-b border-border last:border-0">
       <div className="flex items-start gap-1.5 pt-0.5">
@@ -71,15 +76,25 @@ function FieldRow({ label, field }: { label: string; field: FieldStr }) {
         <FlagBadge status={field.status} />
       </div>
       <div>
-        <p className="text-sm">
-          {field.status === "conflicting" && field.values?.length
-            ? field.values.map((v, i) => v.value).filter(Boolean).join(" / ")
-            : (field.value ?? "—")}
-        </p>
-        <EvidenceSnippet
-          snippet={evidence?.snippet}
-          sourcePassage={evidence?.snippet}
-        />
+        {isConflicting ? (
+          field.values!.map((v, i) => {
+            const ev = v.evidence?.length ? v.evidence[0] : undefined;
+            return (
+              <div key={i} className="mb-1 last:mb-0">
+                <p className="text-sm">{v.value ?? "—"}</p>
+                <EvidenceSnippet snippet={ev?.snippet} sourcePassage={ev?.snippet} />
+              </div>
+            );
+          })
+        ) : (
+          <>
+            <p className="text-sm">{field.value ?? "—"}</p>
+            <EvidenceSnippet
+              snippet={directEvidence?.snippet}
+              sourcePassage={directEvidence?.snippet}
+            />
+          </>
+        )}
       </div>
     </div>
   );
