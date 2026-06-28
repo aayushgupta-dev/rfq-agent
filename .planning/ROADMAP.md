@@ -89,8 +89,12 @@ Decimal phases appear between their surrounding integers in numeric order.
   3. The buyer sees a qualitative comparability/readiness signal per dimension — not a numeric leaderboard or weighted score.
   4. Vendor offers are lightly aligned to the 8 RFQ line items with originals kept visible (differences surfaced, not normalized away).
   5. Missing/unclear/conflicting information produces explicit buyer attention points and generated clarification questions.
-**Plans**: TBD
-**Research**: yes — the comparability-signal *representation* (matrix vs. narrative vs. per-dimension badge) and the precise "light alignment vs. heavy normalization" boundary are open product-thinking decisions worth resolving. Plan with `--research-phase`.
+**Plans**: 4 plans (4 waves)
+Plans:
+- [ ] 04-01-PLAN.md — Wave 1: RED test stubs (test_comparison_agent.py, 13 functions) + conftest_comparison.py fixture builders
+- [ ] 04-02-PLAN.md — Wave 2: ComparisonResult schema flesh-out (ComparabilityVerdict, ClampReport, DimensionComparison, etc.) + codegen drift-check
+- [ ] 04-03-PLAN.md — Wave 3: Comparison agent (StateGraph + verdict clamp + flag collector) + POST /compare/vendors SSE route
+- [ ] 04-04-PLAN.md — Wave 4: Full comparison + clarification prompts authored + comparison trace captured + human checkpoint
 
 ### Phase 5: Buyer UI, Trace & Submission
 **Goal**: A thin, buyer-first UI renders the live AI behavior across five screens, the prompt trace is visible, and the project is deployed with the full submission package.
@@ -115,5 +119,5 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 | 1. Foundation | 5/5 | Complete   | 2026-06-27 |
 | 2. Grounding Gate & Messy Data | 4/4 | Complete   | 2026-06-27 |
 | 3. Extraction Agent | 4/4 | Complete   | 2026-06-27 |
-| 4. Comparison Agent | 0/TBD | Not started | - |
+| 4. Comparison Agent | 0/4 | Not started | - |
 | 5. Buyer UI, Trace & Submission | 0/TBD | Not started | - |
