@@ -1,5 +1,5 @@
 "use client";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import type { VendorResponse } from "@aerchain/shared-types";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -16,6 +16,9 @@ import cheap from "../../../public/data/vendor_cheap.json";
 import fluff from "../../../public/data/vendor_fluff.json";
 
 const BASE = process.env.NEXT_PUBLIC_AI_BASE_URL ?? "http://localhost:8000";
+// Mirror the server's 20 MB cap (services/ai/api/app.py /extract/file-text) so a large
+// file is rejected client-side instead of uploading fully then failing with 413 (WR-07).
+const MAX_UPLOAD_BYTES = 20_000_000;
 
 interface SampleCard {
   id: "thorough" | "cheap" | "fluff";
@@ -48,6 +51,13 @@ const SAMPLES: SampleCard[] = [
 export default function InputPage() {
   const router = useRouter();
   const { loadedVendors, setLoadedVendors } = useBuyerContext();
+
+  // WR-06: guard post-await state writes / navigation after the component unmounts
+  // (user navigates away while a paste/upload fetch is in flight).
+  const mountedRef = useRef(true);
+  useEffect(() => {
+    return () => { mountedRef.current = false; };
+  }, []);
 
   // Paste path state
   const [vendorName, setVendorName] = useState("");
@@ -87,13 +97,17 @@ export default function InputPage() {
       });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const vendorResponse = (await res.json()) as VendorResponse;
+      if (!mountedRef.current) return; // WR-06: don't write state / navigate after unmount
       setLoadedVendors((prev) => [...prev, vendorResponse]);
       router.push("/extraction");
     } catch (err) {
+      if (!mountedRef.current) return;
       setPasteError(err instanceof Error ? err.message : "Submission failed");
     } finally {
-      setPasteLoading(false);
-      setPastePhase("");
+      if (mountedRef.current) {
+        setPasteLoading(false);
+        setPastePhase("");
+      }
     }
   }
 
@@ -101,6 +115,11 @@ export default function InputPage() {
   async function handleFileExtract(e: React.FormEvent) {
     e.preventDefault();
     if (!uploadFile || !uploadVendorName.trim()) return;
+    // WR-07: pre-check the server's 20 MB limit before uploading the whole file
+    if (uploadFile.size > MAX_UPLOAD_BYTES) {
+      setUploadError("File too large — max 20 MB.");
+      return;
+    }
     setUploadLoading(true);
     setUploadError(null);
     setWeakExtraction(false);
@@ -112,8 +131,13 @@ export default function InputPage() {
         method: "POST",
         body: formData,
       });
-      if (!extractRes.ok) throw new Error(`HTTP ${extractRes.status}`);
+      if (!extractRes.ok) {
+        // WR-07: map the server's 20 MB limit (413) to a human message
+        if (extractRes.status === 413) throw new Error("File too large — max 20 MB.");
+        throw new Error(`HTTP ${extractRes.status}`);
+      }
       const { text, chars } = (await extractRes.json()) as { text: string; chars: number };
+      if (!mountedRef.current) return; // WR-06
       if (chars < 200) {
         setWeakExtraction(true);
         setUploadLoading(false);
@@ -128,13 +152,17 @@ export default function InputPage() {
       });
       if (!wrapRes.ok) throw new Error(`HTTP ${wrapRes.status}`);
       const vendorResponse = (await wrapRes.json()) as VendorResponse;
+      if (!mountedRef.current) return; // WR-06
       setLoadedVendors((prev) => [...prev, vendorResponse]);
       router.push("/extraction");
     } catch (err) {
+      if (!mountedRef.current) return;
       setUploadError(err instanceof Error ? err.message : "Upload failed");
     } finally {
-      setUploadLoading(false);
-      setUploadPhase("");
+      if (mountedRef.current) {
+        setUploadLoading(false);
+        setUploadPhase("");
+      }
     }
   }
 
