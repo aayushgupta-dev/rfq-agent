@@ -16,38 +16,22 @@
 _No clamp entries recorded._
 
 ## 4. Clarification Questions (live)
-- **cheap-but-incomplete** / `line_items[2].pricing` (missing): Regarding your pricing for line item 2, your response does not include a price for this item. Could you provide the specific fee for line_items[2]?
-
-- **cheap-but-incomplete** / `line_items[2].scope_coverage` (missing): Regarding the scope coverage for line item 2, your response does not specify what is included for this deliverable. Could you describe the exact scope covered by line_items[2]?
-
-- **cheap-but-incomplete** / `line_items[6].pricing` (missing): Regarding your pricing for line item 6, your response does not include a price for this item. Could you provide the specific fee for line_items[6]?
-
-- **cheap-but-incomplete** / `total_price` (missing): Your response does not include a total project price. Could you provide the full total price for the proposed scope?
-
-- **thorough-but-pricey** / `total_price` (missing): Your response does not include a total project price. Could you provide the full total price for the proposed scope?
-
-- **cheap-but-incomplete** / `line_items[5].pricing` (unclear): Regarding your pricing for line item 5, the price shown is unclear. Could you clarify the exact fee for line_items[5] and confirm the currency and billing basis?
-
-- **cheap-but-incomplete** / `line_items[6].scope_coverage` (unclear): Regarding the scope coverage for line item 6, your description is unclear. Could you clarify exactly what deliverables and services are included in line_items[6]?
-
-- **cheap-but-incomplete** / `timeline` (unclear): Regarding your project timeline, the schedule is unclear. Could you clarify the expected delivery timeline, including key milestones and any conditions that could affect timing?
-
-- **thorough-but-pricey** / `line_items[0].pricing` (unclear): Regarding your pricing for line item 0, the amount is unclear. Could you clarify the exact fee for line_items[0] and confirm the currency and billing basis?
-
-- **thorough-but-pricey** / `line_items[1].pricing` (unclear): Regarding your pricing for line item 1, the amount is unclear. Could you clarify the exact fee for line_items[1] and confirm the currency and billing basis?
-
-- **thorough-but-pricey** / `line_items[4].pricing` (unclear): Regarding your pricing for line item 4, the amount is unclear. Could you clarify the exact fee for line_items[4] and confirm the currency and billing basis?
-
-- **thorough-but-pricey** / `line_items[5].pricing` (unclear): Regarding your pricing for line item 5, the amount is unclear. Could you clarify the exact fee for line_items[5] and confirm the currency and billing basis?
-
-- **polished-fluff** / `pricing_structure` (conflicting): Your response contains conflicting statements about the pricing structure. Could you confirm the correct pricing structure and indicate which version should be used for evaluation?
-
-- **polished-fluff** / `total_price` (conflicting): Your response appears to list conflicting total price figures. Could you confirm the correct total price for the proposal?
-
-- **polished-fluff** / `timeline` (conflicting): Your response includes conflicting timeline information. Could you confirm the correct project timeline and which schedule should be considered final?
-
-- **thorough-but-pricey** / `line_items[2].pricing` (conflicting): Regarding your pricing for line item 2, your response contains conflicting figures. Could you confirm the correct fee for line_items[2]?
-
+- **cheap-but-incomplete** / `line_items[2].pricing` (missing): Regarding your pricing for line item 2, your response does not include the price for this item. Could you provide the specific fee for line_items[2]?
+- **cheap-but-incomplete** / `line_items[2].scope_coverage` (missing): Regarding line item 2, your response does not include the scope coverage for this deliverable. Could you confirm exactly what is included in line_items[2]?
+- **cheap-but-incomplete** / `line_items[6].pricing` (missing): Regarding your pricing for line item 6, your response does not include the price for this item. Could you provide the specific fee for line_items[6]?
+- **cheap-but-incomplete** / `total_price` (missing): Your response does not include a total project price. Could you provide the overall total fee for the full scope?
+- **thorough-but-pricey** / `total_price` (missing): Your response does not include a total project price. Could you provide the overall total fee for the full scope?
+- **cheap-but-incomplete** / `line_items[5].pricing` (unclear): Regarding your pricing for line item 5, the amount shown is unclear. Could you confirm the exact fee for line_items[5] and whether it is a fixed price or an estimate?
+- **cheap-but-incomplete** / `line_items[6].scope_coverage` (unclear): Regarding line item 6, the scope coverage is unclear. Could you clarify exactly which tasks or deliverables are included in line_items[6]?
+- **cheap-but-incomplete** / `timeline` (unclear): Your timeline is described unclearly. Could you confirm the expected delivery schedule, including the start date, key milestones, and final completion date?
+- **thorough-but-pricey** / `line_items[0].pricing` (unclear): Regarding your pricing for line item 0, the amount shown is unclear. Could you confirm the exact fee for line_items[0] and whether it is a fixed price or an estimate?
+- **thorough-but-pricey** / `line_items[1].pricing` (unclear): Regarding your pricing for line item 1, the amount shown is unclear. Could you confirm the exact fee for line_items[1] and whether it is a fixed price or an estimate?
+- **thorough-but-pricey** / `line_items[4].pricing` (unclear): Regarding your pricing for line item 4, the amount shown is unclear. Could you confirm the exact fee for line_items[4] and whether it is a fixed price or an estimate?
+- **thorough-but-pricey** / `line_items[5].pricing` (unclear): Regarding your pricing for line item 5, the amount shown is unclear. Could you confirm the exact fee for line_items[5] and whether it is a fixed price or an estimate?
+- **polished-fluff** / `pricing_structure` (conflicting): Your response contains conflicting statements about the pricing structure. Could you confirm the correct pricing structure and indicate which terms apply?
+- **polished-fluff** / `total_price` (conflicting): Your response contains conflicting statements about the total price. Could you confirm the correct overall total fee?
+- **polished-fluff** / `timeline` (conflicting): Your response contains conflicting statements about the timeline. Could you confirm the correct delivery schedule and final completion date?
+- **thorough-but-pricey** / `line_items[2].pricing` (conflicting): Regarding your pricing for line item 2, there appear to be conflicting statements about the fee. Could you confirm the correct price for line_items[2]?
 
 ## 5. Vendor Readiness
 | Vendor | Readiness |
