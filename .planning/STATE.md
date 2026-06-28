@@ -112,6 +112,7 @@ None yet.
 | # | Description | Date | Commit | Directory |
 |---|-------------|------|--------|-----------|
 | 260628-teg | Dockerize the rfq-agent monorepo (compose + rfq.sh control script + GET /health) | 2026-06-28 | 75d9c9d | [260628-teg-dockerize-monorepo](./quick/260628-teg-dockerize-monorepo/) |
+| fast | Sync served sample fixtures (public/data) with real vendor names — stale persona slugs in vendor_name | 2026-06-28 | 1943ce4 | — |
 
 ## Deferred Items
 
