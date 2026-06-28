@@ -35,10 +35,10 @@ fails, the AI must not hallucinate a number or a claim.
 - [ ] Comparison agent: side-by-side across technical, commercial, scope, timeline, compliance, risk; establishes comparability first; surfaces buyer attention points + clarification questions; never misleads.
 - [ ] Five buyer screens: RFQ Overview, Vendor Upload/Input, Extraction Review (with evidence), Vendor Comparison, Prompt Trace / Prompt Pack view.
 - [ ] The Prompt Pack: versioned, first-class prompt source for RFQ gen, vendor gen, messy-data gen, UI/UX gen, extraction, comparison, clarification/exception handling — each documented (what/why/how it handles unreliable info).
-- [ ] ≥1 complete prompt trace (input → prompt → model output → final structured/displayed output).
-- [ ] Stream agent responses to the UI over SSE (FastAPI emits, Next.js consumes) — never buffer-and-return long agent work.
-- [ ] Deploy: web → Vercel, AI service → Render/Railway, wired via env-configured base URL.
-- [ ] Submission deliverables: working prototype, sample data, Prompt Pack, UI/UX output, extraction + comparison outputs with evidence/clarifications, prompt trace, ≤5-min demo video, 1–2 page write-up, README.
+- [x] ≥1 complete prompt trace (input → prompt → model output → final structured/displayed output). — Prompt Trace screen + docs/traces/
+- [x] Stream agent responses to the UI over SSE (FastAPI emits, Next.js consumes) — never buffer-and-return long agent work.
+- [x] Deploy: web → Vercel, AI service → Render/Railway, wired via env-configured base URL. — Live 2026-06-28 (rfq-agent-web.vercel.app + rfq-agent-ai.onrender.com)
+- [ ] Submission deliverables: working prototype, sample data, Prompt Pack, UI/UX output, extraction + comparison outputs with evidence/clarifications, prompt trace, ≤5-min demo video, 1–2 page write-up, README. — all present EXCEPT the ≤5-min demo video (pending recording)
 
 ### Out of Scope
 
@@ -91,7 +91,7 @@ fails, the AI must not hallucinate a number or a claim.
 |----------|-----------|---------|
 | Hold the full Next.js + FastAPI/LangGraph monorepo (not a leaner single app) | Showcases the Python/LangGraph AI story the rubric rewards; CLAUDE.md §5 is the agreed plan | Phase 1 — scaffolded; pnpm+turbo workspace, Next.js shell, and services/ai uv env all build/lint clean; `@aerchain/shared-types` link proven end-to-end |
 | Data strategy: commit pre-generated samples AND support live generation/upload | Satisfies both "generated sample data" deliverable and "dynamic processing, not hardcoded" requirement; strongest demo | — Pending |
-| Deploy to Vercel + Render/Railway (not local-only) | More impressive submission; accepts the deploy/CORS/cold-start cost | — Pending |
+| Deploy to Vercel + Render/Railway (not local-only) | More impressive submission; accepts the deploy/CORS/cold-start cost | Phase 5 — DONE 2026-06-28: web on Vercel (rfq-agent-web.vercel.app), AI on Render via render.yaml Blueprint (rfq-agent-ai.onrender.com); CORS via `*.vercel.app` regex; E2E verified on the live stack. Free-tier cold start (~50s) accepted; guide in docs/architecture/deployment.md |
 | Support paste + PDF/Word/Excel/PPT via best-effort text extraction (no heavy OCR) | Assignment §11 permits "extracted text"; broad format coverage without over-investing in parsing | — Pending |
 | Grounding validated in code, not by the model | Hallucination control is the headline reliability requirement; LLM self-attestation is untrustworthy | Phase 1 — primitive landed: `Field[T]` absence envelope enforces all 5 grounding states (present/missing/unclear/conflicting/unsupported) via model_validator at the schema boundary; present/unclear/conflicting facts rejected without evidence (PLAT-01) |
 
@@ -113,4 +113,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-06-27 after Phase 2 (grounding gate & messy data)*
+*Last updated: 2026-06-28 — Phase 5 deployed (Vercel + Render) & E2E-verified; phase verification human_needed (demo video pending).*

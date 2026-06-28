@@ -158,13 +158,15 @@ Plans:
 - [x] 05-06-PLAN.md — Wave 3A: Extraction Review + Vendor Comparison screens
 - [x] 05-07-PLAN.md — Wave 3B: Prompt Trace screen + README + write-up + architecture diagrams + demo script
 
-**Wave 4** *(blocked on Wave 3)*
+**Wave 4**
 
-- [ ] 05-08-PLAN.md — Wave 4: Deploy (Render + Vercel) + CORS finalization (has human checkpoints)
+- [x] 05-08-PLAN.md — Wave 4: Deploy (Render + Vercel) + CORS — DONE: live at rfq-agent-web.vercel.app (Vercel) + rfq-agent-ai.onrender.com (Render); CORS verified; E2E confirmed on the deployed stack. SUMMARY + docs/architecture/deployment.md.
 
-**Wave 5** *(blocked on Wave 4)*
+**Wave 5**
 
-- [ ] 05-09-PLAN.md — Wave 5: Playwright E2E run + fix + human UAT sign-off
+- [ ] 05-09-PLAN.md — Wave 5: Playwright E2E + UAT — E2E PASS 7/7 (local prod build, live gpt-5.4) + verified on deployed stack; reference UAT in docs/qa/phase5-UAT.md. **Remaining:** SHIP-04 demo video (not recorded) + human UAT sign-off.
+
+> **Phase 5 verification (2026-06-28): `human_needed`, 4/5 must-haves** — see `05-VERIFICATION.md`. Sole gap: SHIP-04 demo video. Still-open gates: code review, secure-phase, human UAT. Phase intentionally not closed.
 
 ## Progress
 

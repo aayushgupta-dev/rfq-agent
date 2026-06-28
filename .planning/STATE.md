@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Phase 5 UI-SPEC approved
-last_updated: "2026-06-28T11:52:31.268Z"
+stopped_at: Phase 5 deployed + E2E green; verification human_needed (demo video pending)
+last_updated: "2026-06-28T14:35:00.000Z"
 last_activity: 2026-06-28
 progress:
   total_phases: 5
   completed_phases: 4
   total_plans: 26
-  completed_plans: 23
-  percent: 80
+  completed_plans: 24
+  percent: 92
 ---
 
 # Project State
@@ -25,12 +25,20 @@ See: .planning/PROJECT.md (updated 2026-06-27)
 
 ## Current Position
 
-Phase: 05 (buyer-ui-trace-submission) — EXECUTING
-Plan: 3 of 9
-Status: Ready to execute
-Last activity: 2026-06-28
+Phase: 05 (buyer-ui-trace-submission) — EXECUTED, verification human_needed (phase NOT closed)
+Plan: 9 of 9 executed (05-01..05-08 done; 05-09 E2E done, demo video pending)
+Status: Verified 4/5 must-haves (05-VERIFICATION.md). Deployed & E2E-green. Remaining before close: SHIP-04 demo video, code review, secure-phase, human UAT sign-off.
+Last activity: 2026-06-28 — deployed to Render + Vercel; Playwright E2E 7/7; phase verification run (human_needed)
 
-Progress: [█████████░] 88%
+Live: web https://rfq-agent-web.vercel.app · AI https://rfq-agent-ai.onrender.com
+
+Progress: [█████████░] 96%
+
+### Open items (carry to close)
+- SHIP-04: record ≤5-min demo video (docs/demo/demo-script.md) — only verification gap
+- Rotate OPENAI_API_KEY (briefly exposed during Render dashboard entry) before submission
+- Run GSD gates: /gsd:code-review 5 · /gsd:secure-phase 5 · /gsd:verify-work 5
+- Warm Render free instance (~50s cold start) before any live demo
 
 ## Performance Metrics
 
