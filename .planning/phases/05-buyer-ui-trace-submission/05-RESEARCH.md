@@ -644,22 +644,14 @@ The 7 committed trace files in `docs/traces/` have a consistent structure the Tr
 
 ---
 
-## Open Questions
+## Open Questions (RESOLVED)
 
-1. **Trace file serving on Vercel**
-   - What we know: `docs/traces/*.json` are outside `apps/web/`; Vercel builds from `apps/web/` root directory.
-   - What's unclear: Whether `process.cwd()` in a Route Handler on Vercel resolves to monorepo root or to `apps/web/`.
-   - Recommendation: During Wave 0, add a Route Handler `GET /api/traces/[name]` that reads with `path.join(process.cwd(), "../../docs/traces", name)` and test locally first. If it fails on Vercel, add a build step that copies `docs/traces/*.json` → `apps/web/public/traces/`.
+1. **Trace file serving on Vercel** — **RESOLVED:** Copy `docs/traces/*.json` → `apps/web/public/traces/` (build/setup step) and serve via a Route Handler `GET /api/traces/[name]` that reads from `public/traces/`. Avoids the `process.cwd()` monorepo-root ambiguity entirely. Implemented in plan 05-04 Task 1 Step 0.
+   - Original concern: Whether `process.cwd()` in a Route Handler on Vercel resolves to monorepo root or to `apps/web/`. Sidestepped by serving from `public/`.
 
-2. **ui-ux-gen prompt run output format**
-   - What we know: The stub in `ui-ux-gen.v1.md` says output should be "JSON/Markdown that maps to the component tree."
-   - What's unclear: Whether to request JSON (machine-readable) or Markdown (more readable for the submission doc).
-   - Recommendation: Request Markdown with structured headings per screen — easier to include verbatim in `docs/` as the UI/UX artifact, and still demonstrably prompt-driven.
+2. **ui-ux-gen prompt run output format** — **RESOLVED:** Request Markdown with structured headings per screen — easier to include verbatim in `docs/` as the UI/UX artifact, and still demonstrably prompt-driven. Implemented in plan 05-05 Task 1.
 
-3. **PROMPT-04 example selection**
-   - What we know: D-17 says "pick the most instructive" failure.
-   - What's unclear: Which of the 7 prompts has the most interesting documented failure.
-   - Recommendation: The extraction prompt's humility-bias failure is the strongest story (a model that confidently marked `present` on weak evidence, then got downgraded by grounding) — maps directly to the rubric's reliability concern. Use `extraction.v1.md` for PROMPT-04.
+3. **PROMPT-04 example selection** — **RESOLVED:** Use `extraction.v1.md` humility-bias failure (model confidently marked `present` on weak evidence, then got downgraded by the grounding gate) — maps directly to the rubric's reliability concern. Implemented in plan 05-05 Task 2.
 
 ---
 
