@@ -12,7 +12,11 @@ import type {
   VendorReadiness,
 } from "@aerchain/shared-types";
 import { useBuyerContext } from "@/contexts/BuyerContext";
-import { streamCompare, fetchRfq } from "@/lib/api";
+import { streamCompare } from "@/lib/api";
+// ponytail: compare against the SAME committed RFQ the /rfq overview shows and the
+// extraction step grounded against — the static fixture, not /data/rfq (which
+// live-regenerates a fresh RFQ per call). Instant, deterministic, consistent.
+import rfqRaw from "../../../public/data/rfq.json";
 import { ComparabilityBadge } from "@/components/comparability-badge";
 import { FlagBadge } from "@/components/flag-badge";
 import { StreamProgress } from "@/components/stream-progress";
@@ -31,6 +35,9 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { Button } from "@/components/ui/button";
+
+// The committed procurement event — stable module-level reference (matches /rfq + extraction).
+const rfq = rfqRaw as unknown as RFQ;
 
 // D-11 comparison phase sequence for progress
 const COMPARISON_PHASES: Record<string, number> = {
@@ -337,20 +344,12 @@ export default function ComparisonPage() {
   // The fresh extraction list is snapshotted inside each run (effect + manual button)
   // so a run never closes over a stale render's list (CR-02).
 
-  const [rfq, setRfq] = useState<RFQ | null>(null);
-  const [rfqError, setRfqError] = useState(false);
   const [streaming, setStreaming] = useState(false);
   const [phase, setPhase] = useState("");
   const [progressValue, setProgressValue] = useState(0);
   const [error, setError] = useState<string | null>(null);
   // ponytail: AbortController ref — T-05-06-C mitigate
   const abortRef = useRef<AbortController | null>(null);
-
-  useEffect(() => {
-    fetchRfq()
-      .then((r) => { setRfq(r); setRfqError(false); })
-      .catch(() => setRfqError(true)); // WR-05: surface, don't strand silently
-  }, []);
 
   // Abort whatever run is in flight (most relevant to the manual button, whose
   // controller is held in abortRef) on unmount. The auto-start effect aborts its
@@ -477,15 +476,6 @@ export default function ComparisonPage() {
       {error && (
         <Alert variant="destructive">
           <AlertDescription>Comparison could not complete. {error}</AlertDescription>
-        </Alert>
-      )}
-
-      {/* WR-05: RFQ fetch failed — surface it instead of leaving the screen inert */}
-      {rfqError && !comparison && (
-        <Alert variant="destructive">
-          <AlertDescription>
-            Could not load the RFQ — check the AI service is running, then reload this page.
-          </AlertDescription>
         </Alert>
       )}
 

@@ -17,6 +17,15 @@ const flagVariants: Record<FlagStatus, string> = {
 // an unstyled raw string — absence/flag state stays surfaced, never silently degraded (§8).
 const UNKNOWN_VARIANT = "bg-slate-100 text-slate-600";
 
+// Title-case the raw status for display: "not-comparable" → "Not Comparable",
+// "missing" → "Missing". data-status keeps the raw value so selectors/tests are unaffected.
+function toTitleCase(status: string): string {
+  return status
+    .replace(/[-_]+/g, " ")
+    .trim()
+    .replace(/\b\w/g, (c) => c.toUpperCase());
+}
+
 // Accept `string` (not just FlagStatus): LineItemOffer.pricing_status is a bare str on
 // the server, so callers must not force-cast it. Known statuses get their palette; any
 // other value falls back to the neutral variant and renders its literal label (WR-03).
@@ -26,9 +35,9 @@ export function FlagBadge({ status }: { status: FlagStatus | string }) {
     <Badge
       data-testid="flag-badge"
       data-status={status}
-      className={cn("px-2 py-1 text-xs font-semibold", variant)}
+      className={cn("px-2 py-1 text-xs font-semibold whitespace-nowrap", variant)}
     >
-      {status}
+      {toTitleCase(status)}
     </Badge>
   );
 }

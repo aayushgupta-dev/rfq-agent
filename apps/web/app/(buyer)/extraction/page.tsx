@@ -3,7 +3,12 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import type { ExtractionResult, FieldStr, FlagStatus, RFQ } from "@aerchain/shared-types";
 import { useBuyerContext } from "@/contexts/BuyerContext";
-import { streamExtract, normalizeExtractionPayload, fetchRfq } from "@/lib/api";
+import { streamExtract, normalizeExtractionPayload } from "@/lib/api";
+// ponytail: extraction grounds vendors against the SAME committed RFQ the /rfq overview
+// shows and the samples were written for. Importing the static fixture (not /data/rfq,
+// which live-regenerates a fresh RFQ via the model on every visit) makes the flow
+// instant, deterministic, and correct — vendors are never compared to a different RFQ.
+import rfqRaw from "../../../public/data/rfq.json";
 import { EvidenceSnippet } from "@/components/evidence-snippet";
 import { FlagBadge } from "@/components/flag-badge";
 import { StreamProgress } from "@/components/stream-progress";
@@ -11,6 +16,15 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+
+// The committed procurement event — stable module-level reference (matches /rfq page).
+const rfq = rfqRaw as unknown as RFQ;
+
+// Human-readable streaming phases (the SSE emits raw keys "model" / "grounding").
+const PHASE_LABELS: Record<string, string> = {
+  model: "Reading the proposal and extracting fields…",
+  grounding: "Verifying every extracted fact against the vendor's own words…",
+};
 
 // D-09 category layout — maps to ExtractionResult field paths
 const CATEGORIES: { label: string; key: keyof ExtractionResult }[] = [
@@ -71,7 +85,7 @@ function FieldRow({ label, field }: { label: string; field: FieldStr }) {
   const isConflicting = field.status === "conflicting" && !!field.values?.length;
   return (
     <div className="grid grid-cols-[auto_1fr] gap-2 py-2 border-b border-border last:border-0">
-      <div className="flex items-start gap-1.5 pt-0.5">
+      <div className="flex items-center gap-1.5">
         <span className="text-xs font-semibold text-muted-foreground">{label}</span>
         <FlagBadge status={field.status} />
       </div>
@@ -221,8 +235,6 @@ function ExtractionView({ extraction }: { extraction: ExtractionResult }) {
 
 export default function ExtractionPage() {
   const { loadedVendors, extractions, setExtraction, setDowngradeReport } = useBuyerContext();
-  const [rfq, setRfq] = useState<RFQ | null>(null);
-  const [rfqError, setRfqError] = useState(false);
   const [selectedVendor, setSelectedVendor] = useState<string>("");
   const [streaming, setStreaming] = useState(false);
   const [phase, setPhase] = useState("");
@@ -231,15 +243,7 @@ export default function ExtractionPage() {
   // ponytail: AbortController ref — T-05-06-C mitigate (SSE stream that never closes)
   const abortRef = useRef<AbortController | null>(null);
 
-  // Load RFQ on mount; set initial vendor selection
-  useEffect(() => {
-    fetchRfq()
-      .then((r) => { setRfq(r); setRfqError(false); })
-      // WR-05: without rfq the SSE never fires (guards on !rfq) → blank stuck screen.
-      // Surface the failure instead of swallowing it.
-      .catch(() => setRfqError(true));
-  }, []);
-
+  // Set initial vendor selection (RFQ is the committed fixture — no fetch needed)
   useEffect(() => {
     if (!selectedVendor && loadedVendors.length > 0) {
       setSelectedVendor(loadedVendors[0].vendor_name);
@@ -272,7 +276,7 @@ export default function ExtractionPage() {
           if (cancelled) return;
           if (event.type === "status") {
             const { phase: p } = event.payload as { message: string; phase: string };
-            setPhase(p);
+            setPhase(PHASE_LABELS[p] ?? p);
             // D-25: drive progress from known phase sequence, not a +20% counter
             if (p === "model") setProgressValue(40);
             if (p === "grounding") setProgressValue(80);
@@ -326,15 +330,6 @@ export default function ExtractionPage() {
   return (
     <div className="p-6 space-y-6">
       <h1 className="text-3xl font-bold">Extraction Review</h1>
-
-      {/* WR-05: RFQ fetch failed — surface it; without it extraction can't stream */}
-      {rfqError && (
-        <Alert variant="destructive" data-testid="rfq-error">
-          <AlertDescription>
-            Could not load the RFQ — check the AI service is running, then reload this page.
-          </AlertDescription>
-        </Alert>
-      )}
 
       {/* D-10: vendor selector Tabs */}
       <Tabs
