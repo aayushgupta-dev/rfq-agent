@@ -136,8 +136,35 @@ Plans:
   4. The web app (Vercel) reaches the deployed AI service (Render/Railway) via an env-configured base URL with CORS and disabled proxy buffering so SSE streams live in the demo.
   5. The submission package is complete: each Prompt Pack prompt is documented (what/why/how-it-handles-unreliable-info), plus README, 1–2 page write-up, ≤5-min demo video, and a system + AI-pipeline architecture diagram.
 
-**Plans**: TBD
-**UI hint**: yes
+**Plans**: 9 plans (5 waves)
+
+Plans:
+**Wave 0**
+
+- [ ] 05-01-PLAN.md — Wave 0: RED test stubs (test_file_extract.py, test_input_wrap.py) + Playwright E2E spec scaffold
+
+**Wave 1** *(parallel)*
+
+- [ ] 05-02-PLAN.md — Wave 1A: Backend additions (5 Python deps, CORS middleware, POST /extract/file-text, POST /input/raw-text)
+- [ ] 05-03-PLAN.md — Wave 1B: UI shell (shadcn components, app redirect, buyer layout, BuyerContext, lib/sse.ts, lib/session.ts, lib/api.ts, stage rail, display components)
+
+**Wave 2** *(parallel, blocked on Wave 1)*
+
+- [ ] 05-04-PLAN.md — Wave 2A: RFQ Overview + Vendor Input screens + trace Route Handler
+- [ ] 05-05-PLAN.md — Wave 2B: ui-ux-gen prompt authored + run once + PROMPT-02 docs (6 remaining prompts) + PROMPT-04 failure example
+
+**Wave 3** *(parallel, blocked on Wave 2)*
+
+- [ ] 05-06-PLAN.md — Wave 3A: Extraction Review + Vendor Comparison screens
+- [ ] 05-07-PLAN.md — Wave 3B: Prompt Trace screen + README + write-up + architecture diagrams + demo script
+
+**Wave 4** *(blocked on Wave 3)*
+
+- [ ] 05-08-PLAN.md — Wave 4: Deploy (Render + Vercel) + CORS finalization (has human checkpoints)
+
+**Wave 5** *(blocked on Wave 4)*
+
+- [ ] 05-09-PLAN.md — Wave 5: Playwright E2E run + fix + human UAT sign-off
 
 ## Progress
 
@@ -150,4 +177,4 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 | 2. Grounding Gate & Messy Data | 4/4 | Complete   | 2026-06-27 |
 | 3. Extraction Agent | 4/4 | Complete   | 2026-06-27 |
 | 4. Comparison Agent | 4/4 | Complete   | 2026-06-28 |
-| 5. Buyer UI, Trace & Submission | 0/TBD | Not started | - |
+| 5. Buyer UI, Trace & Submission | 0/9 | Not started | - |
