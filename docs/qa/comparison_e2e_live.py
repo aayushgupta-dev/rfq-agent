@@ -83,7 +83,6 @@ def main() -> int:
           f"vendor order preserved: {result.vendor_names}")
 
     # ---- C. Qualitative only — no numeric score/rank anywhere (COMPARE-05 / §24) ----
-    flat = json.dumps(result_payload).lower()
     check(not any(k in result_payload for k in ("score", "rank", "weight")),
           "no score/rank/weight top-level field")
     valid_verdicts = {"comparable", "partially", "not_comparable"}
