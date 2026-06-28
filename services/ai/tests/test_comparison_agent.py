@@ -31,14 +31,12 @@ from __future__ import annotations
 
 import json
 import pathlib
-from unittest.mock import MagicMock, patch
-
-import pytest
-
 import typing
+from unittest.mock import MagicMock, patch
 
 from conftest_comparison import missing_extraction, partial_extraction, present_extraction
 from openai import LengthFinishReasonError
+
 from schemas.domain import (
     ClarificationSet,
     ComparabilityVerdict,
@@ -124,7 +122,7 @@ def test_clamp_only_downgrades() -> None:
 
     Tests primitive clamp_verdict + _ceiling_for_flags independently of the SSE pipeline.
     """
-    from agents.comparison import clamp_verdict, _ceiling_for_flags
+    from agents.comparison import _ceiling_for_flags, clamp_verdict
 
     assert clamp_verdict("comparable", "not_comparable") == "not_comparable"
     assert clamp_verdict("comparable", "partially") == "partially"
@@ -168,7 +166,11 @@ def test_attention_points_are_triggered() -> None:
     Review Fix 7 tightened from 'trigger detected' to 'fabricated point dropped'.
     Code decides WHAT matters, model decides HOW to say it (D-08).
     """
-    from agents.comparison import _detect_attention_triggers, _build_attention_shells, _compute_ceilings
+    from agents.comparison import (
+        _build_attention_shells,
+        _compute_ceilings,
+        _detect_attention_triggers,
+    )
 
     present = present_extraction("v1")
     partial = partial_extraction("v2")  # pricing missing
@@ -305,9 +307,7 @@ def test_vendor_order_preserved() -> None:
     vendor_names = ["a", "b", "c"]
 
     # Build minimal but valid ComparisonResult
-    from schemas.domain import (
-        ClampReport, DimensionComparison, DimensionVerdict, ComparisonResult
-    )
+    from schemas.domain import ClampReport, ComparisonResult, DimensionComparison, DimensionVerdict
 
     dims = []
     for dim in ComparisonDimension:
@@ -379,8 +379,10 @@ def test_comparison_sse_taxonomy() -> None:
     """
     from agents.comparison import run_comparison
     from schemas.domain import (
-        ComparisonDraft, DimensionComparisonDraft, DimensionVerdictDraft,
         ComparabilityVerdict,
+        ComparisonDraft,
+        DimensionComparisonDraft,
+        DimensionVerdictDraft,
     )
 
     # Build a canned ComparisonDraft (no real model call)
@@ -420,7 +422,7 @@ def test_comparison_sse_taxonomy() -> None:
         rfq = MagicMock()
         rfq.line_items = []
 
-        state = run_comparison([ext], rfq)
+        run_comparison([ext], rfq)  # smoke-run; events are collected via the impl loop below
 
     # Collect events from state's result_sse_event + last_sse_event
     # Re-run with event collector
@@ -432,7 +434,10 @@ def test_comparison_sse_taxonomy() -> None:
         events_collected.clear()
 
         from agents.comparison import (
-            _run_align_impl, _run_comparability_impl, _run_compare_impl, _run_clarify_impl
+            _run_align_impl,
+            _run_clarify_impl,
+            _run_comparability_impl,
+            _run_compare_impl,
         )
 
         ext = present_extraction("v1")
@@ -459,6 +464,106 @@ def test_comparison_sse_taxonomy() -> None:
     # "done" event is the last event
     assert events_collected[-1]["type"] == "done", (
         f"Last event must be 'done', got {events_collected[-1]['type']!r}"
+    )
+
+
+def test_compare_route_emits_exactly_one_done() -> None:
+    """Route-level regression guard for CR-01: POST /compare/vendors emits exactly one 'done'.
+
+    The node-level taxonomy test cannot see route-appended events. This exercises the real
+    FastAPI route via TestClient so a duplicate terminal 'done' (route append + clarify node)
+    is caught. Chains are patched — no live API call.
+    """
+    from fastapi.testclient import TestClient
+
+    from agents.comparison import _comparison_chain  # noqa: F401
+    from api.app import app
+    from schemas.domain import (
+        RFQ,
+        ComparabilityVerdict,
+        ComparisonDraft,
+        DimensionComparisonDraft,
+        DimensionVerdictDraft,
+    )
+
+    canned_draft = ComparisonDraft(
+        dimensions=[
+            DimensionComparisonDraft(
+                dimension=dim.value,
+                verdicts=[
+                    DimensionVerdictDraft(
+                        vendor_name=v,
+                        model_proposed=ComparabilityVerdict.comparable,
+                        reason="test",
+                    )
+                    for v in ("v1", "v2")
+                ],
+                narrative="test narrative",
+            )
+            for dim in ComparisonDimension
+        ],
+        narrative_summary="Test summary",
+    )
+    raw_msg = MagicMock()
+    raw_msg.additional_kwargs = {}
+
+    rfq = RFQ(
+        title="Test RFQ",
+        client_name="Test Client",
+        issue_date="2026-01-01",
+        response_deadline="2026-02-01",
+        scope_summary="Test scope",
+        line_items=[],
+        commercial_expectations="Best value",
+    )
+    body = {
+        "extractions": [
+            present_extraction("v1").model_dump(mode="json"),
+            present_extraction("v2").model_dump(mode="json"),
+        ],
+        "rfq": rfq.model_dump(mode="json"),
+    }
+
+    with patch("agents.comparison._comparison_chain") as mock_chain, patch(
+        "agents.comparison._clarification_chain"
+    ) as mock_clar:
+        mock_chain.invoke.return_value = {"raw": raw_msg, "parsed": canned_draft}
+        mock_clar.invoke.return_value = {
+            "raw": raw_msg,
+            "parsed": ClarificationSet(questions=[]),
+        }
+        client = TestClient(app, raise_server_exceptions=True)
+        response = client.post("/compare/vendors", json=body)
+
+    assert response.status_code == 200
+    done_count = sum(1 for line in response.text.splitlines() if '"type":"done"' in line)
+    assert done_count == 1, f"Exactly one 'done' event expected, got {done_count}"
+
+
+def test_compare_route_rejects_single_vendor() -> None:
+    """Route-level guard for CR-02: fewer than two vendors is rejected at the boundary."""
+    from fastapi.testclient import TestClient
+
+    from api.app import app
+    from schemas.domain import RFQ
+
+    rfq = RFQ(
+        title="Test RFQ",
+        client_name="Test Client",
+        issue_date="2026-01-01",
+        response_deadline="2026-02-01",
+        scope_summary="Test scope",
+        line_items=[],
+        commercial_expectations="Best value",
+    )
+    body = {
+        "extractions": [present_extraction("v1").model_dump(mode="json")],
+        "rfq": rfq.model_dump(mode="json"),
+    }
+    client = TestClient(app, raise_server_exceptions=True)
+    response = client.post("/compare/vendors", json=body)
+    assert response.status_code == 422, (
+        f"Single-vendor comparison must be rejected (422), got {response.status_code}"
     )
 
 
@@ -563,8 +668,10 @@ def test_clamp_applied_to_result() -> None:
     """
     from agents.comparison import run_comparison
     from schemas.domain import (
-        ComparisonDraft, DimensionComparisonDraft, DimensionVerdictDraft,
         ComparabilityVerdict,
+        ComparisonDraft,
+        DimensionComparisonDraft,
+        DimensionVerdictDraft,
     )
 
     # partial_extraction("cheap") has missing pricing_structure, commercial_terms, total_price
@@ -656,10 +763,12 @@ def test_dimension_enum_fail_closed() -> None:
 
     E.g. dimension='Commercial' (capital C) or 'unknown_dim' → not_comparable.
     """
-    from agents.comparison import _apply_verdict_clamp, _compute_ceilings
+    from agents.comparison import _apply_verdict_clamp
     from schemas.domain import (
-        ComparisonDraft, DimensionComparisonDraft, DimensionVerdictDraft,
         ComparabilityVerdict,
+        ComparisonDraft,
+        DimensionComparisonDraft,
+        DimensionVerdictDraft,
     )
 
     # Build a draft with dimension="Commercial" (mis-cased — not a valid ComparisonDimension value)
@@ -758,14 +867,14 @@ def test_cross_vendor_conflict_detection() -> None:
 
     Cross-VENDOR comparison of differing values, NOT per-field conflicting status.
     """
-    from agents.comparison import _detect_attention_triggers, _compute_ceilings
     from conftest_extraction import present_field
+
+    from agents.comparison import _compute_ceilings, _detect_attention_triggers
 
     ext1 = present_extraction("v1")
     ext2 = present_extraction("v2")
 
     # Set different timeline values (both present — this is cross-vendor value conflict)
-    from schemas.envelope import Field as EnvelopeField, FlagStatus
     ext1 = ext1.model_copy(update={"timeline": present_field("8 weeks", "8 weeks")})
     ext2 = ext2.model_copy(update={"timeline": present_field("12 weeks", "12 weeks")})
 
@@ -791,7 +900,7 @@ def test_rfq_line_item_alignment() -> None:
     """ExtractionResult whose line_items do NOT map to the RFQ's 8 canonical line_item_ids.
     Assert the agent flags scope as not_comparable with a reason naming the mismatch.
     """
-    from agents.comparison import _check_rfq_alignment, _compute_ceilings, run_comparison
+    from agents.comparison import _check_rfq_alignment, run_comparison
     from schemas.domain import LineItem
 
     # Build an ExtractionResult with no line items
@@ -809,7 +918,10 @@ def test_rfq_line_item_alignment() -> None:
 
     # Run full comparison with mismatch — scope dimension must be not_comparable for v1
     from schemas.domain import (
-        ComparisonDraft, DimensionComparisonDraft, DimensionVerdictDraft, ComparabilityVerdict
+        ComparabilityVerdict,
+        ComparisonDraft,
+        DimensionComparisonDraft,
+        DimensionVerdictDraft,
     )
 
     canned_draft = ComparisonDraft(
@@ -865,7 +977,10 @@ def test_clarification_failure_surfaces_attention_point() -> None:
     """
     from agents.comparison import run_comparison
     from schemas.domain import (
-        ComparisonDraft, DimensionComparisonDraft, DimensionVerdictDraft, ComparabilityVerdict
+        ComparabilityVerdict,
+        ComparisonDraft,
+        DimensionComparisonDraft,
+        DimensionVerdictDraft,
     )
 
     partial = partial_extraction("v1")  # has flagged fields, will trigger clarification call
