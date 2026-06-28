@@ -184,7 +184,7 @@ Both platforms' git-triggered auto-deploy is turned off so the workflow is the
 pipeline:
 
 - `render.yaml`: `autoDeploy: false`
-- `apps/web/vercel.json`: `git.deploymentEnabled.main: false`
+- `apps/web/vercel.json`: `git.deploymentEnabled: false` (disables **all** Vercel git deploys — production *and* preview; only the workflow's `vercel deploy` CLI step ships to prod)
 
 ---
 
