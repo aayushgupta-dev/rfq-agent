@@ -2,6 +2,7 @@ import fs from "fs/promises";
 import path from "path";
 import { TraceTabs } from "./trace-tabs";
 import { PromptPack } from "./prompt-pack";
+import { PageHeader } from "@/components/page-header";
 
 // ponytail: Server Component — reads public/traces/ at request time; no runtime state needed.
 // TraceTabs is "use client" only for tab switching interactivity.
@@ -156,14 +157,11 @@ export default async function TracePage() {
 
   return (
     <div className="space-y-8">
-      <div className="space-y-1">
-        <h1 className="text-3xl font-semibold leading-tight text-foreground">
-          Prompt Trace
-        </h1>
-        <p className="text-sm text-muted-foreground">
-          Input → Prompt → Raw model output → Grounded/clamped final
-        </p>
-      </div>
+      <PageHeader
+        eyebrow="Step 05 · Full auditability"
+        title="Prompt Trace"
+        description="Input → prompt → raw model output → grounded / clamped final. Every step is inspectable, and you can see exactly where code overruled the model."
+      />
 
       {/* Section 1: Trace tabs */}
       <TraceTabs traces={traces} />

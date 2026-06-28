@@ -35,7 +35,7 @@ function Stage({
   return (
     <div className="flex gap-4">
       <div className="flex flex-col items-center">
-        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-muted text-xs font-semibold text-foreground">
+        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand text-xs font-semibold text-white">
           {number}
         </div>
         {number < 4 && <div className="mt-1 w-px flex-1 bg-border" />}
@@ -237,8 +237,10 @@ function TracePanel({ trace }: { trace: TraceData }) {
                 {rawPreview}
                 {rawStr.length > 300 && "…"}
               </p>
-              <ScrollArea className="h-48 rounded-md border bg-muted p-3">
-                <pre className="font-mono text-xs whitespace-pre-wrap break-words">
+              {/* Raw model output rendered as a dark intelligence panel — the AI's
+                  unedited reasoning, before code grounds/clamps it */}
+              <ScrollArea className="h-48 rounded-lg border border-white/10 panel-dark p-3">
+                <pre className="font-mono text-xs whitespace-pre-wrap break-words text-[#e7e3ff]">
                   {rawStr}
                 </pre>
               </ScrollArea>

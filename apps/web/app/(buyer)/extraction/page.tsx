@@ -13,6 +13,7 @@ import { EvidenceSnippet } from "@/components/evidence-snippet";
 import { Markdown } from "@/components/markdown";
 import { FlagBadge } from "@/components/flag-badge";
 import { StreamProgress } from "@/components/stream-progress";
+import { PageHeader } from "@/components/page-header";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -315,8 +316,11 @@ export default function ExtractionPage() {
   // No vendors loaded
   if (loadedVendors.length === 0) {
     return (
-      <div className="p-6 space-y-4">
-        <h1 className="text-3xl font-bold">Extraction Review</h1>
+      <div className="space-y-4">
+        <PageHeader
+          eyebrow="Step 03 · Evidence-backed extraction"
+          title="Extraction Review"
+        />
         <Alert>
           <AlertDescription>
             Select or load a vendor on the{" "}
@@ -329,8 +333,12 @@ export default function ExtractionPage() {
   }
 
   return (
-    <div className="p-6 space-y-6">
-      <h1 className="text-3xl font-bold">Extraction Review</h1>
+    <div className="space-y-6">
+      <PageHeader
+        eyebrow="Step 03 · Evidence-backed extraction"
+        title="Extraction Review"
+        description="Every fact carries a source snippet from the vendor's own words. Missing, unclear, and conflicting fields are surfaced — never silently filled."
+      />
 
       {/* D-10: vendor selector Tabs */}
       <Tabs

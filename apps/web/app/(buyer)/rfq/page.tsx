@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardAction } from "@/componen
 import { Separator } from "@/components/ui/separator";
 import rfqRaw from "../../../public/data/rfq.json";
 import RegenButton from "./regen-button";
+import { PageHeader } from "@/components/page-header";
 
 // ponytail: Server Component renders committed rfq.json instantly (D-21);
 // only the Regen button needs "use client" — isolated to regen-button.tsx.
@@ -16,7 +17,11 @@ function formatBudget(range: number[] | null | undefined): string {
 export default function RfqPage() {
   return (
     <div className="space-y-6">
-      <h1 className="text-3xl font-semibold leading-tight text-foreground">RFQ Overview</h1>
+      <PageHeader
+        eyebrow="Step 01 · Procurement event"
+        title="RFQ Overview"
+        description="The request vendors are responding to — scope, line items, timelines, commercial expectations, and compliance."
+      />
 
       {/* Summary Card */}
       <Card>

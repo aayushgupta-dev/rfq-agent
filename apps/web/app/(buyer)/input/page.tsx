@@ -8,6 +8,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { StreamProgress } from "@/components/stream-progress";
+import { PageHeader } from "@/components/page-header";
 import { useBuyerContext } from "@/contexts/BuyerContext";
 
 // ponytail: static JSON imports are resolved at build time — no fetch, no spinner
@@ -164,29 +165,35 @@ export default function InputPage() {
 
   return (
     <div className="space-y-8">
-      <h1 className="text-3xl font-semibold leading-tight text-foreground">Vendor Input</h1>
+      <PageHeader
+        eyebrow="Step 02 · Vendor responses"
+        title="Vendor Input"
+        description="Load a sample vendor response to see extraction in action — or paste / upload your own below. Any format: text, Markdown, JSON, PDF, Word, Excel, PPT."
+      />
 
       {/* SECTION 1: Hero — one-click sample load (D-04) */}
       <div className="space-y-4">
-        <p className="text-sm text-muted-foreground">
-          Load a sample vendor response to see extraction in action — or paste / upload your own below.
-        </p>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {SAMPLES.map((sample) => (
-            <Card key={sample.id} data-testid={`vendor-card-${sample.id}`}>
+            <Card
+              key={sample.id}
+              data-testid={`vendor-card-${sample.id}`}
+              className="card-hover flex flex-col"
+            >
               <CardHeader>
                 <CardTitle className="text-xl font-semibold leading-tight">{sample.vendor.vendor_name}</CardTitle>
                 <CardDescription className="text-xs font-semibold text-muted-foreground leading-snug">
                   {sample.vendor.persona}
                 </CardDescription>
               </CardHeader>
-              <CardContent className="space-y-4">
-                <p className="text-sm text-muted-foreground leading-relaxed">{sample.description}</p>
+              <CardContent className="flex flex-1 flex-col gap-4">
+                <p className="flex-1 text-sm text-muted-foreground leading-relaxed">{sample.description}</p>
                 <Button
+                  variant="gradient"
                   className="w-full"
                   onClick={() => handleLoadSample(sample)}
                 >
-                  Load Sample
+                  Load sample →
                 </Button>
               </CardContent>
             </Card>
