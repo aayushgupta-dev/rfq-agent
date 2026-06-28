@@ -113,7 +113,7 @@ Plans:
 
 **Wave 2** *(blocked on Wave 1 completion)*
 
-- [ ] 04-02-PLAN.md — Wave 2: ComparisonResult schema flesh-out (ComparabilityVerdict, ClampReport, DimensionComparison, etc.) + codegen drift-check
+- [x] 04-02-PLAN.md — Wave 2: ComparisonResult schema flesh-out (ComparabilityVerdict, ClampReport, DimensionComparison, etc.) + codegen drift-check
 
 **Wave 3** *(blocked on Wave 2 completion)*
 
@@ -149,5 +149,5 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 | 1. Foundation | 5/5 | Complete   | 2026-06-27 |
 | 2. Grounding Gate & Messy Data | 4/4 | Complete   | 2026-06-27 |
 | 3. Extraction Agent | 4/4 | Complete   | 2026-06-27 |
-| 4. Comparison Agent | 1/4 | In Progress|  |
+| 4. Comparison Agent | 2/4 | In Progress|  |
 | 5. Buyer UI, Trace & Submission | 0/TBD | Not started | - |
