@@ -21,7 +21,9 @@ from schemas.domain import (
     DimensionVerdictDraft,
     ExtractionResult,
     FlaggedField,
+    LineItem,
     LineItemOffer,
+    MessSpecItem,
     VendorReadiness,
     VendorResponse,
 )
@@ -45,6 +47,8 @@ __all__ = [
     "EventEnvelope",
     # Domain — core
     "RFQ",
+    "MessSpecItem",
+    "LineItem",
     "VendorResponse",
     "ExtractionResult",
     # Domain — Phase 4 comparison family

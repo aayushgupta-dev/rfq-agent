@@ -42,34 +42,34 @@ from __future__ import annotations
 
 import json
 import logging
-from typing import Any, Callable
+from collections.abc import Callable
+from typing import Any, TypedDict
 
 from langchain_core.messages import SystemMessage
 from langchain_core.prompts import ChatPromptTemplate
 from langgraph.config import get_stream_writer
 from langgraph.graph import END, START, StateGraph
 from openai import LengthFinishReasonError
+from pydantic import BaseModel as _BaseModel
 
 from llm.factory import get_llm
 from prompts.registry import load
 from schemas.domain import (
+    RFQ,
     AttentionPoint,
-    ClarificationQuestion,
-    ClarificationSet,
     ClampEntry,
     ClampReport,
+    ClarificationQuestion,
+    ClarificationSet,
     ComparabilityVerdict,
     ComparisonDimension,
     ComparisonDraft,
     ComparisonResult,
     DimensionComparison,
-    DimensionComparisonDraft,
     DimensionVerdict,
-    DimensionVerdictDraft,
     ExtractionResult,
     FlaggedField,
     LineItemOffer,
-    RFQ,
     VendorReadiness,
 )
 from schemas.envelope import Field as EnvelopeField
@@ -156,8 +156,14 @@ def clamp_verdict(model_verdict: str, code_ceiling: str) -> str:
     """Return the lower of model_verdict and code_ceiling by _VERDICT_ORDER.
 
     Downgrade-only: code cannot upgrade the model's verdict, only downgrade.
+
+    Fail-closed: an unknown model_verdict string (not one of the three valid
+    verdicts) yields the code_ceiling rather than the raw string — code is the
+    guard, and a verbatim unknown string would later raise in ComparabilityVerdict.
     """
-    mv = _VERDICT_ORDER.get(model_verdict, 0)
+    if model_verdict not in _VERDICT_ORDER:
+        return code_ceiling
+    mv = _VERDICT_ORDER[model_verdict]
     cc = _VERDICT_ORDER.get(code_ceiling, 0)
     if mv <= cc:
         return model_verdict
@@ -432,8 +438,6 @@ def _collect_flagged_fields(
     results: list[FlaggedField] = []
 
     def _walk(obj: Any, path: str, vendor_name: str) -> None:
-        from pydantic import BaseModel as _BaseModel
-
         for field_name in type(obj).model_fields:
             value = getattr(obj, field_name)
             field_path = f"{path}.{field_name}" if path else field_name
@@ -549,7 +553,13 @@ def _detect_attention_triggers(
     all_have_gap = all(
         len(ext.compliance_points) == 0
         or all(
-            cp.status in (FlagStatus.missing, FlagStatus.unclear)
+            cp.status
+            in (
+                FlagStatus.missing,
+                FlagStatus.unclear,
+                FlagStatus.unsupported,
+                FlagStatus.conflicting,
+            )
             for cp in ext.compliance_points
             if isinstance(cp, EnvelopeField)
         )
@@ -803,6 +813,9 @@ def _run_compare_impl(state: dict[str, Any], emit: Callable[[dict], None]) -> di
         }
 
     except Exception as exc:
+        # Log full traceback so programming errors are distinguishable from model
+        # errors (both reach this handler). (Review WR-04)
+        logger.exception("compare node failed")
         emit(
             {
                 "type": "error",
@@ -915,8 +928,27 @@ def _clarify_node(state: dict[str, Any]) -> dict[str, Any]:
 # ---------------------------------------------------------------------------
 
 
+class ComparisonState(TypedDict, total=False):
+    """Graph state channels. A typed schema is REQUIRED — with a bare ``dict``
+    schema LangGraph only persists keys a node writes, so the input
+    ``extractions``/``rfq`` were dropped after the align node (which returns {}),
+    KeyError-ing the comparability node on the real astream/route path. Declaring
+    every channel here makes unwritten keys persist (last-value reducer)."""
+
+    extractions: list[ExtractionResult]
+    rfq: RFQ
+    error: str
+    ceilings: Any
+    scope_alignment_issues: Any
+    triggers: list[Any]
+    raw_draft: ComparisonDraft
+    result: ComparisonResult
+    result_sse_event: dict[str, Any]
+    last_sse_event: dict[str, Any]
+
+
 def _build_comparison_graph():  # noqa: ANN201
-    builder = StateGraph(dict)
+    builder = StateGraph(ComparisonState)
     builder.add_node("align", _align_node)
     builder.add_node("comparability", _comparability_node)
     builder.add_node("compare", _compare_node)

@@ -29,7 +29,8 @@ from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel, Field as pydantic_Field, model_validator
+from pydantic import BaseModel, model_validator
+from pydantic import Field as pydantic_Field
 from sse_starlette import EventSourceResponse
 
 from agents._demo import demo_graph
@@ -122,7 +123,7 @@ class ExtractionRequest(BaseModel):
     _MAX_TOTAL = 500_000
 
     @model_validator(mode="after")
-    def _check_payload_size(self) -> "ExtractionRequest":
+    def _check_payload_size(self) -> ExtractionRequest:
         if len(self.vendor_response.raw_text) > self._MAX_RAW_TEXT:
             raise ValueError(
                 f"vendor_response.raw_text exceeds {self._MAX_RAW_TEXT:,} chars "
@@ -181,15 +182,25 @@ class ComparisonRequest(BaseModel):
     extractions: list[ExtractionResult]
     rfq: RFQ
 
+    _MIN_VENDORS: int = 2
     _MAX_VENDORS: int = 5
     # ponytail: _MAX_VENDORS=5 is a prototype limit — single-call context window constraint
     # (RESEARCH Pitfall 7 / Review Fix LOW). Increase if multi-vendor truncation is observed.
 
     @model_validator(mode="after")
-    def _check_vendor_count(self) -> "ComparisonRequest":
-        if len(self.extractions) > self._MAX_VENDORS:
+    def _check_vendor_count(self) -> ComparisonRequest:
+        n = len(self.extractions)
+        if n < self._MIN_VENDORS:
+            # A comparison needs at least two vendors. Reject the degenerate case
+            # at the trust boundary instead of returning a semantically empty
+            # ComparisonResult that silently hides the absence. (Review CR-02 / CLAUDE.md §1)
             raise ValueError(
-                f"Too many vendors: {len(self.extractions)} > {self._MAX_VENDORS} (prototype limit). "
+                f"Too few vendors: {n} < {self._MIN_VENDORS}. "
+                f"A comparison requires at least {self._MIN_VENDORS} vendors."
+            )
+        if n > self._MAX_VENDORS:
+            raise ValueError(
+                f"Too many vendors: {n} > {self._MAX_VENDORS} (prototype limit). "
                 f"Submit at most {self._MAX_VENDORS} vendors per comparison request."
             )
         return self
@@ -213,7 +224,8 @@ async def compare_vendors(req: ComparisonRequest) -> EventSourceResponse:
             stream_mode="custom",
         ):
             yield {"data": EventEnvelope(**chunk).model_dump_json()}
-        yield {"data": EventEnvelope(type="done", payload={}).model_dump_json()}
+        # The clarify node owns the terminal `done` event (both its error and
+        # success paths emit exactly one). Do NOT append another here. (Review CR-01)
 
     return EventSourceResponse(_generate())
 

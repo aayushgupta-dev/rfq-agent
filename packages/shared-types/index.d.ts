@@ -304,6 +304,33 @@ export interface FlaggedField {
   field_context?: string | null;
 }
 /**
+ * One line item in the RFQ — a discrete service or deliverable category.
+ *
+ * budget_range_usd uses list[int] with a 2-element convention (min, max) instead
+ * of tuple[int, int] — OpenAI structured output does not support Python tuples
+ * in JSON schema (Pitfall 6 from RESEARCH.md).
+ */
+export interface LineItem {
+  id: string;
+  name: string;
+  description: string;
+  deliverables: string[];
+  timeline_weeks?: number | null;
+  budget_range_usd?: number[] | null;
+}
+/**
+ * Typed mess-spec entry (D-08/D-09).
+ *
+ * list[dict] avoided — keeps the TS contract typed and the generated
+ * shared-types accurate. Each entry instructs the vendor-gen prompt to inject
+ * one deliberate flaw into a specific line item.
+ */
+export interface MessSpecItem {
+  line_item: string;
+  issue_type: string;
+  instruction: string;
+}
+/**
  * Marketing-services Request for Quotation.
  *
  * Our own clean procurement artifact — plain Python types, no Field[T] wrappers
@@ -324,21 +351,6 @@ export interface RFQ {
   budget_total_usd?: number | null;
 }
 /**
- * One line item in the RFQ — a discrete service or deliverable category.
- *
- * budget_range_usd uses list[int] with a 2-element convention (min, max) instead
- * of tuple[int, int] — OpenAI structured output does not support Python tuples
- * in JSON schema (Pitfall 6 from RESEARCH.md).
- */
-export interface LineItem {
-  id: string;
-  name: string;
-  description: string;
-  deliverables: string[];
-  timeline_weeks?: number | null;
-  budget_range_usd?: number[] | null;
-}
-/**
  * A single vendor's response to the RFQ — raw text + provenance (D-12).
  *
  * raw_text is the vendor's messy prose document exactly as generated (or
@@ -353,16 +365,4 @@ export interface VendorResponse {
   source_id: string;
   format_label: string;
   raw_text: string;
-}
-/**
- * Typed mess-spec entry (D-08/D-09).
- *
- * list[dict] avoided — keeps the TS contract typed and the generated
- * shared-types accurate. Each entry instructs the vendor-gen prompt to inject
- * one deliberate flaw into a specific line item.
- */
-export interface MessSpecItem {
-  line_item: string;
-  issue_type: string;
-  instruction: string;
 }
