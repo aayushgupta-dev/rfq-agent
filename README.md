@@ -179,7 +179,8 @@ Full checklist and results: [docs/qa/phase5-UAT.md](docs/qa/phase5-UAT.md).
 ## Deployment
 
 The app is **live** (see [Live Demo](#live-demo)): the buyer UI on **Vercel** and the AI
-service on **Render**. Both auto-redeploy on every push to `main`.
+service on **Render**. Deploys are gated — push to `main` runs tests, deploys the Render
+backend, verifies `/health`, then deploys the Vercel frontend (`.github/workflows/deploy.yml`).
 
 - **AI service → Render** via the committed `render.yaml` Blueprint (root `services/ai`,
   `uv` build, uvicorn start; `OPENAI_API_KEY` set server-only). Deploy backend first.

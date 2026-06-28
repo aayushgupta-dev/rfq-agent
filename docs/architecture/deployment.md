@@ -144,7 +144,51 @@ See `docs/qa/phase5-UAT.md` for the full checklist and what each test proves.
 
 ---
 
-## 4. Operations & troubleshooting
+## 4. Gated CI/CD pipeline (GitHub Actions)
+
+Pushes to `main` (and manual `workflow_dispatch`) run through a three-job chain
+defined in `.github/workflows/deploy.yml`. **The frontend is never deployed against
+a stale or dead backend.**
+
+```
+test ──► backend ──► frontend
+```
+
+| Job | What it does |
+|---|---|
+| **test** | `uv run pytest` (AI service) + `next build` compile check (web). No `OPENAI_API_KEY` — all tests must pass hermetically. |
+| **backend** | Triggers a Render deploy via the REST API (`clearCache: clear`), polls the deploy status every 15 s until `live` (≤15 min), then polls `/health` until `{"status":"ok"}`. Fails the pipeline on any terminal Render status (`build_failed`, `update_failed`, `canceled`, etc.). |
+| **frontend** | `vercel build --prod` + `vercel deploy --prebuilt --prod`. Only runs after **backend** succeeds — the `needs: backend` gate enforces this in-engine. |
+
+**Why gate the frontend on the backend?** The buyer UI makes live SSE calls to the AI
+service on every screen. Deploying a new frontend against a broken or mid-deploy
+backend would serve a live app with a dead API. The `needs:` chain eliminates that
+window entirely.
+
+### Required GitHub repository secrets
+
+Set these in **Settings → Secrets and variables → Actions** before the pipeline runs:
+
+| Secret | Used by |
+|---|---|
+| `RENDER_API_KEY` | backend job — authenticates Render API calls |
+| `RENDER_SERVICE_ID` | backend job — identifies the `rfq-agent-ai` Render service |
+| `VERCEL_TOKEN` | frontend job — authenticates Vercel CLI |
+| `VERCEL_ORG_ID` | frontend job — Vercel team/org scope |
+| `VERCEL_PROJECT_ID` | frontend job — identifies the `rfq-agent-web` Vercel project |
+
+### Native auto-deploy disabled
+
+Both platforms' git-triggered auto-deploy is turned off so the workflow is the
+**single deploy authority** — no race between a dashboard auto-deploy and the
+pipeline:
+
+- `render.yaml`: `autoDeploy: false`
+- `apps/web/vercel.json`: `git.deploymentEnabled.main: false`
+
+---
+
+## 5. Operations & troubleshooting
 
 | Symptom | Cause | Fix |
 |---|---|---|
