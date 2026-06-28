@@ -155,8 +155,8 @@ Plans:
 
 **Wave 3** *(parallel, blocked on Wave 2)*
 
-- [ ] 05-06-PLAN.md — Wave 3A: Extraction Review + Vendor Comparison screens
-- [ ] 05-07-PLAN.md — Wave 3B: Prompt Trace screen + README + write-up + architecture diagrams + demo script
+- [x] 05-06-PLAN.md — Wave 3A: Extraction Review + Vendor Comparison screens
+- [x] 05-07-PLAN.md — Wave 3B: Prompt Trace screen + README + write-up + architecture diagrams + demo script
 
 **Wave 4** *(blocked on Wave 3)*
 
@@ -177,4 +177,4 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 | 2. Grounding Gate & Messy Data | 4/4 | Complete   | 2026-06-27 |
 | 3. Extraction Agent | 4/4 | Complete   | 2026-06-27 |
 | 4. Comparison Agent | 4/4 | Complete   | 2026-06-28 |
-| 5. Buyer UI, Trace & Submission | 5/9 | In Progress|  |
+| 5. Buyer UI, Trace & Submission | 7/9 | In Progress|  |
