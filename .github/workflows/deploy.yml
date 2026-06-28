@@ -29,9 +29,6 @@ jobs:
       - name: Install AI service deps
         working-directory: services/ai
         run: uv sync --frozen
-      - name: Run AI service tests
-        working-directory: services/ai
-        run: uv run pytest
       - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v4
         with:
@@ -39,6 +36,12 @@ jobs:
           cache: pnpm
       - name: Install web deps
         run: pnpm install --frozen-lockfile
+      # pnpm install must precede pytest: the codegen-drift test (test_codegen_drift.py)
+      # runs pydantic2ts, which shells out to node_modules/.bin/json2ts
+      # (json-schema-to-typescript). Without it the test errors "json2ts must be installed".
+      - name: Run AI service tests
+        working-directory: services/ai
+        run: uv run pytest
       - name: Build web (compile check)
         run: pnpm --filter @aerchain/web build
         env:
