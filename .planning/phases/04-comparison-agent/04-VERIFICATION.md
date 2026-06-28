@@ -1,9 +1,18 @@
 ---
 phase: 04-comparison-agent
 verified: 2026-06-28T00:00:00Z
-status: human_needed
+status: passed
+human_items_resolved: 2026-06-28
 score: 5/5 must-haves verified
 overrides_applied: 0
+resolution: >
+  All 3 human_verification items resolved. (1) comparison.v1.md + clarification.v1.md
+  prompt quality and (2) comparison_trace_1.md readability were reviewed and APPROVED by
+  the user at the Wave-4 human checkpoint (recorded in 04-04-SUMMARY.md). (3) the live
+  GPT-5.4 trace (docs/traces/comparison_trace_2.{json,md}) was captured by the Phase 4
+  functional E2E gate, which also asserted — on real model output — that no final verdict
+  exceeds its code ceiling, no offer price is fabricated, and gaps produce clarification
+  questions (docs/qa/04-comparison-uat.md, all PASS).
 human_verification:
   - test: "Review comparison.v1.md and clarification.v1.md prompt quality against the rubric"
     expected: "comparison.v1.md has clear role framing, precise verdict definitions, model_proposed REQUIRED section, humility instruction, no-normalization prohibition, attention-points contract, field-to-dimension map, and >= 3 concrete few-shot examples. clarification.v1.md has strict-count instruction, REJECTED/ACCEPTED example pair, and ordering instruction."
@@ -20,7 +29,7 @@ human_verification:
 
 **Phase Goal:** Vendors are compared honestly — comparability is established before any scoring, differences are surfaced without normalization, and gaps become clarification questions.
 **Verified:** 2026-06-28
-**Status:** human_needed
+**Status:** passed (all 3 human_verification items resolved — see frontmatter `resolution`)
 **Re-verification:** No — initial verification
 
 ## Goal Achievement
