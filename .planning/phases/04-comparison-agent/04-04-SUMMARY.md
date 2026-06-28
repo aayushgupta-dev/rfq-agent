@@ -110,16 +110,16 @@ Wave 4: refined the comparison.v1.md prompt (added missing model_proposed requir
 
 None — all stubs resolved.
 
-## Pending Human Checkpoint
+## Human Checkpoint — APPROVED (2026-06-28)
 
-The plan includes a `type="checkpoint:human-verify"` gate requiring the buyer/reviewer to:
-1. Review comparison.v1.md prompt quality (including the model_proposed requirement section)
-2. Review clarification.v1.md prompt quality (strict-count instruction)
-3. Review comparison_trace_1.md (verdict-clamp diff table, fixture mode note)
-4. Confirm all 20 tests pass
-5. Confirm no regressions
+`type="checkpoint:human-verify"` gate reviewed and approved by the user:
+1. comparison.v1.md prompt quality (model_proposed REQUIRED section, humility, no-normalization prohibitions) — approved
+2. clarification.v1.md prompt quality (strict-count instruction) — approved
+3. comparison_trace_1.md (verdict-clamp diff: model proposed comparable → code clamped 7 verdicts) — approved
+4. All 20 comparison tests pass; full suite 136 passed / 1 xfailed / 0 failures — confirmed
+5. No regressions — confirmed
 
-This checkpoint is NOT auto-approved. The executor has stopped here to return to the orchestrator.
+Follow-up agreed at approval: capture a **real-model** comparison trace (`comparison_trace_2`, real GPT-5.4) during the Phase 4 functional E2E gate to fully satisfy assignment §16 ("Model output") alongside this deterministic fixture trace.
 
 ## Threat Surface Scan
 
