@@ -1,8 +1,9 @@
 ---
-status: diagnosed
+status: resolved
 trigger: "Vendor response with two contradictory total prices (USD 1.2M vs $950,000) extracted as 'present' USD 1.2M, never flagged conflicting. $950k silently dropped. READ-ONLY diagnosis."
 created: 2026-06-29T04:40:06Z
-updated: 2026-06-29T04:40:06Z
+updated: 2026-06-29T05:40:00Z
+resolved_by: "plan 05-10 (commits d273376, 1d26bde, e58ef44)"
 ---
 
 ## Current Focus
@@ -94,3 +95,19 @@ fix: >
   path is behaviorally covered.
 verification: N/A (read-only diagnosis)
 files_changed: []
+
+## Closure (2026-06-29)
+
+Resolved by **plan 05-10** — the prompt-side fix this diagnosis recommended shipped exactly as
+specified, verified genuinely against the code:
+- `services/ai/prompts/extraction.v1.md` — total_price bullet now branches present/missing/**conflicting**
+  (>1 distinct grand total → surface both via `values[]`, never pick) + "Example 5 — conflicting
+  (numeric / grand total)" few-shot (the missing price anchor). (commit `d273376`)
+- `data/vendor_fluff.json` — same-field grand-total contradiction injected (USD 1.2M vs $950,000) +
+  an "overall" internal_conflict mess_spec, so the path now has committed coverage. (commit `1d26bde`)
+- Tests — `test_polished_fluff_has_total_price_conflict` (deterministic CI guard) +
+  `test_total_price_conflict_live` (@pytest.mark.live behavioral proof). 149 passed, 2 deselected. (commit `e58ef44`)
+- `grounding/gate.py` untouched (CLAUDE.md §8 — code must not invent the dropped claim to upgrade
+  present→conflicting; detection is model judgment, code only proves/downgrades).
+
+Confirmed in UAT (test-8) and the buyer-UI E2E screenshot `docs/qa/uat-evidence/05-10-total-price-conflicting.png`.
