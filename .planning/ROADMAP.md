@@ -26,7 +26,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 2: Grounding Gate & Messy Data** - Code-enforced grounding (LLM-free, unit-tested) + RFQ/vendor generation with mess specs (completed 2026-06-27)
 - [x] **Phase 3: Extraction Agent** - Grounding-gated extraction with evidence, four flag types, safe structured output, SSE streaming, first trace (completed 2026-06-27)
 - [x] **Phase 4: Comparison Agent** - Comparability-before-ranking over `ExtractionResult[]` with clarification questions (completed 2026-06-28)
-- [ ] **Phase 5: Buyer UI, Trace & Submission** - Five buyer screens, in-app prompt trace, deploy, and the full submission package
+- [x] **Phase 5: Buyer UI, Trace & Submission** - Five buyer screens, in-app prompt trace, deploy, and the full submission package (completed 2026-06-29)
 
 ## Phase Details
 
@@ -164,13 +164,13 @@ Plans:
 
 **Wave 5**
 
-- [ ] 05-09-PLAN.md — Wave 5: Playwright E2E + UAT — E2E PASS 7/7 (local prod build, live gpt-5.4) + verified on deployed stack; reference UAT in docs/qa/phase5-UAT.md. **Remaining:** SHIP-04 demo video (not recorded) + human UAT sign-off.
+- [x] 05-09-PLAN.md — Wave 5: Playwright E2E + UAT — E2E PASS 7/7 (local prod build, live gpt-5.4) + verified on deployed stack; reference UAT in docs/qa/phase5-UAT.md. **Remaining:** SHIP-04 demo video (not recorded) + human UAT sign-off.
 
 > **Phase 5 verification (2026-06-28): `human_needed`, 4/5 must-haves** — see `05-VERIFICATION.md`. Sole gap: SHIP-04 demo video. Still-open gates: code review, secure-phase, human UAT. Phase intentionally not closed.
 
 **Gap closure** *(UAT test-8, major)*
 
-- [ ] 05-10-PLAN.md — Flag contradictory grand totals as total_price=conflicting: extraction.v1.md conflict instruction + price-conflict few-shot + committed vendor_fluff contradiction + deterministic + live behavioral tests.
+- [x] 05-10-PLAN.md — Flag contradictory grand totals as total_price=conflicting: extraction.v1.md conflict instruction + price-conflict few-shot + committed vendor_fluff contradiction + deterministic + live behavioral tests.
 
 ## Progress
 
@@ -183,4 +183,4 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 | 2. Grounding Gate & Messy Data | 4/4 | Complete   | 2026-06-27 |
 | 3. Extraction Agent | 4/4 | Complete   | 2026-06-27 |
 | 4. Comparison Agent | 4/4 | Complete   | 2026-06-28 |
-| 5. Buyer UI, Trace & Submission | 7/9 | In Progress|  |
+| 5. Buyer UI, Trace & Submission | 10/10 | Complete   | 2026-06-29 |
