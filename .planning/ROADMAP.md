@@ -136,7 +136,7 @@ Plans:
   4. The web app (Vercel) reaches the deployed AI service (Render/Railway) via an env-configured base URL with CORS and disabled proxy buffering so SSE streams live in the demo.
   5. The submission package is complete: each Prompt Pack prompt is documented (what/why/how-it-handles-unreliable-info), plus README, 1–2 page write-up, ≤5-min demo video, and a system + AI-pipeline architecture diagram.
 
-**Plans**: 9 plans (5 waves)
+**Plans**: 10 plans (5 waves + 1 gap-closure)
 
 Plans:
 **Wave 0**
@@ -167,6 +167,10 @@ Plans:
 - [ ] 05-09-PLAN.md — Wave 5: Playwright E2E + UAT — E2E PASS 7/7 (local prod build, live gpt-5.4) + verified on deployed stack; reference UAT in docs/qa/phase5-UAT.md. **Remaining:** SHIP-04 demo video (not recorded) + human UAT sign-off.
 
 > **Phase 5 verification (2026-06-28): `human_needed`, 4/5 must-haves** — see `05-VERIFICATION.md`. Sole gap: SHIP-04 demo video. Still-open gates: code review, secure-phase, human UAT. Phase intentionally not closed.
+
+**Gap closure** *(UAT test-8, major)*
+
+- [ ] 05-10-PLAN.md — Flag contradictory grand totals as total_price=conflicting: extraction.v1.md conflict instruction + price-conflict few-shot + committed vendor_fluff contradiction + deterministic + live behavioral tests.
 
 ## Progress
 
