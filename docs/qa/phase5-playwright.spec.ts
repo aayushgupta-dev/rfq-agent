@@ -50,8 +50,6 @@ test.describe.serial("Phase 5 — Buyer Journey E2E", () => {
     await expect(page.getByRole("heading", { name: /rfq/i })).toBeVisible();
     // Assert at least one line item name rendered
     await expect(page.locator('[data-testid="rfq-line-item"]').first()).toBeVisible();
-    // Assert regenerate button present
-    await expect(page.getByRole("button", { name: /regenerate rfq/i })).toBeVisible();
   });
 
   test("Vendor Input — sample load hero path (D-04)", async () => {

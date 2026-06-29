@@ -1,12 +1,10 @@
 import type { RFQ } from "@aerchain/shared-types";
-import { Card, CardContent, CardHeader, CardTitle, CardAction } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import rfqRaw from "../../../public/data/rfq.json";
-import RegenButton from "./regen-button";
 import { PageHeader } from "@/components/page-header";
 
-// ponytail: Server Component renders committed rfq.json instantly (D-21);
-// only the Regen button needs "use client" — isolated to regen-button.tsx.
+// ponytail: Server Component renders the committed rfq.json instantly (D-21).
 const rfq = rfqRaw as unknown as RFQ;
 
 function formatBudget(range: number[] | null | undefined): string {
@@ -32,10 +30,6 @@ export default function RfqPage() {
               {rfq.client_name} &middot; Issued {rfq.issue_date} &middot; Deadline {rfq.response_deadline}
             </p>
           </div>
-          <CardAction>
-            {/* ponytail: RegenButton is a client island; regen is optional user-triggered call */}
-            <RegenButton />
-          </CardAction>
         </CardHeader>
         <CardContent className="space-y-4">
           <div>
