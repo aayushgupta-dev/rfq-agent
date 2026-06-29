@@ -1,5 +1,5 @@
 ---
-status: complete
+status: diagnosed
 phase: 05-buyer-ui-trace-submission
 source: [05-01-SUMMARY.md, 05-02-SUMMARY.md, 05-03-SUMMARY.md, 05-04-SUMMARY.md, 05-05-SUMMARY.md, 05-06-SUMMARY.md, 05-07-SUMMARY.md, 05-08-SUMMARY.md, 05-09-SUMMARY.md]
 started: 2026-06-29T04:20:54Z
@@ -104,19 +104,33 @@ blocked: 0
   reason: "User reported: extraction picked USD 1.2M, marked total price 'Present', and never surfaced the explicit '$950,000, fully inclusive' contradiction. No 'conflicting' flag produced for a clear contradiction."
   severity: major
   test: 8
-  root_cause: ""
-  artifacts: []
-  missing: []
-  debug_session: ""
+  root_cause: "Same-field 'conflicting' is 100% prompt-driven model judgment; the grounding gate only DOWNGRADES (present/unclear/conflicting → unsupported), never upgrades present → conflicting (correct by §8 — code must not invent the dropped claim). The model missed it under two prompt pressures: total_price is framed as a single decimal ('extract it as a decimal number', extraction.v1.md:128-129), and the only conflicting few-shot is a TIMELINE narrative — there is no numeric/price conflict example. Systemic: no committed sample or test feeds a same-field total contradiction and asserts conflicting."
+  artifacts:
+    - path: "services/ai/prompts/extraction.v1.md"
+      issue: "Lines 128-129 bias total_price to a single decimal; conflicting guidance (54-57) + only few-shot (241-275) is timeline-only — no price-conflict anchor."
+    - path: "services/ai/grounding/gate.py"
+      issue: "ground_field (236-317) is one-directional; cannot detect/upgrade a contradiction (by design)."
+    - path: "data/vendor_fluff.json / data/vendor_thorough.json"
+      issue: "No committed same-field total_price contradiction; conflicting path behaviorally untested."
+  missing:
+    - "In extraction.v1.md total_price bullet: if >1 distinct grand-total is stated anywhere, return conflicting with one values[] entry per total — never pick one."
+    - "Add a price/numeric conflicting few-shot beside the timeline one."
+    - "Add a same-field total_price contradiction to a committed sample + an extraction-agent test asserting conflicting (behavioral coverage)."
+  debug_session: ".planning/debug/conflicting-not-flagged.md"
 
-- truth: "Extraction evidence offers a drill-down to the full source passage with the cited span highlighted and a copy control (per UI-SPEC)."
+- truth: "Extraction evidence offers a drill-down to the full source passage with the cited span highlighted (per UI-SPEC D-07)."
   status: failed
-  reason: "User reported: evidence is always shown inline (verbatim + grounded marker) but there is no click-to-expand drill-down, no full-passage view with highlighted span, and no copy button on extraction evidence."
+  reason: "User reported: evidence is always shown inline (verbatim + grounded marker) but there is no click-to-expand drill-down, no full-passage view with highlighted span."
   severity: minor
   test: 7
-  root_cause: ""
-  artifacts: []
-  missing: []
+  root_cause: "Never-built feature (not a regression). evidence-snippet.tsx has 3 branches and never reads char_start/char_end; FieldRow (extraction/page.tsx:68-101) discards offsets+source_id past .snippet. UI-SPEC D-07 (05-UI-SPEC.md:99,142,234,243) specced a Collapsible drill-down with the cited span underlined in accent color. (Copy button on extraction was a UAT embellishment — spec only requires copy on the Trace screen.) All data needed is already client-side: Evidence offsets survive normalization, and VendorResponse.raw_text (full source) is in BuyerContext."
+  artifacts:
+    - path: "apps/web/components/evidence-snippet.tsx"
+      issue: "3 branches; no Collapsible, no offset usage, no highlighted span."
+    - path: "apps/web/app/(buyer)/extraction/page.tsx"
+      issue: "FieldRow (68-101) passes only snippet+value to EvidenceSnippet; discards offsets/source_id."
+  missing:
+    - "OPTIONAL (~30 lines, no backend): pass full Evidence + active vendor raw_text into EvidenceSnippet; add a Collapsible 4th branch rendering raw_text.slice(start-120,start) + <span underline accent>slice(start,end)</span> + slice(end,end+120); guard with raw_text.slice(start,end)===snippet fallback. Reuse trace-tabs.tsx CopyButton (174-190)."
   debug_session: ""
 
 - truth: "Currency amounts render with standard thousands grouping appropriate to a USD/US-market RFQ (e.g. $1,615,000)."
