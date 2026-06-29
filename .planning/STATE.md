@@ -2,9 +2,9 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: verifying
-stopped_at: Phase 5 UI-SPEC approved
-last_updated: "2026-06-29T05:02:07.967Z"
+status: milestone_complete
+stopped_at: Milestone complete (Phase 05 was final phase)
+last_updated: 2026-06-29T05:14:26.163Z
 last_activity: 2026-06-29
 progress:
   total_phases: 5
@@ -21,31 +21,39 @@ progress:
 See: .planning/PROJECT.md (updated 2026-06-27)
 
 **Core value:** Evidence over assertion, absence made first-class — every shown fact carries a source snippet; missing/unclear/conflicting/unsupported are explicit states; the AI never fabricates a number or claim.
-**Current focus:** Phase 05 — buyer-ui-trace-submission
+**Current focus:** Milestone complete
 
 ## Current Position
 
-Phase: 05 (buyer-ui-trace-submission) — EXECUTED, verification human_needed (phase NOT closed)
-Plan: 9 of 9 executed (05-01..05-08 done; 05-09 E2E done, demo video pending)
-Status: Phase complete — ready for verification
+Phase: 05
+Plan: Not started
+Status: Milestone complete
 Last activity: 2026-06-29
 
 Live: web https://rfq-agent-web.vercel.app · AI https://rfq-agent-ai.onrender.com
 
 Progress: [██████████] 100%
 
-### Open items (carry to close)
+### Post-close notes (milestone v1.0)
 
-- SHIP-04: record ≤5-min demo video (docs/demo/demo-script.md) — only verification gap
-- Rotate OPENAI_API_KEY (briefly exposed during Render dashboard entry) before submission
-- Run GSD gates: /gsd:code-review 5 · /gsd:secure-phase 5 · /gsd:verify-work 5
-- Warm Render free instance (~50s cold start) before any live demo
+Phase 05 closed 2026-06-29 after the 2nd UAT (13/15) + gap-closure plan 05-10. Resolved at close:
+- ✓ SHIP-04 demo video — recorded by developer (stored outside the repo; carry the link in the submission package)
+- ✓ OPENAI_API_KEY rotated (developer-confirmed)
+- ✓ GSD gates run: verify-work (2nd UAT), code-review (05-REVIEW.md), secure-phase (05-SECURITY.md: threats_open 0)
+- ✓ Major UAT gap (test-8: contradictory grand totals → conflicting) fixed & verified (plan 05-10; live + non-live + buyer-UI E2E)
+
+Accepted deferred follow-ups (non-blocking, optional polish — see 05-UAT.md Gaps):
+- Evidence drill-down (UI-SPEC D-07) — inline evidence already satisfies the rubric
+- Currency digit-grouping on RFQ screen ("$16,15,000" → "$1,615,000")
+- Regenerate-RFQ latency (~2 min)
+
+Operational: warm the Render free instance (~50s cold start) before any live demo.
 
 ## Performance Metrics
 
 **Velocity:**
 
-- Total plans completed: 17
+- Total plans completed: 27
 - Average duration: — min
 - Total execution time: 0.0 hours
 
@@ -57,6 +65,7 @@ Progress: [██████████] 100%
 | 02 | 5 | - | - |
 | 03 | 4 | - | - |
 | 04 | 4 | - | - |
+| 05 | 10 | - | - |
 
 **Recent Trend:**
 
