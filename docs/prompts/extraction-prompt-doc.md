@@ -61,6 +61,7 @@ couple the phases and reduce reusability.
 | Vendor gave a bundled total, no per-item breakdown | Per-item pricing → `unclear`; document-level `pricing_structure` → quotes the bundle | Never fabricates per-item splits |
 | Vague/conditional statement ("TBD pending budget") | Use `unclear` with verbatim quote | Buyer sees the vagueness |
 | Two contradictory statements | Use `conflicting` with `values[]`, each side with its own evidence | Both sides visible, nothing discarded |
+| Two contradictory **grand totals** (e.g. "all-in USD 1.2M" vs "a total of $950,000, fully inclusive") | `total_price` → `conflicting` with one `values[]` entry per total (numeric/price few-shot anchors this) | Buyer sees both totals; AI never presents one as definitive |
 | Vendor made a claim with no traceable text | Code gate downgrades to `unsupported` after model returns | Model cannot self-clear grounding |
 
 ---
