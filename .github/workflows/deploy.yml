@@ -107,6 +107,12 @@ jobs:
       - name: Pull Vercel project settings (production)
         run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
       - name: Build
-        run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
+        # NEXT_PUBLIC_AI_BASE_URL is inlined into the client bundle at build time. The
+        # Vercel project var is "Sensitive", so `vercel pull` can't read it and the CLI
+        # build baked it empty -> relative URLs -> 404 on every backend call. Inject it
+        # into the pulled build env here so the build never depends on the Vercel var type.
+        run: |
+          echo "NEXT_PUBLIC_AI_BASE_URL=https://rfq-agent-ai.onrender.com" >> .vercel/.env.production.local
+          vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
       - name: Deploy
         run: vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}

@@ -1,7 +1,9 @@
 import type { ExtractionResult, RFQ, VendorResponse } from "@aerchain/shared-types";
 import { streamSSE, type EventEnvelope } from "./sse";
 
-const BASE = process.env.NEXT_PUBLIC_AI_BASE_URL ?? "http://localhost:8000";
+// `||` (not `??`): an empty-string env var must fall back too — an empty BASE
+// silently turns every call into a relative URL that 404s on the web origin.
+const BASE = process.env.NEXT_PUBLIC_AI_BASE_URL || "http://localhost:8000";
 
 // CRITICAL: request body key is "vendor_response" (FastAPI ExtractionRequest.vendor_response)
 // Sending "vendor" → 422 Unprocessable Entity

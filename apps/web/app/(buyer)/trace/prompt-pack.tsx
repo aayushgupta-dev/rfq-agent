@@ -2,7 +2,9 @@
 import { useState } from "react";
 import { Markdown } from "@/components/markdown";
 
-const BASE = process.env.NEXT_PUBLIC_AI_BASE_URL ?? "http://localhost:8000";
+// `||` (not `??`): an empty-string env var must fall back too — an empty BASE
+// silently turns every call into a relative URL that 404s on the web origin.
+const BASE = process.env.NEXT_PUBLIC_AI_BASE_URL || "http://localhost:8000";
 
 export interface PromptMeta {
   id: string;
