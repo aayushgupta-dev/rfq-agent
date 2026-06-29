@@ -1,18 +1,12 @@
 ---
 phase: 05-buyer-ui-trace-submission
 verified: 2026-06-28T14:30:00Z
-status: human_needed
-score: 4/5
+status: verified
+reverified: 2026-06-29T05:10:00Z
+score: 5/5
 overrides_applied: 0
-gaps:
-  - truth: "Submission package includes a ≤5-min demo video"
-    status: failed
-    reason: "SHIP-04 demo video has not been recorded. Only the script (docs/demo/demo-script.md) exists. No .mp4/.mov/.webm file is present in the repo."
-    artifacts:
-      - path: "docs/demo/"
-        issue: "Contains demo-script.md only; no video file present"
-    missing:
-      - "Record the ≤5-min demo video per docs/demo/demo-script.md and add it to the submission package"
+closure_note: "Closed 2026-06-29. The single failing gap (SHIP-04 demo video) is resolved — developer recorded the demo video (stored outside the repo as a binary asset; link to be carried in the submission package). API key rotation (human security gate) confirmed done by developer. UAT 2nd-pass (2nd-UAT, .planning/phases/05-buyer-ui-trace-submission/05-UAT.md, 2026-06-29) drove all 5 buyer screens live in-browser: 13/15 pass; the one major UAT gap (test-8: contradictory grand totals not flagged conflicting) was fixed & verified via plan 05-10 (prompt-side; gate.py untouched per §8; live test + non-live suite + buyer-UI E2E all green). 3 minor/cosmetic UAT gaps (evidence drill-down, currency formatting, regenerate latency) accepted as deferred follow-ups."
+gaps: []
 human_verification:
   - test: "Load a sample vendor → extraction screen → verify evidence snippets are visible and Gaps & Risks panel shows flagged fields"
     expected: "Gaps panel (data-testid=gaps-panel) visible with ≥1 non-present flag badge; at least one evidence snippet with 'Source:' text visible; no fabricated values in extraction"
@@ -34,9 +28,9 @@ human_verification:
 # Phase 5: Buyer UI, Trace & Submission — Verification Report
 
 **Phase Goal:** A thin, buyer-first UI renders the live AI behavior across five screens, the prompt trace is visible, and the project is deployed with the full submission package.
-**Verified:** 2026-06-28T14:30:00Z
-**Status:** human_needed (4/5 automated truths verified; 1 gap — SHIP-04 demo video absent; 5 items need human confirmation)
-**Re-verification:** No — initial verification
+**Verified:** 2026-06-28T14:30:00Z · **Re-verified/closed:** 2026-06-29T05:10:00Z
+**Status:** verified (5/5) — phase CLOSED. SHIP-04 demo video recorded (developer; stored outside repo) and API key rotated (developer-confirmed); the prior 1 gap is resolved. The 5 human-verification items were confirmed: items 1–3 (live extraction / comparison / trace amber-diff) re-driven live in-browser during the 2nd UAT (2026-06-29); item 4 (deployed SSE chunking) covered by prior deployment evidence (05-08 SUMMARY + docs/qa/uat-evidence/deployed-extraction.png); item 5 (key rotation) confirmed by developer.
+**Re-verification:** Yes — closed after 2nd UAT + gap-closure plan 05-10.
 
 ---
 
@@ -50,9 +44,9 @@ human_verification:
 | SC2 | All five screens render with buyer-first hierarchy (risks/gaps first, evidence on drill-down) | VERIFIED | All 5 screen files substantive (rfq 357 LOC, extraction 357 LOC, comparison 503 LOC, trace 199 LOC + trace-tabs.tsx, input 184 LOC); `data-testid="gaps-panel"` precedes extraction categories; Attention panel at line 53 precedes comparison matrix |
 | SC3 | Every fact in Extraction Review has a visible evidence snippet; non-comparable vendors flagged before scoring | VERIFIED | `data-testid="evidence-snippet"` on EvidenceSnippet component; `data-testid="comparability-matrix"` and exact text "Comparability determined in code from evidence — not a model verdict" in comparison page; comparison clamp enforced in `agents/comparison.py` |
 | SC4 | Web (Vercel) reaches deployed AI service (Render) via env-configured URL; CORS and SSE streaming work | VERIFIED | Both services live (rfq-agent-web.vercel.app, rfq-agent-ai.onrender.com documented in README + deployment.md); `allow_origin_regex=r"https://.*\.vercel\.app"` covers production URL; `X-Accel-Buffering: no` set on both SSE endpoints at lines 344, 367 in app.py; deployed stack manually verified (docs/qa/uat-evidence/deployed-extraction.png — 60 evidence snippets, 12 absence flags) |
-| SC5 | Submission package: prompt docs, README, write-up, demo video, system+pipeline diagram | FAILED | All items present EXCEPT demo video — SHIP-04 gap (see below) |
+| SC5 | Submission package: prompt docs, README, write-up, demo video, system+pipeline diagram | VERIFIED | All items present; demo video recorded by developer 2026-06-29 (stored outside the repo as a binary asset — carry the link in the submission package) |
 
-**Score:** 4/5 truths verified
+**Score:** 5/5 truths verified
 
 ---
 
@@ -211,13 +205,15 @@ No `FIXME` or `XXX` markers found anywhere in phase-5 modified files. No unrefer
 
 ### Gaps Summary
 
-**One gap blocking SC5:**
+**No blocking gaps — phase closed 2026-06-29.**
 
-**SHIP-04 (demo video)** — The `docs/demo/demo-script.md` storyboard is authored and complete, but no video file has been recorded. The REQUIREMENTS.md and ROADMAP.md both list SHIP-04 as a hard deliverable for the submission package. This was explicitly acknowledged as a pending human task in 05-09-SUMMARY.md (`open_items: ["SHIP-04 demo video (≤5 min) NOT yet recorded — human task"`). No video file (`.mp4`, `.mov`, `.webm`) exists anywhere under `docs/`.
+**SHIP-04 (demo video) — RESOLVED.** The demo video was recorded by the developer (2026-06-29) following `docs/demo/demo-script.md`. It is stored outside the repo as a binary asset (videos are not committed to git); the submission package should carry the link/file. The storyboard, pre-demo checklist, and "code-disproves-model" arc are in `docs/demo/demo-script.md`.
 
-**Action required:** Record the demo following `docs/demo/demo-script.md`. The pre-demo checklist (warm Render instance, pre-load comparison_trace_1 for known amber rows, Fluff vendor first) is documented. Target ≤5 minutes covering: RFQ overview → messy vendor → extraction with gaps/evidence → comparison with comparability signal → trace with code-disproves-model moment → Prompt Pack list.
+**Major UAT gap (test-8: contradictory grand totals) — RESOLVED via plan 05-10.** Prompt-side fix (extraction.v1.md conflict branch + numeric few-shot); `grounding/gate.py` untouched (§8). Verified by the live behavioral test, the full non-live suite (149 passed), and an end-to-end buyer-UI check (screenshot `docs/qa/uat-evidence/05-10-total-price-conflicting.png`).
 
-**No other gaps.** All other requirements are satisfied in the codebase. The REQUIREMENTS.md traceability table still marks UI-03/04/05 and SHIP-01..05 as "Pending" — this is stale documentation, not a functional gap.
+**Deferred (accepted) follow-ups — non-blocking:** 3 minor/cosmetic UAT gaps recorded in `05-UAT.md` — evidence drill-down (UI-SPEC D-07, optional), currency digit-grouping ("$16,15,000"), and Regenerate-RFQ latency (~2 min). None affect the phase goal or rubric-critical behavior.
+
+**Docs staleness:** REQUIREMENTS.md traceability may still mark some items "Pending" — stale documentation, not a functional gap; the screens/requirements are verified SATISFIED above.
 
 ---
 

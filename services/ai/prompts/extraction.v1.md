@@ -125,8 +125,15 @@ Extract these fields at the document level (covering the whole proposal):
 - **`pricing_structure`** — if the vendor stated an overall pricing model, grand total,
   or bundle statement, quote it here. If no such statement exists, `missing`.
 
-- **`total_price`** — if a specific grand total figure is separable from the proposal,
-  extract it as a decimal number. If the vendor never stated a single total, `missing`.
+- **`total_price`** — the vendor's overall grand total for the whole proposal.
+  - If exactly one distinct grand-total figure is stated, return status `present` with that
+    value and its verbatim evidence.
+  - If the vendor never stated a single grand total, return `missing`.
+  - **If MORE THAN ONE distinct grand-total figure is stated anywhere in the response (e.g. one
+    section says "all-in USD 1.2M" and another says "a total of $950,000, fully inclusive"),
+    this is a contradiction: return status `conflicting` with one `values[]` entry per total,
+    each carrying its own verbatim evidence snippet. Do NOT pick one and discard the other, and
+    do NOT average or reconcile them — surface both.**
 
 - **`commercial_terms`** — payment structure, milestone billing, discounts, surcharges,
   or commercial conditions. Quote verbatim if stated.
@@ -263,6 +270,42 @@ Vendor states the timeline in two different places with contradictory values.
         "evidence": [
           {
             "snippet": "Realistic delivery is 8 to 10 months depending on feedback cycles and client approvals",
+            "source_id": "vendor_acme_agency",
+            "char_start": 0,
+            "char_end": 1
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+### Example 5 — conflicting (numeric / grand total)
+
+Vendor states two different all-in grand totals in two different sections, never reconciled.
+
+```json
+{
+  "total_price": {
+    "status": "conflicting",
+    "values": [
+      {
+        "value": "USD 1.2M all-in program fee",
+        "evidence": [
+          {
+            "snippet": "Our all-in program fee for the full engagement is USD 1.2M, inclusive of all services and managed delivery",
+            "source_id": "vendor_acme_agency",
+            "char_start": 0,
+            "char_end": 1
+          }
+        ]
+      },
+      {
+        "value": "$950,000, fully inclusive",
+        "evidence": [
+          {
+            "snippet": "Final commercials land at a total of $950,000, fully inclusive of all fees and managed delivery",
             "source_id": "vendor_acme_agency",
             "char_start": 0,
             "char_end": 1

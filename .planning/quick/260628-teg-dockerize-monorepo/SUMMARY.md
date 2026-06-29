@@ -1,6 +1,8 @@
 ---
 phase: quick-260628-teg
 plan: 01
+status: complete
+completed: 2026-06-28
 subsystem: infrastructure
 tags: [docker, compose, deployment, devx, healthcheck]
 requires: [services/ai (FastAPI), apps/web (Next.js), packages/shared-types, data/, docs/traces/]

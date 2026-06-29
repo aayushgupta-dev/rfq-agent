@@ -149,3 +149,17 @@ def test_polished_fluff_has_conflict() -> None:
         "polished-fluff vendor must contain at least two contradictory timeline or "
         "scope statements (D-09 mess spec: internal_conflict)"
     )
+
+
+def test_polished_fluff_has_total_price_conflict() -> None:
+    """vendor_fluff must state two contradictory all-in grand totals (UAT test-8 regression guard)."""
+    vendor_path = _DATA_DIR / FIXTURE_FILENAMES["polished-fluff"]
+    # Assert existence FIRST
+    assert vendor_path.exists(), f"Missing fixture: {vendor_path}"
+    vendor = VendorResponse.model_validate_json(vendor_path.read_text())
+    raw = vendor.raw_text
+    # D-13: string search only, no LLM call. Pins the exact injected totals.
+    assert "USD 1.2M" in raw and "$950,000" in raw, (
+        "vendor_fluff must contain two contradictory all-in grand totals (USD 1.2M vs $950,000) "
+        "so the total_price=conflicting path is exercisable (UAT test-8)"
+    )

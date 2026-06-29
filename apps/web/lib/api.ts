@@ -22,12 +22,6 @@ export function streamCompare(
   return streamSSE(`${BASE}/compare/vendors`, { extractions, rfq }, signal);
 }
 
-export async function fetchRfq(): Promise<RFQ> {
-  const res = await fetch(`${BASE}/data/rfq`);
-  if (!res.ok) throw new Error(`HTTP ${res.status}`);
-  return res.json() as Promise<RFQ>;
-}
-
 /**
  * Normalize the extraction "result" SSE payload.
  *
