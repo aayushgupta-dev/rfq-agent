@@ -561,3 +561,67 @@ def test_truncation_live_guard() -> None:
             },
             config={"max_tokens": 1},
         )
+
+
+# ---------------------------------------------------------------------------
+# 10. Live grand-total conflict guard (UAT test-8 — major regression)
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.live
+def test_total_price_conflict_live() -> None:
+    """Live: feeding two contradictory grand totals yields total_price=conflicting with both values.
+
+    UAT test-8 (major) regression guard. Skipped in CI; run with `uv run pytest -m live` against a
+    real gpt-5.4 key. Proves the extraction.v1.md total_price conflict instruction + price-conflict
+    few-shot (Task 1) actually drive the model — the only honest check of a model-judgment behavior.
+    """
+    from agents.extraction import run_extraction
+    from schemas.domain import RFQ, VendorResponse
+
+    vendor_response = VendorResponse(
+        vendor_name="Cobalt Test Agency",
+        persona="test",
+        mess_spec=[],
+        source_id="vendor_conflict_live",
+        format_label="text",
+        raw_text=(
+            "Cobalt Test Agency is pleased to propose an integrated marketing programme for "
+            "the GlowBite launch, spanning strategy, creative, production, and media. "
+            "Our all-in program fee for the full engagement is USD 1.2M, inclusive of all "
+            "services and managed delivery. "
+            "We bring senior strategic leadership and disciplined production oversight throughout. "
+            "Final commercials land at a total of $950,000, fully inclusive of all fees and "
+            "managed delivery. We welcome the opportunity to refine this in a clarification session."
+        ),
+    )
+    rfq = RFQ(
+        title="GlowBite Go-to-Market Marketing Services",
+        client_name="Luminos Consumer Brands",
+        issue_date="2026-01-01",
+        response_deadline="2026-02-01",
+        scope_summary="Integrated launch marketing programme.",
+        line_items=[
+            {
+                "id": "strategy-creative",
+                "name": "Strategy & Creative",
+                "description": "Strategy and creative development.",
+                "deliverables": ["Positioning", "Campaign platform"],
+            },
+        ],
+        commercial_expectations="Best value, transparent pricing.",
+    )
+
+    state = run_extraction(vendor_response, rfq)
+    result = state["result"]  # ExtractionResult
+    tp = result.total_price
+    assert tp.status == FlagStatus.conflicting, (
+        f"two contradictory grand totals must flag total_price=conflicting, got {tp.status!r} "
+        f"(value={tp.value!r}) — UAT test-8: AI must not present one total as definitive"
+    )
+    assert tp.values and len(tp.values) >= 2, "both contradictory totals must be surfaced in values[]"
+    # both numbers present across the surfaced values (order-independent, currency-format-tolerant)
+    blob = " ".join(str(cv.value) for cv in tp.values)
+    assert ("1.2" in blob or "1,200,000" in blob or "1200000" in blob) and "950" in blob, (
+        f"both contradictory totals (1.2M and 950,000) must appear in values[], got {blob!r}"
+    )
