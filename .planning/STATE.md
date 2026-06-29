@@ -2,10 +2,10 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: milestone_complete
-stopped_at: Milestone complete (Phase 05 was final phase)
-last_updated: 2026-06-29T05:14:26.163Z
-last_activity: 2026-06-29
+status: Awaiting next milestone
+stopped_at: Phase 5 UI-SPEC approved
+last_updated: "2026-06-29T05:39:13.264Z"
+last_activity: 2026-06-29 — Milestone v1.0 completed and archived
 progress:
   total_phases: 5
   completed_phases: 5
@@ -18,31 +18,29 @@ progress:
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-06-27)
+See: .planning/PROJECT.md (updated 2026-06-29 after v1.0 milestone)
 
 **Core value:** Evidence over assertion, absence made first-class — every shown fact carries a source snippet; missing/unclear/conflicting/unsupported are explicit states; the AI never fabricates a number or claim.
-**Current focus:** Milestone complete
+**Current focus:** v1.0 shipped & archived — planning next milestone (`/gsd:new-milestone`)
 
 ## Current Position
 
-Phase: 05
-Plan: Not started
-Status: Milestone complete
-Last activity: 2026-06-29
-
-Live: web https://rfq-agent-web.vercel.app · AI https://rfq-agent-ai.onrender.com
-
-Progress: [██████████] 100%
+Phase: Milestone v1.0 complete
+Plan: —
+Status: Awaiting next milestone
+Last activity: 2026-06-29 — Milestone v1.0 completed and archived
 
 ### Post-close notes (milestone v1.0)
 
 Phase 05 closed 2026-06-29 after the 2nd UAT (13/15) + gap-closure plan 05-10. Resolved at close:
+
 - ✓ SHIP-04 demo video — recorded by developer (stored outside the repo; carry the link in the submission package)
 - ✓ OPENAI_API_KEY rotated (developer-confirmed)
 - ✓ GSD gates run: verify-work (2nd UAT), code-review (05-REVIEW.md), secure-phase (05-SECURITY.md: threats_open 0)
 - ✓ Major UAT gap (test-8: contradictory grand totals → conflicting) fixed & verified (plan 05-10; live + non-live + buyer-UI E2E)
 
 Accepted deferred follow-ups (non-blocking, optional polish — see 05-UAT.md Gaps):
+
 - Evidence drill-down (UI-SPEC D-07) — inline evidence already satisfies the rubric
 - Currency digit-grouping on RFQ screen ("$16,15,000" → "$1,615,000")
 - Regenerate-RFQ latency (~2 min)
@@ -139,3 +137,7 @@ Items acknowledged and carried forward from previous milestone close:
 Last session: 2026-06-29T05:01:17.977Z
 Stopped at: Phase 5 UI-SPEC approved
 Resume file: None
+
+## Operator Next Steps
+
+- Start the next milestone with /gsd-new-milestone
