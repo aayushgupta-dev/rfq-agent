@@ -3,12 +3,12 @@ status: diagnosed
 phase: 05-buyer-ui-trace-submission
 source: [05-01-SUMMARY.md, 05-02-SUMMARY.md, 05-03-SUMMARY.md, 05-04-SUMMARY.md, 05-05-SUMMARY.md, 05-06-SUMMARY.md, 05-07-SUMMARY.md, 05-08-SUMMARY.md, 05-09-SUMMARY.md]
 started: 2026-06-29T04:20:54Z
-updated: 2026-06-29T04:37:00Z
+updated: 2026-06-29T05:08:00Z
 ---
 
 ## Current Test
 
-[testing complete]
+[testing complete — major gap (test 8) fixed & verified via 05-10; see Gaps]
 
 ## Tests
 
@@ -117,6 +117,7 @@ blocked: 0
     - "Add a price/numeric conflicting few-shot beside the timeline one."
     - "Add a same-field total_price contradiction to a committed sample + an extraction-agent test asserting conflicting (behavioral coverage)."
   debug_session: ".planning/debug/conflicting-not-flagged.md"
+  resolution: "FIXED & VERIFIED via plan 05-10 (commits d273376, 1d26bde, e58ef44). Prompt-side fix only (extraction.v1.md total_price conflict branch + Example 5 price few-shot); gate.py untouched (§8). Verified: (1) live test test_total_price_conflict_live passed against real gpt-5.4 — model emits total_price=conflicting with both 1.2M and 950k in values[]; (2) non-live suite 149 passed, no regression; (3) END-TO-END buyer UI — loaded vendor_fluff, /extraction now shows 'Gaps & Risks — Total price → Conflicting' with two contradictory totals surfaced + evidence (screenshot docs/qa/uat-evidence/05-10-total-price-conflicting.png). Note: with full fluff (4 total figures) the model surfaced the indicative-vs-envelope range pair rather than the injected 1.2M/950k pair — both are genuine contradictions; the in-process live test confirms the injected pair specifically. Core promise holds: contradictory totals flagged conflicting, both surfaced, none silently chosen."
 
 - truth: "Extraction evidence offers a drill-down to the full source passage with the cited span highlighted (per UI-SPEC D-07)."
   status: failed
